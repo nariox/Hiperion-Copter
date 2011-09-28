@@ -1,0 +1,48 @@
+Partlist
+
+Exported from ESCpower.brd at 8/28/11 9:32 PM
+
+EAGLE Version 5.11.0 Copyright (c) 1988-2010 CadSoft
+
+Part     Value             Package           Library       Position (mil)        Orientation
+
+BATTERY+ Battery+          BATTERY_CONNECTOR ESC           (484.984 1619.299)    MR270
+C1                         E5-8,5            rcl           (384 928)             R180
+C2       100n              C0805             rcl           (700.764 615.528)     R180
+C3       100n              C0805             rcl           (475.236 128)         MR270
+C4       100n              C0805             rcl           (360.52 214.157)      MR270
+IC1      7805L             TO92              linear        (462.74 578)          R90
+IC2      TL071P            DIL08             linear        (839.079 321.37)      R180
+J1       J7MM              07                jumper        (1232 1532)           MR270
+J2       J7MM              07                jumper        (828 1524)            R270
+PAD1                       2,54/0,9          wirepad       (80 80)               R0
+PAD2                       2,54/0,9          wirepad       (80.567 1680.772)     R0
+PAD3                       2,54/0,9          wirepad       (2479.748 80.126)     R0
+PAD4                       2,54/0,9          wirepad       (2479.685 1640.488)   R0
+R1       4k7               M0805             rcl           (570.906 298.472)     MR270
+R2       18k               M0805             rcl           (843.079 260.157)     MR0
+R3       4k7               M0805             rcl           (472.874 298.472)     MR270
+R4       4k7               M0805             rcl           (567.299 128)         MR270
+R5       470               M0805             rcl           (1268.055 800.835)    MR0
+R6       18k               M0805             rcl           (1324.157 928)        R0
+R9       470               M0805             rcl           (1682.425 815.402)    MR0
+R10      470               M0805             rcl           (859.591 803.197)     MR0
+R11      18k               M0805             rcl           (1734 928)            R0
+R12      18k               R0805             rcl           (908.606 932.921)     R0
+R13      SHUNT             0207/10           rcl           (629.079 988.827)     R90
+R14      4k7               M0805             rcl           (779.079 757.528)     R90
+SL1                        06P               con-amp-quick (2224.945 1115.795)   R90
+SL2                        07P               con-amp-quick (1589.118 414.614)    R180
+T1       BC850             SOT23             transistor    (998.37 756.543)      MR0
+T2       BC850             SOT23             transistor    (1409.394 762.646)    MR0
+T3       BC850             SOT23             transistor    (1822.189 765.008)    MR0
+U$1      IRFR1205          DPAK              ESC           (908.606 1132.921)    R0
+U$2      IRFR5305          DPAK              ESC           (908.606 1132.921)    MR0
+U$3      MOTOR_CONNECTOR   MOTOR_CONNECTOR   ESC           (908.606 1378)        R0
+U$4      IRFR1205          DPAK              ESC           (1319.236 1128)       R0
+U$5      IRFR5305          DPAK              ESC           (1319.236 1128)       MR0
+U$6      MOTOR_CONNECTOR   MOTOR_CONNECTOR   ESC           (1319.236 1378)       R0
+U$7      IRFR1205          DPAK              ESC           (1734 1128)           R0
+U$8      IRFR5305          DPAK              ESC           (1734 1128)           MR0
+U$9      MOTOR_CONNECTOR   MOTOR_CONNECTOR   ESC           (1734 1378)           R0
+U$11     BATTERY_CONNECTOR BATTERY_CONNECTOR ESC           (282.819 1619.299)    R270
