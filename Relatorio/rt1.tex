@@ -1,0 +1,657 @@
+\documentclass[brazil,ruledheader]{abnt}
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage[alf]{abntcite}
+%\usepackage[alf,iso-690-1987}{abntcite}
+\usepackage{graphicx}
+
+\renewcommand{\ABNTbibliographyname}{Referências}
+
+
+\makeatletter
+\usepackage{babel}
+\makeatother
+\begin{document}
+
+\autor{Bruno Pinho, Danilo Luvizotto \& Pedro Nariyoshi}
+
+
+\titulo{Hipérion - Plataforma Versátil de Desenvolvimento Multirrotor}
+
+
+\orientador{Marcelo Knörich Zuffo}
+
+
+\coorientador{Felipe Miguel Pait}
+
+
+%\comentario{Proposta de Projeto Final apresentado na disciplina PSI-2591 Projeto de Formatura I.}
+
+
+\instituicao{Departamento de Sistemas Eletrônicos \par Escola Politécnica\par Universidade
+de São Paulo}
+
+
+\local{São Paulo - SP, Brasil}
+
+
+\data{\today}
+
+\capa
+
+\folhaderosto
+%Projeto do Trabalho de Formatura apresentado à Escola Politécnica da USP como parte dos requisitos da disciplina PSI2591-Projeto de Formatura I.
+% \begin{folhadeaprovacao}
+% Relatório Inicial sob o título \textit{``\ABNTtitulodata''}, apresentado à Escola Politécnica da USP como parte dos requisitos da disciplina PSI2592-Projeto de Formatura II, perante a banca examinadora constituída pelos
+% professores: \setlength{\ABNTsignthickness}{0.4pt}
+% 
+% \assinatura{Prof. Marcelo Knörich Zuffo\\ Orientador} \assinatura{Prof. Sérgio Takeo Kofuji}
+% \assinatura{Profa. Ramona M. Straube Shukovski}
+% 
+% \end{folhadeaprovacao}
+\begin{resumo}
+  Este projeto tem como objetivo propor e implementar uma plataforma de desenvolvimento voadora. O intuito é criar uma base de conhecimento para que projetos posteriores possam se beneficiar do conhecimento adquirido. O projeto será implementado em camadas hierárquicas, tal como o modelo OSI. Esta abstração torna o projeto mais versátil e expansível.
+  
+  Palavras chave: \textit{modular, abstração, vôo, brushless, multirrotores, plataformas embarcadas, sistemas sem fio, telemetria, controle não linear, autônomo, li-po, sistemas eletrônicos}
+\end{resumo}
+
+%\chapter*{Dedicatória}
+
+%Dedico este trabalho a ...
+
+
+% \chapter*{Agradecimentos}
+% 
+% Agradecemos primeiramente a nossas famílias, que dedicaram grande quantidade de recursos na nossa educação, de forma muitas vezes sacrificial, mas sempre com amor.
+% 
+% Agradecemos também ao corpo docente da Escola Politécnica, por nos ensinar, ocasionalmente contra nossa vontade, mas sempre para o nosso bem. Em especial a aqueles que ensinam com paixão. 
+% 
+% No escopo deste projeto, ainda agradecemos os professores Marcelo Zuffo e Felipe Pait que acreditaram no projeto e aceitaram a tarefa de nos orientar.
+% 
+% E não podemos esquecer os professores Takeo e Weslley que mesmo não participando formalmente do projeto, dedicaram seu tempo e esforço para nos auxiliar.
+
+\chapter*{Lista de Termos}
+
+A lista a seguir contém as abreviaturas e termos utilizados nesta monografia. As abreviaturas podem, no entanto, apresentar outros significados em outros contextos.\\
+\textbf{API} \textit{(Application Programming Interface)}: Interface de Programação de Aplicativo, um conjunto de normas que permite uma interface entre dois aplicativos ou um aplicativo e um plugin.\\
+\textbf{ARM} \textit{(Advanced Risc Machine)}: é uma arquitetura de processadores de 32-bits RISC.\\
+\textbf{Brushless, Motor} : um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.\\
+\textbf{ESC} \textit{(Electronic Speed Controller)}: Controlador de Velocidade Eletrônico, é um dispositivo que faz a comutação das fases num motor sem escova.\\
+\textbf{GNU/Linux}: é um sistema operacional que utiliza as ferramentas do projeto GNU e o núcleo Linux.\\
+\textbf{GPS} \textit{(Global Positioning System)} : sistema utilizado para obter informações sobre tempo e posição de um objeto, utilizando 4 ou mais satélites.\\
+\textit{Inrunner}: um motor cujo estator se encontra no exterior, e o rotor do lado interior.\\
+\textbf{LSI}: Laboratório de Sistemas Integráveis, parte da Escola Politécnica da Universidade de São Paulo.\\
+\textbf{MVA}: Mícro-Veículo Aéreo, é uma classe de VANTs de tamanho reduzido.\\
+\textbf{Multirrotor}: um objeto voador dotado de duas ou mais hélices e que se utiliza do empuxo causado por essas para o vôo.\\
+\textbf{OSI, Modelo}: uma arquitetura que divide redes de computadores em diversas camadas, utilizada para modelar e abstrair as redes.\\
+\textit{Outrunner}: um motor cujo estator se encontra no exterior, e o rotor no interior.\\
+\textbf{PID, Controlador}: um controlador que emprega um algoritmo proporcional, integrativo e diferencial ao erro para controle de processos.\\
+\textbf{RISC} \textit{(Reduced Instruction Set Computer)} : é uma estratégia para desenvolvimento de processadores que se restringe as instruções a um grupo reduzido de instruções simples.\\
+\textbf{RTOS} \textit{(Real-Time Operating System)} : Sistema operacional de Tempo-Real.\\
+\textbf{SDK} \textit{(Software Development Kit)}: Kit de Desenvolvimenteo de Software é um conjunto de aplicativos, documentação e exemplos para auxíliar e/ou permitir o desenvolvimento de softwares para determinada plataforma.\\
+\textbf{VANT}: Veículo Aéreo Não-Tripulado, controlado remotamente ou autônomamente.
+
+\listoffigures
+
+% \listoftables
+
+\tableofcontents{}
+
+\chapter{Introdução\label{cap:introducao}}
+
+\begin{flushright}{}``\emph{Sobre hipérion, nos é dito que foi o primeiro a entender,\\
+                            através de atenção diligente e observação,\\
+                            os movimentos da lua e de outros corpos celestes, (...)\\
+                            foi ele também aquele que tornou esses fatos conhecidos;\\
+                            e por esta razão ele foi chamado de pai desses corpos(...)}''\\
+{\small Diodoro da Sicília (5.67.1)}\end{flushright}{\small \par}
+\vfill{}
+
+\section{Contextualização e Motivação}
+A evolução da tecnologia ao longo da história permitiu ao homem desenvolver as mais diversas ferramentas, desde as que o auxiliam no trabalho até os dispositivos dedicados ao lazer. A depender do tamanho desses objetos, seus transportes podem ser feitos de diversas maneiras; pequenos objetos podem ser carregados, mas, para objetos um pouco maiores, isso já pode não ser possível ou conveniente, de forma que pode ser necessário incorporar a eles partes dedicadas a facilitar a sua movimentação. 
+
+Dentre as possíveis soluções para a movimentação de ferramentas de pequeno porte, uma solução recente é o uso de Micro-Veículos Aéreos (MVAs). Um MVA possui algumas vantagens em relação aos outros meios, dentre as quais pode-se destacar a versatilidade, já que o movimento não depende do terreno e, por isso, ele passa por cima de obstáculos que são de difícil transposição para pernas ou rodas. Além disso, os MVAs tem um grau de liberdade adicional, já que podem variar a sua altura, conseguindo chegar a posições impossíveis para veículos terrestres ou aquáticos.
+
+Essa última característica torna o MVA ótimo para uma grande variedade de usos nos quais são desejadas agilidade e mobilidade. É o caso de câmeras de vídeo controladas à distância, que podem ser usadas, por exemplo, para a filmagem de eventos esportivos ou para a imersão em realidade aumentada. 
+
+O desenvolvimento científico tem possibilitado sistemas embarcados cada vez mais potentes, e isto tem aumentado o interesse em MVAs, tanto para pesquisas, quanto para aplicações profissionais. No entanto, não há uma plataforma de desenvolvimento, apenas produtos comerciais com objetivos específicos. Dessa forma que é necessário primeiro o desenvolvimento de um sistema multirrotor para que então seja iniciada a pesquisa.
+
+\section{Objetivos}
+
+O projeto visa a implementação de um multirrotor modular expansível para uso  como uma plataforma de desenvolvimento para aplicações futuras e implementação de uma aplicação que demonstre o potencial do protótipo gerado. A ênfase do projeto é a arquitetura modular e discreta do multirrotor, que permitirá que aplicações e sensores sejam adicionados ou removidos com o mínimo de alterações tanto no software quanto no hardware desenvolvidos. Para que isso seja possível, serão definidos os requisitos dos módulos de aplicação, seus protocolos de comunicação e o barramento onde eles serão ligados, dentre outros, além das APIs a serem geradas. Será necessária, também, uma documentação apropriada que permita que o usuário compreenda e utilize todos os recursos sem dificuldades.
+
+	O sistema será construído em camadas, semelhante ao modelo OSI de camadas. Um diagrama do sistema pode ser encontrado no anexo 1. O módulo de controle cuidará dos algoritmos de vôo como estabilidade, PID, ele recebe o sinal dos sensores mais essenciais ao vôo e recebe também comandos vindos do módulo de navegação.
+
+	O módulo de navegação se encarrega de utilizar os sensores disponíveis para decidir qual rota tomar, ele recebe sinais do controle remoto, além de estar ligado aos sensores não essenciais através do barramento, esses sensores são utilizados para fazer correções na rota.
+	
+	É possível ainda expandir o projeto através de um módulo de aplicações. Este seria ligado ao barramento como um periférico comum, mas possuiria um processador mais poderoso e lidaria com sinais de som e vídeo. Ele também poderia ser responsável pelos cálculos mais custosos e por carregar o programa que o multirrotor executará no modo autônomo. Por estar ligado no barramento, ele também é capaz de se comunicar com os outros periféricos para processar estes dados também.
+
+O protótipo final deverá possuir capacidades suficientes para o seu uso como uma plataforma de desenvolvimento. Essas capacidades incluem, mas não se limitam a:
+\begin{itemize}
+  \item Capacidade de vôo estável;
+  \item movimentação em 3 eixos e rotação em torno do eixo vertical;
+%  \item mecanismo de prevenção de colisões;
+  \item aferição e envio de dados dos sensores.
+\end{itemize}
+
+A navegação poderá ser de duas formas. O modo manual, onde o multirrotor é controlado remotamente pelo usuário. E o modo semi-autônomo, que utiliza rotas pré-definidas, guiando-se pelo GPS, incluindo a funcionalidade de voltar ao ponto de origem caso seja perdida a conexão com o controle manual.
+%Além disso, o vídeo capturado poderá ser transmitido para acompanhamento do operador em terra.
+
+\section{Organização do Trabalho}
+
+Este trabalho possui mais 8 capítulos, além dos anexos, referências e bibliografias. Nos capítulos 2  e 3 serão apresentados os principais elementos tecnológicos e  teóricos do projeto. O desenvolvimento do trabalho será apresentado no capítulo 4, no qual serão mostrados as competências e habilidades do grupo, metodologia e objetivos do projeto, descrição das atividades, dificuldades e limitações encontradas.
+Nos capítulos 5, 6, 7 e 8 serão apresentados os tópicos relacionados ao orçamento do projeto, cronogramas, riscos e gerência de projeto.
+Para finalizar, o capítulo 9 concluirá o trabalho, apresentado uma síntese de tudo que foi visto e, neste capítulo, também serão mostrados os resultados obtidos. Nas referências, bibliografias e nos anexos serão apresentados complementos e fontes de informações relevantes ao projeto.
+
+\chapter{Modelo da Arquitetura}
+
+\section{Considerações Iniciais}
+
+Uma parte importante do projeto Hipérion é a sua arquitetura de hardware e software. Foi escolhido uma arquitetura modular para hardware e para software.
+A idéia será separar fisicamente e funcionalmente os dispositivos eletrônicos que irão compor o sistema embarcado da VANT em vários módulos eletrônicos inteligentes independentes. Os módulos serão inteligentes porque eles deverão processar as informações obtidas do meio externo (no caso dos sensores) e também processar as informações internas (passagem de parâmetros e mensagens de \textit{feedback}). Tais módulos eletrônicos se comunicarão através de interfaces pré-definidas, seguindo uma hierarquia também pré-definida.
+
+A figura \ref{fig.arquitetura} mostra de forma simplificada a arquitetura de hardware do VANT. 
+
+\begin{figure}[hb]
+  \centering
+  \includegraphics[width=6in]{./Figuras/arquitetura.eps}
+  \caption[Modelo de abstração]%
+  {Diagrama relacionando as camadas de abstração com o Hardware}\label{fig.arquitetura}
+\end{figure}
+
+As camadas principais são:
+\begin{enumerate}
+  \item Motores;
+  \item periféricos e Controle de Vôo;
+  \item controle de Navegação;
+  \item periféricos de Navegação.
+\end{enumerate}
+
+\section{Camada Motores}
+
+A camada Motores será composta pelos motores \textit{brushless}, que serão responsáveis pelas manobras da aeronave, e pelos ESCs, que serão responsáveis pelo controle dos motores \textit{brushless}. Tal camada receberá comandos da camada superior (Periféricos e Controle de Vôo), tais como: aumentar/diminuir rotação dos motores, desligar motores ou ligar motores. Além disso, esta camada também deverá enviar mensagens de feedback para sua camada superior.
+
+\section{Camada Periféricos e Controle de Vôo}
+A camada Periféricos e Controle de Vôo será composta pelos módulos: acelerômetros, giroscópio e controle de vôo. Os módulos desta camada serão responsáveis pela estabilidade da aeronave durante as manobras de vôo (subir, descer, girar, parar, etc) e durante o repouso também. 
+
+O módulo Controle de Vôo receberá comandos de navegação do módulo superior (Navegação) e deverá executar a manobra definida pelo respectivo comando. Para isso, um algoritmo de controle, inserido no módulo controle de vôo, deverá ler os valores das variáveis de vôo oriundas dos módulos acelerômetros e giroscópio e atuar nos motores de vôo, através do envio de comandos para a camada inferior (Motores de Vôo). A camada também deverá manter a estabilidade da aeronave nas situações de ausência de comandos, que poderá corresponder a uma situação de repouso ou de emergência. Além disso, mensagens de feedback também serão enviadas para sua camada superior (Controle de Navegação).
+
+\section{Camada Controle de Navegação}
+
+A camada Controle de Navegação será composta por um único módulo: módulo de Navegação. Neste módulo estarão presentes as várias rotinas de navegação que dependerão das aplicações pretendidas para a aeronave, como por exemplo: navegação manual, navegação por GPS, etc. Esta camada receberá comandos, valores e parâmetros dos periféricos da camada superior (Periféricos de Navegação), que poderão ser:
+
+\begin{itemize}
+  \item Altura, através do módulo barômetro;
+  \item posição geográfica, através do módulo GPS;
+  \item posição em relação a um alv,; através do módulo multimídia;
+  \item comandos manuais de navegação, através do módulo controle remoto.
+\end{itemize}
+
+\section{Camada Periféricos de Navegação}
+
+A camada Periféricos de Navegação será composta por módulos que auxiliarão um determinado tipo de navegação. Para este projeto, pretende-se criar os seguintes tipos de navegação:
+
+\begin{itemize}
+  \item Navegação manual;
+  \item navegação por GPS;
+  %\item navegação por vídeo.
+\end{itemize}
+
+A navegação manual consistirá em pilotar a aeronave através de um rádio controle. Para tanto, um módulo de controle remoto será inserido e irá criar um link de comunicação remoto entre a aeronave e o usuário que a está pilotando.
+
+A navegação por GPS consistirá em fazer a aeronave seguir um trajeto determinado, usando informações oriundas do módulo GPS e processadas pelo módulo de navegação. Além disso, o módulo GPS também servirá como um instrumento de localização para a aeronave.
+
+%A navegação por vídeo consistirá em obter uma imagem de vídeo do ambiente através do módulo multimídia e processá-la neste mesmo módulo. O resultado do processamento desta imagem será transformado em parâmetros que serão enviados para sua respectiva rotina de navegação no módulo de navegação. Pretende-se com isso fazer a nave perseguir um alvo específico ou utilizar a imagem para qualquer outra aplicação, como vigilância por exemplo.
+
+A comunicação entre os módulos será realizada através de interfaces $I^2C$ e SPI. A interface $SPI$ será utilizada para ligar os módulos acelerômetros e giroscópio ao módulo controle de vôo. Apesar desta interface ser destinada a topologia ponto a ponto, é possível ligar mais de dois periféricos através desta interface \cite{spiusart}.
+
+A interface $I^2C$ ligará os módulos ESC ao módulo controle de vôo. Este tipo de interface funcionará ligando vários módulos através de um único barramento \cite{proto$I^2C$}. , ligará os módulos da camada Periféricos de Navegação ao módulo de Navegação da camada Controle de Navegação. De forma semelhante à interface $I^2C$, a interface $CAN$ também ligará os módulos através de um barramento. As especificações desta interface encontram-se em \citeonline{protocan}.
+
+Nos módulos Controle de Vôo e controle de Navegação serão utilizados os microcontroladores ARM, devido a sua boa relação custo-benefício em termos de periféricos presentes, processamento e memória de programa.
+
+Assim como o hardware, o software também será modular. As rotinas do software embarcado do VANT também estarão fisicamente separadas, pois estarão contidas em seus respectivos módulos e seguiram uma hierarquia pré-definida. Dessa forma, o desenvolvimento do software embarcado do VANT seguirá uma metodologia de programação semelhante à programação orientada a objetos.
+
+Um sistema operacional de tempo real (RTOS) será embarcado nos módulos controle de vôo e no módulo controle de navegação. Optou-se pelo uso de um RTOS, porque pretende-se criar uma camada de software que separe as rotinas de controle e navegação das rotinas de acesso ao hardware, como proposto em \citeonline{controlrtos} . 
+
+%Foi feita uma pesquisa sobre os sistemas operacionais de tempo real (RTOS) disponíveis. Foi encontrado uma grande variedade de RTOS. Optou-se pelo FreeRTOS, devido às suas características mostradas em \cite{freertos}, tais como: software aberto, requisitos de tempo real, possibilidade de ser embarcado para um microcontrolador, etc.
+
+\chapter{Referencial Teórico\label{cap:referencialteorico}}
+
+\begin{flushright}{}``\emph{Navegar é preciso, viver não.}''\\
+{\small Luís de Camões}\end{flushright}{\small \par}
+
+
+\section{Considerações Iniciais}
+
+Neste capítulo serão apresentados os conceitos e a terminologia básicos da área do projeto e a bibliografia do trabalho. O conteúdo deste relatório é suficiente para o entendimento do funcionamento deste projeto. Para uma visão mais detalhada sobre os diferentes temas abordados neste capítulo, recomenda-se a leitura da bibliografia citada.
+
+\section{Motores \textit{Brushless}\label{sec:brushless}}
+
+A escolha dos motores é essencial para o projeto, pois fornecem a propulsão necessária para o vôo. Há diversos tipos de motores disponíveis no mercado, síncronos ou assíncronos, de corrente contínua ou alternada etc.
+
+Como o veículo armazena sua energia em uma bateria, foram escolhidos motores de  de corrente contínua, já que isto elimina a necessidade de inversores complexos, permitindo o uso de circuitos chaveadores mais simples.
+
+A maioria dos motores de corrente contínua utilizam um dispositivo denominado escova para chavear seus enrolamentos. Este é composto por fios dispostos de forma fazer contato com os enrolamentos do rotor, enquanto este gira. Apesar de ser uma solução efetiva para diversas aplicações, a escova impõe diversas limitações como:
+
+\begin{itemize}
+  \item faiscamento;
+  \item ruído acústico;
+  \item ruído elétrico;
+  \item desgaste mecânico devido ao atrito;
+  \item menor eficiência;
+  \item menor relação potência $\times$ tamanho;
+  \item maior velocidade angular.
+\end{itemize}
+
+Há motores de corrente contínua que não utilizam escovar para fazer o chaveamento, estes são denominados \textit{brushless} (``sem escova'' em inglês). Estes motores são semelhantes em construção síncronos trifásicos com imãs permanentes, mas otimizados para operação em corrente contínua.
+
+Por não possuir a escova para fazer o chaveamento entre os enrolamentos, é necessário um circuito eletrônico que execute a mesma função. Apesar de aumentar a complexidade do sistema, multirrotores necessitam de motores com rotações elevadas, o que dificulta o uso da escova. Além disto, como os multirrotores são alimentados por uma bateria, é interessante que o sistema seja o mais eficiente o possível, para aumentar o tempo de vôo.
+
+Estes motores geralmente possuem 3 enrolamentos que controlam o campo no estator, enquanto o rotor utiliza imãs permanentes. Isto elimina a necessidade da escova para gerar o campo no rotor.
+
+Hoje em dia, eles são utilizados em uma grande variedade de aplicações. Desde pequenos motores encontrados em ventoinhas de computador, a motores maiores encontrados em veículos, como o Segway \cite{segway}.
+
+Para mais informações, consultar \cite{avr443}.
+
+\section{Controlador de Velocidade Eletrônico\label{sec:esc}}
+
+O controlador de velocidade, também chamado de \textit{ESC} é um circuito eletrônico utilizado para substituir os comutadores mecânicos. Seu papel é chavear os enrolamentos de forma síncrona com o motor até que este atinja a velocidade desejada.
+
+\subsection{Sincronização \textit{sensorless}}
+Como é necessário que o controlador saiba a posição do rotor para pode chaveá-lo, é necessário que haja algum tipo de realimentação entre o motor e o ESC. Alguns motores empregam sensores de posição Hall ou codificadores rotatórios como forma de realimentação. No entanto isto aumenta ainda mais o custo e a complexidade do sistema. Há uma maneira de se obter a informação sobre a posição do motor sem a necessidade de sensores externos que utiliza as tensões no próprio enrolamento para definir as posições.
+
+Controladores que utilizam esta técnica são chamados de \textit{sensorless} (do inglês sem sensor), apesar do nome, é de fato um sistema dotado elementos sensores. O funcionamento deles é análogo ao funcionamento de um gerador síncrono. Ao passar pelos enrolamentos, o campo magnético do rotor induz tensões nos enrolamentos. A tensão induzida é proporcional a à frequência angular e sua fase indica a posição do rotor. Durante o chaveamento, apenas 2 enrolamentos estão conectados (um ao $V_{SS}$ e outro ao $V_{DD}$, enquanto um deles está ``flutuando'', a tensão neste enrolamento é utilizada para indicar a fase do rotor. 
+
+Diferentemente das máquinas síncronas comuns, os motores brushless são projetados para que a tensão induzida tenha formato trapezoidal, isto facilita a detecção da posição do rotor. Quando o motor atinge $(V_{DD}+V_{SS})/2$ sabe-se que o campo magnético do rotor está alinhado com o campo magnético do enrolamento sendo analisado. Após o cruzamento deste ponto, o ESC inicia um \textit{timer} que, quando expira, chaveia o circuito.
+
+\subsection{Máquina de estados}
+
+Para descrever o funcionamento do programa (baseado em \cite{avr444}) pode-se utilizar uma máquina de estados:
+
+\begin{figure}[hb]
+  \centering
+  \includegraphics[width=6in]{./Figuras/ESC-diagrama.eps}
+  \caption
+  {Máquina de estados do laço principal do programa do ESC}\label{fig.escdia}
+\end{figure}
+
+Na inicialização dos periféricos 
+
+
+\subsection{Partida}
+
+Como os imãs geram uma tensão alternada de amplitude proporcional à velocidade angular entre o rotor e o estator, não é possível utilizar esta técnica durante a partida ou em baixas rotações. Isto é especialmente crítico para sistemas em que a carga é variável ou imprevisível. Quando a carga é conhecida ou está numa faixa previsível, o problema se torna mais tratável, mas mesmo assim não há uma técnica universal para a partida do motor \cite{avr444}.
+
+Este mesmo manual sugere a partida em malha aberta, que é o mais utilizado para este tipo de aplicação. Para isto, o controlador espera um período pré-determinado antes de chavear o circuito. Após obter velocidade angular suficiente o controlar habilita a realimentação.
+
+A carga deve estar numa faixa conhecida. Se a carga estiver muito abaixo do esperado, o motor poderá não chavear rápido o suficiente, colocando o enrolamento em curto e possivelmente danificando o motor. Se a carga estiver muito acima do esperado, o motor não se moverá e a partida do motor irá falhar.
+
+\section{Bateria de lítio-polímero}
+
+A bateria é o elemento que provê a energia necessária ao funcionamento eletromecânico e eletrônico do multirrotor. É desejável que sua massa seja baixa, já que um peso maior significará mais empuxo nos motores e uma maior corrente drenada. Ao mesmo tempo, é desejável uma carga elétrica alta, para se ter mais autonomia.
+
+O lítio é o mais leve dentre os metais e com o maior potencial eletroquímico, o que o torna uma escolha bastante atraente para o uso em baterias. Devido à sua grande reatividade, porém, seu uso na forma metálica não é conveniente, sendo mais usados os compostos que provêem íons de lítio sem sofrer grandes modificações estruturais \cite{lipoeval,batterysearch}. 
+
+A bateria de lítio-polímero é ideal para uso em veículos elétricos por conseguir armazenar uma grande quantidade de energia por unidade de massa (energia específica) e por unidade de volume (densidade de energia), além de fornecer uma grande quantidade de potência por unidade de volume (densidade de potência), por ter alta eficiência energética, alta capacidade de corrente e vida útil longa \cite{lipoeval}.
+
+Essas características justificam seu uso mesmo apesar das dificuldades que ela introduz, já que as células são extremamente inflamáveis, tensões maiores que 4,5V causam a dissociação do eletrólito - danificando a célula e podendo causar explosão - e tensões abaixo de 1V causam dissociação do eletrodo negativo \cite{enlipomodel}.
+
+\subsection{Química}
+
+A bateria de lítio-polímero normalmente usa um óxido de lítio com outro metal como eletrodo positivo e um composto de carbono como eletrodo negativo \cite{advlipo}. As reações químicas envolvidas no funcionamento da bateria são \cite{lipostatusquo,lipoeval}:
+
+Eletrodo positivo:
+\begin{equation}
+  LiMO_2 \Longleftrightarrow Li_{(1-x)}MO_2 + x Li^+
+\end{equation}
+
+Eletrodo negativo:
+\begin{equation}
+C_n + xLi + xe^- \Longleftrightarrow C_nLi_x
+\end{equation}
+
+Reação completa:
+\begin{equation}
+LiMO_2 + C_n  \Longleftrightarrow Li_{(1-x)}MO_2 + C_nLi_x
+\end{equation}
+
+Em geral, o metal $''M''$ associado ao lítio no óxido do eletrodo positivo é o cobalto \cite{lipostatusquo,lipoeval}.
+
+\subsection{Modelo}
+
+Em \cite{enlipomodel} foi desenvolvido um modelo para as baterias de lítio-polímero considerando o efeito da variação da temperatura nas características elétricas. O esquema pode ser visto abaixo:
+
+\begin{figure}[hb]
+  \centering
+  \includegraphics[width=6in]{./Figuras/modelo.eps}
+  \caption[Modelo da Bateria]
+  {Esquema elétrico do modelo desenvolvildo em \cite{enlipomodel}}\label{fig.bateria}
+\end{figure}
+
+No lado esquerdo do diagrama, o capacitor, o resistor e a fonte de corrente controlada por corrente modelam a capacidade, a auto-descarga e o estado de carga (SOC) da bateria. A capacidade da bateria é uma função do número de ciclos de carga e descarga, mas esse efeito é desprezível para baterias de lítio-polímero. No lado direito do esquema, a fonte de tensão controlada por tensão é usada para simular a relação não linear entre o estado de carga e a tensão de circuito aberto (OCV). Rseries modela a resistência ômica interna da célula, e as redes RC consideram o comportamento transitório. Cada parâmetro usado para modelar $V_cell$ é função do estado de carga e da temperatura. A tensão medida nos contatos da célula podem ser expressadas no domínio $s$ como \citeonline{enlipomodel} sugere:
+
+\begin{equation}
+  V_{cell} = V_{OC}(SOC,T) - I_{cell}R_{series}(SOC,T)  - I_{cell}Z_{t_long}(SOC,T) - I_{cell}Z_{t_short}(SOC,T)
+\end{equation}
+
+onde $Zt\_long$ e $Zt\_short$ são as impedâncias dos dois grupos RC. As duas constantes de tempo $\tau t\_long$ e $\tau t\_short$ estão na magnitude dos segundos e dos minutos respectivamente \cite{enlipomodel}. 
+
+O método para obtenção dos parâmetros acima citados está descrito em \citeonline{enlipomodel}.
+
+\subsection{Valores de referência}
+
+Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é estudada uma bateria de lítio-polímero de 3,7V e 100Ah:
+\begin{itemize}
+  \item Energia específica : 146 Wh/kg
+  \item Densidade de energia: 373 Wh/l
+  \item Auto-descarga: < 5\% por mês
+  \item Eficiência energética > 95\% entre 20 e 40 ºC
+  \item Temperatura de operação: entre -20 e 60 ºC
+  \item Vida útil (perda de 20\% da capacidade original): 1200 ciclos de carga / descarga
+\end{itemize}
+
+\section{Zigbee}
+	
+	Zigbee é um protocolo de comunicação de redes sem fio baseado na norma 802.15.4 do IEEE \cite{norma80215} cuja ênfase é o baixo consumo de energia.
+	
+	O termo Zigbee é devido à semelhança entre esta rede e o comportamento das abelhas. Da mesma forma que as abelhas quando buscam o néctar, os nós da rede operam em malha, trocando informações entre si. As abelhas trocam informações andando em zigue-zague, para informar distância, direção de aonde se encontra a fonte de alimento. Portanto, ZigBee é uma palavra valise para Zigue-Zague e \textit{bee} (abelha em inglês).
+	
+O protocolo é interessante para ser usado em aplicações embarcadas onde consumo de energia seja um fator limitante e não se necessite de altas taxas de transmissão. O foco é definido como propósito geral, baratas e auto-organizadas redes em malhas que podem ser usadas para controle industrial, sensores embarcados, coleta de dados médicos, alarmes de fumaça ou intruso, automação de prédios, automação doméstica, etc. \cite{zigbee,zigbeedeetc}.
+
+\section{Controle}
+
+O tema sobre controle de multirrotores voltou a ser estudado, graças a tecnologias novas e o grande interesse em \textit{VANTs}. Há diversas pesquisas já publicadas e os métodos desenvolvidos obtem resultados satisfatório, apesar de não haver o estabelecimento de uma teoria clássica especificamente para multirrotores. Abaixo são relatados alguns trabalhos desenvolvidos com esse tema que propõem diferentes abordagens para essa tarefa.
+
+\citeonline{modellingpid} apresenta um modelo para um quadrirotor e é desenvolvido um método de controle proporcional-integral-derivativo (PID) clássico, com quatro forças de entrada que são os empuxos gerados pelos quatro rotores.
+
+Em \cite{nlpid} é projetado um controlador não linear baseado no esquema clássico de controle proporcional-integral-derivativo (PID) para controlar um quadrrotor com seis graus de liberdade. A posição horizontal do quadrirotor é controlada por ações PI, enquanto a orientação e a posição vertical são controladas por algorítmos PID. A performance é verificada por testes numéricos, embora apenas os efeitos da força gravitacional sejam compensados.
+
+%\cite{rbfarx} sugere um modelo MIMO RBF-ARX para representar a dinâmica não-linear de um quadrrotor e, baseando-se em um modelo ARX linearizado obtido do RBF-ARX no ponto de operação, é proposto o controle por realimentação de estado com abordagem LQR. Por fim, a proposta é aplicada num quadriotor, confirmando a validade do modelo RBF-ARX.
+
+\citeonline{visionuav} revê o modelo matemático de um quadrirotor usando a equação de Lagrange. Então é proposto um método de controle linear baseado em imagens de duas câmeras, uma no quadrrotor e outro no solo.
+
+\citeonline{fuzzycontrol} formula um sistema de controle inteligente de quadrrotores baseado na lógica fuzzy. As entradas para o sistemas são o valores desejados para altura e os ângulos em relação aos três eixos de referência que passam pelo centro de massa, e as saídas são as potências de cada um dos quatro rotores para se atender à especificação. Por fim, são feitas simulações para validar a eficiência da estratégia de controle.
+
+\section{Considerações finais}
+
+Neste capítulo foram apresentados aspectos técnicos do projeto, como motores e controladores. No capítulo a seguir, serão tratados assuntos relativos à motivação e execução do projeto.
+
+\chapter{Desenvolvimento do Trabalho}
+
+\section{Considerações Iniciais}
+
+Este capítulo trata de assuntos não relacionados às técnicas apresentadas no capítulo anterior. Serão discutidos aspectos sobre a equipe e como será executado o projeto. 
+
+\section{Sobre a equipe}
+
+O grupo é composto por três alunos: Bruno Pinho, Danilo Luvizotto e Pedro Nariyoshi. 
+
+Bruno já teve contato com aquisição de dados de GPS e tem experiência com transceptores, irá trabalhar no hardware do módulo de controle e módulo de comunicação e nos algoritmos de navegação autônoma.
+Até o momento trabalhou estudando como será implementado a utilização do GPS e demais sensores para permitir a navegabilidade autônoma e também na aquisição dos parâmetros para estabilização e navegabilidade do sistema. Assim como também foi observado uma maneira da utilização do controle a distância.
+
+Danilo tem conhecimentos sobre sistemas operacionais e programação. Irá trabalhar na implementação do sistema operacional no módulo multimídia, além de trabalhar na transmissão de dados.
+Até o momento, pesquisou sobre o funcionamento de motores \textit{brushless}, contribuiu para a elaboração da arquitetura e para a divisão das funcionalidades entre os módulos, pesquisou as famílias de microcontroladores e processadores ARM disponíveis e adequadas para o projeto, dos sistemas GNU/Linux existentes para esses processadores e os ambientes de desenvolvimentos disponibilizados pelos seus fabricantes.
+
+Pedro já trabalhou com cancelamento de ruído com áudio e tem interesse em algoritmos adaptativos, controle e acústica. Neste projeto irá trabalhar no controle e redução de vibrações durante o vôo. Tem se dedicado no desenvolvimento e estudo dos controladores de velocidade dos motores, tem trabalhado coordenando e checando cada seção do projeto. Contribuiu para a definição final da arquitetura e para a escolha dos processadores e sensores a serem utilizados.
+
+Na etapa de planejamento, a equipe contava com mais um integrante, Marcos Tortólio, que não está mais participando devido a um programa de intercâmbio na Espanha, como previsto.
+Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de hardware e software do veículo.
+
+\section{Problema a ser resolvido}
+
+	Apesar da existência produtos no mercado que utilizam sistemas multirrotores, não há nenhuma plataforma de desenvolvimento para aplicações diversas. Para fins de aprendizado e pesquisa, é comum que se desenvolvam sistemas de maneira independente e os utilizem para apenas um propósito. Nosso projeto busca criar uma plataforma de desenvolvimento versátil, disponibilizando abertamente o software, o hardware, os conhecimentos e a documentação gerados, de forma a criar uma base de conhecimento para o desenvolvimento do projeto e para seu uso como ferramenta.
+
+	A Escola Politécnica da Universidade de São Paulo possui diversos laboratórios que poderiam utilizar o dispositivo para pesquisa, como reconstrução 3D de objetos, algoritmos de controle, aprendizado de máquina etc. O foco não é pesquisar nenhuma dessas áreas a fundo, mas sim criar uma ferramenta capaz de ser utilizada facilmente nessas aplicações.
+
+	Pode-se comparar esse projeto a um SDK ou a uma API, ele permite ao desenvolvedor trabalhar sobre uma camada de abstração. Um desenvolvedor poderia por exemplo implementar técnicas de detecção de imagens para fazer busca de objetos sem a necessidade de compreender os motores trifásicos. Ao mesmo passo, um outro desenvolvedor poderia trabalhar no algoritmo de controle, sem se preocupar com os outros módulos do sistema.
+	
+\section{Motivações e Justificativas Técnicas}
+
+  Um multirrotor com um número par de rotores tem vantagens substanciais sobre helicópteros convencionais. Se cada par adjacente de hélices girar em sentido oposto, é possível controlar o momento angular controlando a razão entre a rotação das hélices. Assim, um multirrotor é capaz de reduzir o problema eletromecânico de voar a um problema de controle eletrônico.
+
+	O projeto implementa conhecimentos diversos da Engenharia Elétrica, como controle, programação, processamento de sinais, redes de computadores, circuitos elétricos, e é, portanto, é adequado e representativo à meta generalista do curso.
+
+	Além de colocar em prática conceitos aprendidos durante o curso, também nos aprofundaremos nas áreas de controle multivariável, processamento de imagens e sistemas eletrônicos embarcados.
+
+Por fim, a plataforma desenvolvida poderá ser utilizada por projetos posteriores, já que a área de veículos aéreos não-tripulados (VANTs) possui diversas vertentes de pesquisa em andamento.
+
+\section{Descrição das Atividades a serem Realizadas}
+As etapas do projeto serão: Estudo Preliminar, Definições, Construção da Plataforma de Desenvolvimento, Estudo de Algoritmos de Controle, Construção do Protótipo, Controle Avançado, Desenvolvimento das Aplicações e Montagem Final. A seguir estão descritas as atividades e suas respectivas subatividades.
+
+\begin{enumerate}
+
+  \item Estudo Preliminar \\
+	Nesta etapa, os objetivos serão:
+\begin{itemize}
+  \item pesquisar sobre a construção de MVAs;
+  \item pesquisar sobre as possíveis plataformas de desenvolvimento.
+\end{itemize}
+
+  \item Definições\\
+	Nesta etapa, os objetivos serão:
+\begin{itemize}
+  \item definir os módulos básicos do veículo;
+  \item definir uma arquitetura de hardware e software para implementar os controles e aplicações do veículo;
+  \item definir alguns componentes básicos, tais como: tipos de motor e drivers;
+  \item definir o número de hélices.
+\end{itemize}
+
+  \item Estudo de um multirrotor comercial:
+  \begin{itemize}
+    \item escolha de um modelo comparando com outros existentes no mercado;
+    \item compra e estudo teórico do multirrotor escolhido;
+    \item montagem e estudo da parte estrutural;
+    \item avaliação dos pontos fortes e fracos;
+    \item utilizar a experiência e o conhecimento adquirido para auxiliar na construção do protótipo.
+  \end{itemize}
+  
+  \item Construção da Plataforma de Desenvolvimento\\
+	Nesta etapa, os objetivos serão:
+\begin{itemize}
+  \item comprar componentes;
+  \item construção do hardware básico: microcontroladores e barramentos de dados;
+  \item desenvolver bibliotecas básicas de interface do microcontrolador;
+  \item estudar o comportamento dos motores.
+\end{itemize}
+
+  \item Estudo de Algoritmos de Controle\\
+	Nesta etapa, os objetivos serão:
+\begin{itemize}
+  \item estudar a construção de um multirrotor comercial;
+  \item pesquisar possíveis algoritmos de controle.
+\end{itemize}
+
+  \item Construção do Protótipo\\
+	Nesta etapa, os objetivos serão:
+\begin{itemize}
+  \item construir os módulos sensores básicos;
+  \item construir o módulo central;
+  \item conectar os módulos ao barramento da plataforma de desenvolvimento;
+  \item ligar motores, módulo central e módulos sensores;
+  \item testar sensores, comandos de voo e estabilidade.
+\end{itemize}
+
+  \item Controle Avançado\\
+	Nesta etapa, os objetivos serão:
+\begin{itemize}
+  %\item implementar sistema anticolisão;
+  \item implementar o módulo e sistema de navegação manual;
+  \item implementar o módulo e sistema de navegação autônoma ;
+  \item testar os sistemas anteriores.
+\end{itemize}
+
+  \item Desenvolvimento das Aplicações\\
+Nesta etapa, os objetivos serão:
+\begin{itemize}
+  \item construção do módulo GPS;
+  %\item construção do módulo multimídia;
+  \item implementar sistema de navegação por GPS;
+  %\item implementar sistema de navegação por vídeo.
+  %\item testar os sistemas anteriores.
+\end{itemize}
+
+  \item Montagem Final\\
+	Nesta etapa, os objetivos serão:
+\begin{itemize}
+  \item Interligar todos os módulos;
+  \item testar todos os sistemas e aplicações.
+\end{itemize}
+
+\end{enumerate}
+
+\section{Metas}
+
+O projeto resultará em quatro produtos, descritos abaixo:
+
+\begin{enumerate}
+
+  \item Curvas que relacionem as seguintes variáveis de interesse do multirrotor:
+  \begin{itemize}
+    \item massa total das baterias;
+    \item autonomia;
+    \item alcance;
+    \item velocidade;
+    \item carga útil.
+  \end{itemize}
+  As curvas trarão as demais variáveis em função da massa total das baterias para, pelo menos, 3 diferentes massas de baterias.
+  \item Softwares dos micro-controladores que realizem, controlem ou possibilitem as seguintes tarefas:
+  \begin{itemize}
+    \item excitação dos motores;
+    \item controle de vôo e estabilização;
+    \item navegação manual ou por GPS;
+    \item comunicação entre os módulos;
+    \item comunicação sem fio.
+  \end{itemize}
+  
+  \item Protótipo funcional de multirrotor que com as seguintes capacidades:
+  \begin{itemize}
+    \item receber dados de um controlador manual;
+    \item voar pelo menos 10 minutos;
+    \item levantar uma carga útil de pelo menos 1kg;
+    \item realizar um percurso arbitrário em um raio de até 50m ao ar livre;
+    \item percorrer uma rota através do módulo GPS entre dois pontos distantes de até 50m;
+    \item possuir expansibilidade para módulos extras.
+  \end{itemize}
+  
+  \item{Manual de projeto e construção de multirrotores, contendo:}
+  \begin{itemize}
+    \item guia para a construção de um multirrotor;
+    \item explicação sobre o uso das curvas geradas;
+    \item descrição da arquitetura;
+    \item detalhamento do hardware suficiente para o uso e modificação por um iniciante;
+    \item documentação do software e dos dados trocados entre as camadas;
+    \item explicação sucinta das teorias por trás dos algoritmos.
+  \end{itemize}
+  
+\end{enumerate}
+
+
+
+\section{Dificuldades e Limitações}
+
+Um problema encontrado foi a falta de documentação. Esta dificuldade se dá por dois motivos majoritários. O uso de motores \textit{brushless} e controladores é algo razoavelmente recente e pois o \textit{design} dispositivos se dá geralmente de maneira industrial ou amadora, portanto não há literatura bem estabelecida sobre o assunto.
+
+A capacidade de escrita e comunicação também é um fator limitante. O estudante politécnico geralmente não utiliza essas habilidades e elas atrofiam com o tempo. Muitas vezes é difícil e demorado para transmitir uma ideia ou organizar os pensamentos da equipe.
+
+No entanto, a disciplina foi capaz de expor estas deficências da equipe e exercitar as habilidades de comunicação dos membros.
+
+\chapter{Cronograma}
+
+\begin{figure}[hb]
+  \centering
+  \includegraphics[width=6in]{./Figuras/crono1.eps}
+  \caption[Carta de Gantt do 1o. Semestre]%
+  {Carta de Gantt do 1o. Semestre}\label{fig.crono1}
+\end{figure}
+
+\begin{figure}[hb]
+  \centering
+  \includegraphics[width=6in]{./Figuras/crono2.eps}
+  \caption[Carta de Gantt do 2o. Semestre]%
+  {Carta de Gantt do 2o. Semestre}\label{fig.crono2}
+\end{figure}
+
+%\chapter{Orçamento}
+%(AINDA FALTA)
+%Motores (Hobby King)
+%Hélices (Hobby King)
+%Bateria (Hobby King)
+%Hastes (Hobby King)
+%Microcontroladores
+%Fios (chute)
+%Conectores (chute)
+%Sensores (ver sparkfun)
+
+\chapter{Análise de Risco}
+
+O projeto envolve aspectos que nunca foram discutidos em sala de aula e que equipe não possui familiaridade, como controle de vôo. Estas etapas criam incerteza e é impossível afirmar o tempo que será gasto para o desenvolvimento desses módulos. Para minimizar esse problema, o projeto foi separado em blocos independentes e cada bloco será um \textit{milestone}.
+
+Um problema encontrado foi a falta de documentação. Esta dificuldade se dá por dois motivos majoritários. O uso de motores \textit{brushless} e controladores é algo razoavelmente recente
+
+Existe também os riscos associados a realização do projeto. Para montagem do hardware é necessário a importação de grande parte de componentes, como sensores e motores. A importação acarreta em outros riscos, como o atraso ou eventual extravio de encomendas. Para evitar imprevistos, uma lista preliminar de componentes foi elaborada e os componentes já foram encomendados.
+
+\chapter{Conclusões e trabalhos futuros\label{cap:conclusao}}
+
+\vfill{}
+\begin{flushright}{}``\emph{Nada se cria, nada se perde, tudo se
+transforma.}''\\
+{\small Lavousier}\end{flushright}{\small \par}
+\vfill{}
+
+Plataformas de desenvolvimento de veículos voadores autônomos são interessantes por permitirem a implementação de algoritmos e aplicativos de forma simples e rápida. Consegue-se isto isolando a aplicação dos outros módulos envolvidos no desenvolvimento de um multirrotor.
+
+\section{Resultados}
+
+Ao longo deste semestre, resultados importantes foram obtidos:
+\begin{itemize}
+  \item definição da estrutura básica do multirrotor;
+  \item definição da arquitetura de hardware e software da platafoma;
+  \item definição de componentes básicos;
+  \item formação de uma base teórica sobre a construção de multirrotores e sobre arquitetura de hardware e software de sistemas embarcados.
+\end{itemize}
+
+Espera-se ainda, ao final deste semestre, terminar a escolha definitiva dos componentes básicos e concluir a sua compra. Dessa forma, será possível seguir o cronograma apresentado e construir o sistema todo a tempo de poder testá-lo e corrigir eventuais erros de projeto.
+
+Um projeto completo de engenharia apresenta grandes dificuldades. Estudantes apresentam maior facilidade para resolver problemas fechados, como provas e exercícios pela sua maior prática com estes desafios. A disciplina de projeto de formatura proporciona uma oportunidade para que os alunos aprendam por experiência como lidar com um projeto de engenharia. Apesar de ser insuficiente para um preparo completo, esta disciplina é como uma incubadora,  permitindo os alunos a sobreviver no mercado de trabalho.
+
+\section{Considerações sobre o Curso de Graduação}
+
+A ênfase de Sistemas Eletrônicos tem por objetivo ser uma ênfase generalista, oferecendo tanto uma base sólida de conhecimentos fundamentais quanto um leque de opções para a especialização em uma área específica da Engenharia Elétrica. Neste projeto utiliza-se conceitos de dessas áreas aprendidos em diversas disciplinas.
+
+Para a levitação e movimentação do multirrotor, utiliza-se conhecimentos aprendidos nas matérias do núcleo de controle, PTC2412 (Controle I) e PTC2512 (Laboratório de Controle). Além destas, a disciplina PSI2662 (Sensores e Atuadores) complementa este conjunto com metodologia de implementação de projetos embarcados e sensores para evitar colisões, e a disciplina PSI2661 (Transceptores) viabiliza a transmissão dos dados por radiofrequência.
+
+%A captura de áudio e vídeo envolve matérias do núcleo de processamento de sinais, como PSI2533 (Modelagem em processamento de sinais) e PSI2432 (Projeto e Implementação de Filtros Digitais), onde aprende-se técnicas de filtragem e codificação de sinais.
+
+A implementação do módulo de controle envolve as matérias de circuitos integrados PSI2451, PSI2452 e PSI2553 e de programação MAC2166 (Introdução à programação), MAC0122 (Algoritmos) e PCS2478 (Tópicos em Programação). Além disto, a construção dos circuitos de interface entre o controle e os motores e entre o controle e os sensores, utiliza-se conceitos aprendidos nos módulos de eletrônica, como PSI2223 (Introdução à eletrônica), PSI2324 (Eletrônica I) e PSI2326 (Eletrônica II).
+
+	 Esta seção procura sumarizar e evidenciar as mais importantes, no entanto reconhece-se que há disciplinas que apesar de não mencionadas compõem os conhecimentos que serão utilizados neste projeto.
+
+\bibliography{rt1}
+
+% \chapter*{Bibligrafia Geral}
+% (AINDA FALTA)
+% Trata-se de uma lista de material bibliográfico consultado na pesquisa e que servirá de base para a realização do trabalho. Todavia, esta lista não está vinculada à citação no texto. É elemento opcional.
+% 
+\appendix
+
+\chapter{Comparativos entre outros multirrotores}
+
+Existem diversas plataformas de multirrotores no mercado. A maioria composta por quadrirrotores. Entre estes, são notáveis: Aeroquad \citeonline{aeroquad}, Ardrone\citeonline{ardrone}, Microdrones\citeonline{microdrone}, Mikrokopter\citeonline{mikrokopter}.
+
+O AeroQuad é um projeto de software e hardware livre dedicado à construção de helicópteros de quatro rotores de controle remoto. O hardware do AeroQuad consiste tipicamente em um microcontrolador Arduino (Mega-2560 ou Uno) que funciona como o controlador de vôo, juntamente com vários  sensores, como acelerômetros e giroscópios. O software, é escrito principalmente em C e enviado ao micro-controlador Arduino através do IDE, atualmente suporta o modo "Acrobatic", que usa apenas o giroscópio para auxiliar o vôo, e um modo "Estável" que usa tanto o giroscópio e acelerômetro para ajudar no vôo. 
+
+ARDrone pertence à empresa Norte-Americana Parrot que atua na área de desenvolvimento de dispositivos sem fios para celular. O ARDrone é um quadcóptero comercial que se difere dos outros pelo fato que seu controle remoto é um celular ou Ipod.
+
+Microdrones é uma empresa alemã cujo foco é o desenvolvimento de pequenas aeronaves, principalmente quadrirrotores. Possui hoje dois modelos comerciais à venda.
+
+	Mikrokopter, é um \textit{website} alemão dedicado a projetos de multirrotores, dentre eles, neste \textit{website} encontra-se a maior quantidade de combinações. Há modelos com quatro, seis e oito hélices. Há documentação de muitos componentes, inclusive uma descrição detalhada sobre o tempo de vôo para diferentes configurações. Para mais informações, visite \cite{mikrokopter}.
+
+%\anexo
+
+%\chapter{Apêndices e Anexos}
+%(AINDA FALTA)
+%Anexo consiste em um texto ou documento não elaborado pelo autor, que serve de fundamentação, comprovação e ilustração. Os anexos são identificados por letras maiúsculas consecutivas, travessão e pelos respectivos títulos. É elemento opcional. 
+%Se houverem mais anexos, identifique-os como Anexo B, Anexo C e assim por diante.
+
+
+\end{document}
