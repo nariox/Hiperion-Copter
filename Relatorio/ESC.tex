@@ -152,7 +152,7 @@ A idéia será separar fisicamente e funcionalmente os dispositivos eletrônicos qu
 
 A figura \ref{fig.arquitetura} mostra de forma simplificada a arquitetura de hardware do VANT. 
 
-\begin{figure}[hb]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=6in]{./Figuras/arquitetura.eps}
   \caption[Modelo de abstração]
@@ -205,7 +205,7 @@ A navegação por GPS consistirá em fazer a aeronave seguir um trajeto determinado
 
 A comunicação entre os módulos será realizada através de interfaces $I^2C$ e SPI. A interface $SPI$ será utilizada para ligar os módulos acelerômetros e giroscópio ao módulo controle de vôo. Apesar desta interface ser destinada a topologia ponto a ponto, é possível ligar mais de dois periféricos através desta interface \cite{spiusart}.
 
-A interface $I^2C$ ligará os módulos ESC ao módulo controle de vôo. Este tipo de interface funcionará ligando vários módulos através de um único barramento \cite{proto$I^2C$}. , ligará os módulos da camada Periféricos de Navegação ao módulo de Navegação da camada Controle de Navegação. De forma semelhante à interface $I^2C$, a interface $CAN$ também ligará os módulos através de um barramento. As especificações desta interface encontram-se em \citeonline{protocan}.
+A interface $I^2C$ ligará os módulos ESC ao módulo controle de vôo. Este tipo de interface funcionará ligando vários módulos através de um único barramento \cite{protoi2c}. , ligará os módulos da camada Periféricos de Navegação ao módulo de Navegação da camada Controle de Navegação. De forma semelhante à interface $I^2C$, a interface $CAN$ também ligará os módulos através de um barramento. As especificações desta interface encontram-se em \citeonline{protocan}.
 
 Nos módulos Controle de Vôo e controle de Navegação serão utilizados os microcontroladores ARM, devido a sua boa relação custo-benefício em termos de periféricos presentes, processamento e memória de programa.
 
@@ -277,7 +277,7 @@ A figura \ref{fig.escchav} demonstra o funcionamento do método:
 
 Para descrever o funcionamento do programa (baseado em \cite{avr444}) pode-se utilizar uma máquina de estados:
 
-\begin{figure}[hb]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=6in]{./Figuras/ESC-diagrama.eps}
   \caption
@@ -286,10 +286,35 @@ Para descrever o funcionamento do programa (baseado em \cite{avr444}) pode-se ut
 
 Na inicialização dos periféricos 
 
-As tarefas de chaveamento serão tratadas por interrupções, para que o chaveamento ocorra sinconizadamente com a movimentação do rotor.
+As tarefas de chaveamento serão tratadas por interrupções, para que o chaveamento ocorra sinconizadamente com a movimentação do rotor. 
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=6in]{./Figuras/ESC-interrupt.eps}
+  \caption
+  {Fluxograma de interrupções}\label{fig.escint}
+\end{figure}
 
+Durante a comutação, o sinal lido pelo conversor A/D é muito ruidoso, portanto adiciona-se um \textit{timer de Hold-Off} para que a leitura do conversor A/D só ocorra após o ruído de comutação desvanecer. Após isto, a leitura do conversor A/D é ativada.
 
+As leituras de corrente e da tensão contra-eletromotriz são feitas quando há transbordo no timer do PWM, também para evitar interferência nas medidas. 
+
+Além destas medidas, é aplicado um filtro IIR passa-baixas digital na medida da tensão contra-eletromotriz, para evitar o chaveamento espúrio. O filtro possui esta forma:
+
+\begin{equation}
+  y = \over{ax_n + by_{n-1}{a+b}
+\end{equation}
+
+Este filtro possui resposta em frequência:
+
+\begin{equation}
+  
+H(e^{j\omega}) = \over{a}{a+b(1-e^{-j\omega}}
+\end{equation}
+
+Pode-se notar que ele possui ganho $\approx 1$ para baixas frequências e o ganho cai para $\over{a}{a+2b}$ para altas frequências.
+
+Para reduzir a complexidade da divisão e melhorar a estabilidade, $a+b$ devem ser uma potência de $2$, para que a divisão possa ser convertida em um deslocamento de bits. O manual \cite{avr444} sugere o uso de $a=1$ e $b=3$.
 
 \subsection{Partida}
 
@@ -299,6 +324,9 @@ Este mesmo manual sugere a partida em malha aberta, que é o mais utilizado para 
 
 A carga deve estar numa faixa conhecida. Se a carga estiver muito abaixo do esperado, o motor poderá não chavear rápido o suficiente, colocando o enrolamento em curto e possivelmente danificando o motor. Se a carga estiver muito acima do esperado, o motor não se moverá e a partida do motor irá falhar.
 
+\subsection{Condicionamento dos sinais}
+
+NÇANÇANÇANAÇNA
 \section{Bateria de lítio-polímero}
 
 A bateria é o elemento que provê a energia necessária ao funcionamento eletromecânico e eletrônico do multirrotor. É desejável que sua massa seja baixa, já que um peso maior significará mais empuxo nos motores e uma maior corrente drenada. Ao mesmo tempo, é desejável uma carga elétrica alta, para se ter mais autonomia.
@@ -334,7 +362,7 @@ Em geral, o metal $''M''$ associado ao lítio no óxido do eletrodo positivo é o c
 
 Em \cite{enlipomodel} foi desenvolvido um modelo para as baterias de lítio-polímero considerando o efeito da variação da temperatura nas características elétricas. O esquema pode ser visto abaixo:
 
-\begin{figure}[hb]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=6in]{./Figuras/modelo.eps}
   \caption[Modelo da Bateria]
@@ -363,13 +391,13 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
   \item Vida útil (perda de 20\% da capacidade original): 1200 ciclos de carga / descarga
 \end{itemize}
 
-\section{Zigbee}
+% \section{Zigbee}
 	
-	Zigbee é um protocolo de comunicação de redes sem fio baseado na norma 802.15.4 do IEEE \cite{norma80215} cuja ênfase é o baixo consumo de energia.
+% 	Zigbee é um protocolo de comunicação de redes sem fio baseado na norma 802.15.4 do IEEE \cite{norma80215} cuja ênfase é o baixo consumo de energia.
 	
-	O termo Zigbee é devido à semelhança entre esta rede e o comportamento das abelhas. Da mesma forma que as abelhas quando buscam o néctar, os nós da rede operam em malha, trocando informações entre si. As abelhas trocam informações andando em zigue-zague, para informar distância, direção de aonde se encontra a fonte de alimento. Portanto, ZigBee é uma palavra valise para Zigue-Zague e \textit{bee} (abelha em inglês).
+% 	O termo Zigbee é devido à semelhança entre esta rede e o comportamento das abelhas. Da mesma forma que as abelhas quando buscam o néctar, os nós da rede operam em malha, trocando informações entre si. As abelhas trocam informações andando em zigue-zague, para informar distância, direção de aonde se encontra a fonte de alimento. Portanto, ZigBee é uma palavra valise para Zigue-Zague e \textit{bee} (abelha em inglês).
 	
-O protocolo é interessante para ser usado em aplicações embarcadas onde consumo de energia seja um fator limitante e não se necessite de altas taxas de transmissão. O foco é definido como propósito geral, baratas e auto-organizadas redes em malhas que podem ser usadas para controle industrial, sensores embarcados, coleta de dados médicos, alarmes de fumaça ou intruso, automação de prédios, automação doméstica, etc. \cite{zigbee,zigbeedeetc}.
+% O protocolo é interessante para ser usado em aplicações embarcadas onde consumo de energia seja um fator limitante e não se necessite de altas taxas de transmissão. O foco é definido como propósito geral, baratas e auto-organizadas redes em malhas que podem ser usadas para controle industrial, sensores embarcados, coleta de dados médicos, alarmes de fumaça ou intruso, automação de prédios, automação doméstica, etc. \cite{zigbee,zigbeedeetc}.
 
 \section{Controle}
 
@@ -570,14 +598,14 @@ No entanto, a disciplina foi capaz de expor estas deficências da equipe e exerci
 
 \chapter{Cronograma}
 
-\begin{figure}[hb]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=6in]{./Figuras/crono1.eps}
   \caption[Carta de Gantt do 1o. Semestre]%
   {Carta de Gantt do 1o. Semestre}\label{fig.crono1}
 \end{figure}
 
-\begin{figure}[hb]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=6in]{./Figuras/crono2.eps}
   \caption[Carta de Gantt do 2o. Semestre]%
