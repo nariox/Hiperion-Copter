@@ -60,4 +60,4 @@
 \contentsline {subsection}{\numberline {9.4.1}Descri\c c\~ao}{47}
 \contentsline {subsection}{\numberline {9.4.2}Componentes}{48}
 \contentsline {subsection}{\numberline {9.4.3}Par\^ametros de entrada e sa\IeC {\'\i }da}{48}
-\contentsline {subsection}{\numberline {9.4.4}Comportamento}{48}
+\contentsline {subsection}{\numberline {9.4.4}Comportamento}{49}

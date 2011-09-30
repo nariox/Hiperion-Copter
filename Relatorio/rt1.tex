@@ -732,12 +732,11 @@ A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adap
 Dessa maneira, é possível modificar o software ou o hardware pertencente a uma ou mais camadas de abstração sem se preocupar com as outras, desde que se observe a especificação das mensagens trocadas entre elas.
 
 Essas camadas ou domínios de tarefas são:
-
 \begin{enumerate}
-  \item     Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
-  \item     Camada de estabilização do vôo, responsável por garantir a estabilidade do vôo;
-  \item     Camada de navegação, responsável pela velocidade e pela direção do sistema;
-  \item     Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle e onde é possível acrescentar módulos personalizados.
+  \item Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
+  \item Camada de estabilização do vôo, responsável por garantir a estabilidade do vôo;
+  \item Camada de navegação, responsável pela velocidade e pela direção do sistema;
+  \item Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle e onde é possível acrescentar módulos personalizados.
 \end{enumerate}
 
 A figura \ref{fig.arquitsimp} dá uma visão geral da arquitetura, que será detalhada mais adiante.
@@ -828,9 +827,7 @@ Saídas:
 
 A camada de estabilização age através de um laço que começa com a leitura dos parâmetros de navegação obtidos do microcontrolador daquela camada e segue com a leitura dos sinais dos sensores de estabilização, ou seja, dos acelerômetros e dos giroscópios. O próximo passo é a execução dos algoritmos PID que geram os parâmetros de rotação dos motores, parâmetros os quais são enviados aos ESCs da camada de excitação.
 
-Os algoritmos que controlam a estabilidade são PIDs não-lineares, ver a seção \ref{sec:controle} para mais detalhes.
-
-Abaixo, um diagrama que representa esse comportamento:
+Os algoritmos que controlam a estabilidade são PIDs não-lineares, ver a seção \ref{sec:controle} para mais detalhes. A figura \ref{fig.estabfunc} representa esse comportamento.
 
 \begin{figure}[h!]
   \centering
@@ -881,11 +878,15 @@ Saída:
 
 A camada de navegação possui um laço principal que tem início com a leitura dos parâmetros de direção, velocidade e rotação, os quais são obtidos do módulo de recepção do rádio-controle e/ou podem ser também gerados na camada de periféricos. Isso abre a possibilidade de que aplicações personalizadas determinem a direção, a velocidade de translação e a rotação do multirrotor.
 
-Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS e magnetômetro). A partir desses parâmetros e sinais é realizado o processamento que gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) que são enviados para o microcontrolador da camada de estabilização.
+Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS e magnetômetro). A partir desses parâmetros e sinais é realizado o processamento que gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) que são enviados para o microcontrolador da camada de estabilização. A figura \ref{fig.navfunc} representa esse comportamento.
 
-Abaixo, um diagrama que representa esse comportamento:
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=4in]{./Figuras/Navega-func.eps}
+  \caption[Funcionamento da camada de navegação]
+  {visão geral do funcionamento da camada de navegação}\label{fig.navfunc}
+\end{figure}
 
-Figura 4: comportamento da camada de navegação
 \section{Camada de periféricos}
 \subsection{Descrição}
 
