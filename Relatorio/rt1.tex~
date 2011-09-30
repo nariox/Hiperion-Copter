@@ -97,7 +97,6 @@ A lista a seguir contém as abreviaturas e termos utilizados nesta monografia. As
 
 \tableofcontents{}
 
-\part{Primeira parte - Relatório do projeto}
 \chapter{Introdução\label{cap:introducao}}
 
 \begin{flushright}{}``\emph{Sobre hipérion, nos é dito que foi o primeiro a entender,\\
@@ -218,8 +217,9 @@ Um sistema operacional de tempo real (RTOS) será embarcado nos módulos controle 
 
 \chapter{Referencial Teórico\label{cap:referencialteorico}}
 
-\begin{flushright}{}``\emph{Navegar é preciso, viver não é preciso.}''\\
+\begin{flushright}{}``\emph{Navegar é preciso, viver não.}''\\
 {\small Luís de Camões}\end{flushright}{\small \par}
+
 
 \section{Considerações Iniciais}
 
@@ -277,7 +277,7 @@ A figura \ref{fig.escchav} demonstra o funcionamento do método:
 
 Para descrever o funcionamento do programa (baseado em \cite{avr444}) pode-se utilizar a máquina de estados representada na figura \ref{fig.escdia}.
 
-\begin{figure}[h!]
+\begin{figure}[hb]
   \centering
   \includegraphics[width=6in]{./Figuras/ESC-diagrama.eps}
   \caption
@@ -629,16 +629,40 @@ No entanto, a disciplina foi capaz de expor estas deficências da equipe e exerci
   {Carta de Gantt do 2o. Semestre}\label{fig.crono2}
 \end{figure}
 
-%\chapter{Orçamento}
+\chapter{Orçamento}
 %(AINDA FALTA)
-%Motores (Hobby King)
-%Hélices (Hobby King)
-%Bateria (Hobby King)
-%Hastes (Hobby King)
-%Microcontroladores
-%Fios (chute)
-%Conectores (chute)
-%Sensores (ver sparkfun)
+\begin{tabular}{lr}
+Sensores e GPS: &\$174,85 \\
+~~ 1x IMU Digital Combo Board - ITG3200/ADXL345: & \$64.95 \\
+~~ 1x LS20031 GPS Receiver: & \$59.95 \\
+~~ 1x MicroMag 3-Axis Magnetometer: & \$49.95 \\
+\\
+ESC: & \$30 \\
+\\
+Módulo de controle: &\$29.95 \\
+~~ 1x LPC1114 LPCXpresso board &\$29.95\\
+\\
+Baterias: & \$26,51 \\
+~~ 2x ZIPPY Flightmax 5700mAh 2S3P 25C & \$26.51\\
+\\
+Motores: & \$65.52 \\
+~~ 6x Motores Turnigy 450 H2218 Brushless outrunner 3550KV & \$65.52\\
+\\
+Estrutura: & \$45.00\\
+~~ 2x Jogos com 6 hélices (3 de cada tipo) & \$7.00\\
+~~ 2x Barra de fibra 3mm & \$3.00  \\
+~~ 1x Placa de fibra 1mm & \$10.00\\
+~~ 4x Barra de fibra 6mm & \$11.00\\
+~~ 4x Adaptadores para hélices & \$8.00\\
+~~ 4x Proteção para motores & \$6.00\\
+\\
+Protótipo para estudo: & \$1785.00 \\
+~~ 1x MK Hexa2 Base Kit & \$1785.00\\
+
+Total: & \$2156.83 \\
+\\
+Total - Protótipo: & \$371.83
+\end{tabular}
 
 \chapter{Análise de Risco}
 
@@ -658,29 +682,19 @@ transforma.}''\\
 
 Plataformas de desenvolvimento de veículos voadores autônomos são interessantes por permitirem a implementação de algoritmos e aplicativos de forma simples e rápida. Consegue-se isto isolando a aplicação dos outros módulos envolvidos no desenvolvimento de um multirrotor.
 
+\section{Resultados}
 
-\section{Fase do projeto}
+Ao longo deste semestre, resultados importantes foram obtidos:
+\begin{itemize}
+  \item definição da estrutura básica do multirrotor;
+  \item definição da arquitetura de hardware e software da platafoma;
+  \item definição de componentes básicos;
+  \item formação de uma base teórica sobre a construção de multirrotores e sobre arquitetura de hardware e software de sistemas embarcados.
+\end{itemize}
 
-    O projeto encontra-se na fase de desenvolvimento do protótipo. Todo o material teórico foi coletado e os componentes foram comprados.
-    Os ESCs estão em fase final de prototipagem. Toda a teoria necessária foi abordada e o ESC está em fase de teste. Após validar a teorida o circuito impresso será feito de modo que possa ser utilizado no multirrotor.
-    A parte do controle está em fase inicial de desenvolvimento. O algoritmo está sendo construido. A placa que será utilizada no módulo de controle já foi devidamente estudada esperando apenas a efetivação do algoritmo teórico para transporta-lo para a placa.
-    A comunicação I2c que será utilizada entre os ESCs e o módulo de controle já foi devidamente testada e em parte está implementada. Faltando apenas a construção dos dois módulos para efetuar o último teste.
-    A estrutura ainda não está pronta devido ao fato de que alguns componentes ainda não foram entregues. Porém uma estrutura de suporte já esta montada para caso necessário de algum teste.
-    As demais partes do projeto ainda estão em desenvolvimento inicial e a maior parte dos componentes ainda não chegaram, o que acarretará em um pequeno atraso no planejamento.
-    
-    % \section{Resultados}
+Espera-se ainda, ao final deste semestre, terminar a escolha definitiva dos componentes básicos e concluir a sua compra. Dessa forma, será possível seguir o cronograma apresentado e construir o sistema todo a tempo de poder testá-lo e corrigir eventuais erros de projeto.
 
-% Ao longo deste semestre, resultados importantes foram obtidos:
-% \begin{itemize}
-%   \item definição da estrutura básica do multirrotor;
-%   \item definição da arquitetura de hardware e software da platafoma;
-%   \item definição de componentes básicos;
-%   \item formação de uma base teórica sobre a construção de multirrotores e sobre arquitetura de hardware e software de sistemas embarcados.
-% \end{itemize}
-
-% Espera-se ainda, ao final deste semestre, terminar a escolha definitiva dos componentes básicos e concluir a sua compra. Dessa forma, será possível seguir o cronograma apresentado e construir o sistema todo a tempo de poder testá-lo e corrigir eventuais erros de projeto.
-
-% Um projeto completo de engenharia apresenta grandes dificuldades. Estudantes apresentam maior facilidade para resolver problemas fechados, como provas e exercícios pela sua maior prática com estes desafios. A disciplina de projeto de formatura proporciona uma oportunidade para que os alunos aprendam por experiência como lidar com um projeto de engenharia. Apesar de ser insuficiente para um preparo completo, esta disciplina é como uma incubadora,  permitindo os alunos a sobreviver no mercado de trabalho.
+Um projeto completo de engenharia apresenta grandes dificuldades. Estudantes apresentam maior facilidade para resolver problemas fechados, como provas e exercícios pela sua maior prática com estes desafios. A disciplina de projeto de formatura proporciona uma oportunidade para que os alunos aprendam por experiência como lidar com um projeto de engenharia. Apesar de ser insuficiente para um preparo completo, esta disciplina é como uma incubadora,  permitindo os alunos a sobreviver no mercado de trabalho.
 
 \section{Considerações sobre o Curso de Graduação}
 
@@ -700,10 +714,9 @@ A implementação do módulo de controle envolve as matérias de circuitos integrado
 % (AINDA FALTA)
 % Trata-se de uma lista de material bibliográfico consultado na pesquisa e que servirá de base para a realização do trabalho. Todavia, esta lista não está vinculada à citação no texto. É elemento opcional.
 % 
-% \begin{appendix}
-  
+\appendix
 
-\chapter{Apêndice A - Comparativos entre outros multirrotores}
+\chapter{Comparativos entre outros multirrotores}
 
 Existem diversas plataformas de multirrotores no mercado. A maioria composta por quadrirrotores. Entre estes, são notáveis: Aeroquad \citeonline{aeroquad}, Ardrone\citeonline{ardrone}, Microdrones\citeonline{microdrone}, Mikrokopter\citeonline{mikrokopter}.
 
@@ -713,65 +726,14 @@ ARDrone pertence à empresa Norte-Americana Parrot que atua na área de desenvolvi
 
 Microdrones é uma empresa alemã cujo foco é o desenvolvimento de pequenas aeronaves, principalmente quadrirrotores. Possui hoje dois modelos comerciais à venda.
 
-	Mikrokopter, é uma \textit{empresa} alemã dedicada a projetos de multirrotores, dentre as empresas pesquisadas, esta apresenta a maior quantidade de combinações. Há modelos com quatro, seis e oito hélices. Há documentação de muitos componentes, inclusive uma descrição detalhada sobre o tempo de vôo para diferentes configurações. Para mais informações, conferir \cite{mikrokopter}.
-	
-	% 
+	Mikrokopter, é um \textit{website} alemão dedicado a projetos de multirrotores, dentre eles, neste \textit{website} encontra-se a maior quantidade de combinações. Há modelos com quatro, seis e oito hélices. Há documentação de muitos componentes, inclusive uma descrição detalhada sobre o tempo de vôo para diferentes configurações. Para mais informações, visite \cite{mikrokopter}.
 
-% \chapter{Manual de Construção de um Multirrotor}
+%\anexo
+
+%\chapter{Apêndices e Anexos}
 %(AINDA FALTA)
-% Anexo consiste em um texto ou documento não elaborado pelo autor, que serve de fundamentação, comprovação e ilustração. Os anexos são identificados por letras maiúsculas consecutivas, travessão e pelos respectivos títulos. É elemento opcional. 
-
+%Anexo consiste em um texto ou documento não elaborado pelo autor, que serve de fundamentação, comprovação e ilustração. Os anexos são identificados por letras maiúsculas consecutivas, travessão e pelos respectivos títulos. É elemento opcional. 
 %Se houverem mais anexos, identifique-os como Anexo B, Anexo C e assim por diante.
-% \end{appendix}
 
-\part{Segunda Parte - Manual de Construção de um Multirrotor}
-\setcounter{chapter}{0}
-\chapter{Arquitetura}
-A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. Por isso, o software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
 
-Dessa maneira, é possível modificar o software ou o hardware pertencente a uma ou mais camadas de abstração sem se preocupar com as outras, desde que se observe a especificação das mensagens trocadas entre elas.
-
-Essas camadas ou domínios de tarefas são:
-
-\begin{enumerate}
-  \item     Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
-  \item     Camada de estabilização do vôo, responsável por garantir a estabilidade do vôo;
-  \item     Camada de navegação, responsável pela velocidade e pela direção do sistema;
-  \item     Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle e onde é possível acrescentar módulos personalizados.
-\end{enumerate}
-
-A figura \ref{fig.arquitsimp} dá uma visão geral da arquitetura, que será detalhada mais adiante.
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Arquitsimp.eps}
-  \caption[Arquitetura simplificada]
-  {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
-\end{figure}
-
-\section{Camada de excitação dos motores}
-\subsection{Descrição}
-
-Essa é a primeira camada, abaixo da camada de estabilização de vôo. Responsável por garantir que a rotação dos motores esteja de acordo com o determinado, por detectar e proteger os motores de sobrecorrentes e por fornecer a potência que eles necessitam para funcionar. Deve impedir que os motores queimem caso os rotores fiquem presos ou girem em aberto (sem hélices).
-
-\subsection{Componentes}
-
-É constituída pelos n motores, hélices e controladores eletrônicos de velocidade (eletronic speed controllers - ESCs), sendo n o número de rotores do multirrotor. Os ESCs, por sua vez, são constituídos por duas placas de circuito, sendo uma responsável pela lógica e a outra pelo fornecimento de potência aos motores.
-
-As hélices são presas nos eixos dos motores de forma que girem com ele. Cada motor é ligado à placa do circuito de potência do ESC correspondente, pela qual é alimentado. A placa de potência do ESC é ligada à sua placa de lógica e à bateria, a qual fornece a tensão e a corrente necessárias para o acionamento dos motores.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-      \item da camada de estabilização de vôo:
-      \begin{itemize}
-        \item rotação do motor (para cada ESC + rotor)
-      \end{itemize}
-\end{itemize}    
-        
-
-Saída:
-
-    para a camada de estabilização de vôo
-        status dos motores
 \end{document}

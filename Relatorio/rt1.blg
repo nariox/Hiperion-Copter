@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+The top-level auxiliary file: rt1.aux
+The style file: abnt-alf.bst
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Database file #1: abnt-options.bib
+Database file #2: rt1.bib
+Reallocated wiz_functions (elt_size=4) to 9000 items from 140582869538672.
++---------------------------------------------------------+
+| Estilo bibliografico abnt-alf.bst versao 1.53           |
+| Implementa a NBR6023, NBR10520 e NBR10523               |
+| Em caso de duvidas ou problemas com este estilo procure |
+| http://abntex.codigolivre.org.br                        |
++---------------------------------------------------------+
+You've used 21 entries,
+            6522 wiz_defined-function locations,
+            1268 strings with 12053 characters,
+and the built_in function-call counts, 15865 in all, are:
+= -- 1287
+> -- 464
+< -- 14
++ -- 214
+- -- 144
+* -- 1053
+:= -- 2104
+add.period$ -- 89
+call.type$ -- 22
+change.case$ -- 189
+chr.to.int$ -- 26
+cite$ -- 20
+duplicate$ -- 763
+empty$ -- 1386
+format.name$ -- 680
+if$ -- 3888
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 357
+newline$ -- 107
+num.names$ -- 90
+pop$ -- 443
+preamble$ -- 1
+purify$ -- 75
+quote$ -- 0
+skip$ -- 962
+stack$ -- 1
+substring$ -- 636
+swap$ -- 384
+text.length$ -- 12
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 8
+warning$ -- 0
+while$ -- 130
+width$ -- 0
+write$ -- 315

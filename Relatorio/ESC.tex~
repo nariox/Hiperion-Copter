@@ -22,7 +22,7 @@
 \orientador{Marcelo Knörich Zuffo}
 
 
-\coorientador{Sérgio Takeo Kofuji}
+\coorientador{Felipe Miguel Pait}
 
 
 %\comentario{Proposta de Projeto Final apresentado na disciplina PSI-2591 Projeto de Formatura I.}
@@ -97,7 +97,6 @@ A lista a seguir contém as abreviaturas e termos utilizados nesta monografia. As
 
 \tableofcontents{}
 
-\part{Primeira parte - Relatório do projeto}
 \chapter{Introdução\label{cap:introducao}}
 
 \begin{flushright}{}``\emph{Sobre hipérion, nos é dito que foi o primeiro a entender,\\
@@ -218,8 +217,9 @@ Um sistema operacional de tempo real (RTOS) será embarcado nos módulos controle 
 
 \chapter{Referencial Teórico\label{cap:referencialteorico}}
 
-\begin{flushright}{}``\emph{Navegar é preciso, viver não é preciso.}''\\
+\begin{flushright}{}``\emph{Navegar é preciso, viver não.}''\\
 {\small Luís de Camões}\end{flushright}{\small \par}
+
 
 \section{Considerações Iniciais}
 
@@ -245,7 +245,7 @@ A maioria dos motores de corrente contínua utilizam um dispositivo denominado es
 
 Há motores de corrente contínua que não utilizam escovar para fazer o chaveamento, estes são denominados \textit{brushless} (``sem escova'' em inglês). Estes motores são semelhantes em construção síncronos trifásicos com imãs permanentes, mas otimizados para operação em corrente contínua.
 
-Por não possuir a escova para fazer o chaveamento entre os enrolamentos, é necessário um circuito eletrônico que execute a mesma função. Apesar de aumentar a complexidade do sistema, multirrotores necessitam de motores com rotações elevadas, o que impossibilita o uso da escova. Além disto, como os multirrotores são alimentados por uma bateria, é interessante que o sistema seja o mais eficiente o possível, para aumentar o tempo de vôo.
+Por não possuir a escova para fazer o chaveamento entre os enrolamentos, é necessário um circuito eletrônico que execute a mesma função. Apesar de aumentar a complexidade do sistema, multirrotores necessitam de motores com rotações elevadas, o que dificulta o uso da escova. Além disto, como os multirrotores são alimentados por uma bateria, é interessante que o sistema seja o mais eficiente o possível, para aumentar o tempo de vôo.
 
 Estes motores geralmente possuem 3 enrolamentos que controlam o campo no estator, enquanto o rotor utiliza imãs permanentes. Isto elimina a necessidade da escova para gerar o campo no rotor.
 
@@ -260,7 +260,7 @@ O controlador de velocidade, também chamado de \textit{ESC} é um circuito eletrô
 \subsection{Sincronização \textit{sensorless}}
 Como é necessário que o controlador saiba a posição do rotor para pode chaveá-lo, é necessário que haja algum tipo de realimentação entre o motor e o ESC. Alguns motores empregam sensores de posição Hall ou codificadores rotatórios como forma de realimentação. No entanto isto aumenta ainda mais o custo e a complexidade do sistema. Há uma maneira de se obter a informação sobre a posição do motor sem a necessidade de sensores externos que utiliza as tensões no próprio enrolamento para definir as posições.
 
-Controladores que utilizam esta técnica são chamados de \textit{sensorless} (do inglês sem sensor), apesar do nome, é de fato um sistema dotado elementos sensores. O funcionamento deles é análogo ao funcionamento de um gerador síncrono. Ao passar pelos enrolamentos, o campo magnético do rotor induz tensões nos enrolamentos. A tensão induzida é proporcional à frequência angular e sua fase indica a posição do rotor. Durante o chaveamento, apenas 2 enrolamentos estão conectados (um ao $V_{SS}$ e outro ao $V_{DD}$, enquanto um deles está ``flutuando'', a tensão neste enrolamento é utilizada para indicar a fase do rotor. 
+Controladores que utilizam esta técnica são chamados de \textit{sensorless} (do inglês sem sensor), apesar do nome, é de fato um sistema dotado elementos sensores. O funcionamento deles é análogo ao funcionamento de um gerador síncrono. Ao passar pelos enrolamentos, o campo magnético do rotor induz tensões nos enrolamentos. A tensão induzida é proporcional a à frequência angular e sua fase indica a posição do rotor. Durante o chaveamento, apenas 2 enrolamentos estão conectados (um ao $V_{SS}$ e outro ao $V_{DD}$, enquanto um deles está ``flutuando'', a tensão neste enrolamento é utilizada para indicar a fase do rotor. 
 
 Diferentemente das máquinas síncronas comuns, os motores brushless são projetados para que a tensão induzida tenha formato trapezoidal, isto facilita a detecção da posição do rotor. Quando o motor atinge $(V_{DD}+V_{SS})/2$ sabe-se que o campo magnético do rotor está alinhado com o campo magnético do enrolamento sendo analisado. Este evento é denominado cruzamento de zero (CZ), pois caso a fonte seja simétrica $V_{DD}=-V_{SS}$. Após o cruzamento deste ponto, o ESC inicia um \textit{timer} que, quando expira, chaveia o circuito.
 
@@ -275,7 +275,7 @@ A figura \ref{fig.escchav} demonstra o funcionamento do método:
 
 \subsection{Máquina de estados}
 
-Para descrever o funcionamento do programa (baseado em \cite{avr444}) pode-se utilizar a máquina de estados representada na figura \ref{fig.escdia}.
+Para descrever o funcionamento do programa (baseado em \cite{avr444}) pode-se utilizar uma máquina de estados:
 
 \begin{figure}[h!]
   \centering
@@ -284,38 +284,35 @@ Para descrever o funcionamento do programa (baseado em \cite{avr444}) pode-se ut
   {Máquina de estados do laço principal do programa do ESC}\label{fig.escdia}
 \end{figure}
 
-Na inicialização dos periféricos, inicia-se os conversores A/D, a comunicação $I^2C$, os \textit{timers}, as portas e comparadores.
-
-A partida do motor é constituída pelo carregamento da sequência de chaveamento, do chaveamento em malha aberta e da inicialização do \textit{timer Watchdog}. Este \textit{timer} é utilizado para detectar travamentos no motor. Se nenhuma comutação é executada dentro de um intervalo pré-determinado, o controlador entende que o motor está parado e tenta dar a partida novamente.
-
-As tarefas não relacionadas às interrupções envolvem principalmente a comunicação e outras funções que se podem ser adicionadas ao código.
+Na inicialização dos periféricos 
 
 As tarefas de chaveamento serão tratadas por interrupções, para que o chaveamento ocorra sinconizadamente com a movimentação do rotor. 
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=3in]{./Figuras/ESC-interrupt.eps}
+  \includegraphics[width=6in]{./Figuras/ESC-interrupt.eps}
   \caption
   {Fluxograma de interrupções}\label{fig.escint}
 \end{figure}
 
-Durante a comutação, o sinal lido pelo conversor A/D é muito ruidoso, o que aumenta substancialmente a chance de alarme de CZ falso. Adiciona-se um \textit{timer de Hold-Off} para que a leitura do conversor A/D só ocorra após o ruído de comutação desvanecer. Após a interrupção de \textit{Hold-Off}, a leitura do conversor A/D é ativada.
+Durante a comutação, o sinal lido pelo conversor A/D é muito ruidoso, portanto adiciona-se um \textit{timer de Hold-Off} para que a leitura do conversor A/D só ocorra após o ruído de comutação desvanecer. Após isto, a leitura do conversor A/D é ativada.
 
 As leituras de corrente e da tensão contra-eletromotriz são feitas quando há transbordo no timer do PWM, também para evitar interferência nas medidas. 
 
 Além destas medidas, é aplicado um filtro IIR passa-baixas digital na medida da tensão contra-eletromotriz, para evitar o chaveamento espúrio. O filtro possui esta forma:
 
 \begin{equation}
-  y_n = \frac{ax_n + by_{n-1}}{a+b}.
+  y = \over{ax_n + by_{n-1}{a+b}
 \end{equation}
 
 Este filtro possui resposta em frequência:
 
 \begin{equation}
-H(e^{j\omega}) = \frac{a}{a+b(1-e^{-j\omega})}.
+  
+H(e^{j\omega}) = \over{a}{a+b(1-e^{-j\omega}}
 \end{equation}
 
-Pode-se notar que ele possui ganho $\approx 1$ para baixas frequências e o ganho cai para $\frac{a}{a+2b}$ para altas frequências.
+Pode-se notar que ele possui ganho $\approx 1$ para baixas frequências e o ganho cai para $\over{a}{a+2b}$ para altas frequências.
 
 Para reduzir a complexidade da divisão e melhorar a estabilidade, $a+b$ devem ser uma potência de $2$, para que a divisão possa ser convertida em um deslocamento de bits. O manual \cite{avr444} sugere o uso de $a=1$ e $b=3$.
 
@@ -329,21 +326,7 @@ A carga deve estar numa faixa conhecida. Se a carga estiver muito abaixo do espe
 
 \subsection{Condicionamento dos sinais}
 
-  Os sinais de realimentação contém ruído, principalmente devido ao chaveamento dos transistores. Além disso, o nível do sinal pode não estar na faixa correta. Para que os sinais representem corretamente as informações de interesse, se utiliza de circuitos condicionadores de sinal.
-  
-  Nesta aplicação, a maior parte deles é composta por um circuito divisor de tensão passa-baixas. Este circuito é bastante simples, podendo ser montado com apenas 3 componentes passivos:
-  
-  \begin{figure}[h!]
-  \centering
-  \includegraphics[width=1in]{./Figuras/ESC-sigcond.eps}
-  \caption
-  {Condicionador de sinais}\label{fig.escsigcond}
-\end{figure}
-
-  Regulando os resistores e o capacitor pode-se escolher a faixa de tensão e resposta em frequência do circuito. Não é desejável que o filtro seja de banda estreia, pois ele se torna ``lento'' e deforma o sinal de interesse.
-  
-  Foram pesquisados diferentes combinações e decidiu-se por resistores de $4,7k\Omega$ e um capacitor de $100nF$. Estes valores proprocionam ganho de $0,5$ para baixas frequências e frequência de corte próxima a 2kHz, que equivale a 120000RPM, o que é uma ordem de grandeza maior que as rotações que espera-se do motor.
-
+NÇANÇANÇANAÇNA
 \section{Bateria de lítio-polímero}
 
 A bateria é o elemento que provê a energia necessária ao funcionamento eletromecânico e eletrônico do multirrotor. É desejável que sua massa seja baixa, já que um peso maior significará mais empuxo nos motores e uma maior corrente drenada. Ao mesmo tempo, é desejável uma carga elétrica alta, para se ter mais autonomia.
@@ -373,7 +356,7 @@ Reação completa:
 LiMO_2 + C_n  \Longleftrightarrow Li_{(1-x)}MO_2 + C_nLi_x
 \end{equation}
 
-Em geral, o metal $``M''$ associado ao lítio no óxido do eletrodo positivo é o cobalto \cite{lipostatusquo,lipoeval}.
+Em geral, o metal $''M''$ associado ao lítio no óxido do eletrodo positivo é o cobalto \cite{lipostatusquo,lipoeval}.
 
 \subsection{Modelo}
 
@@ -424,7 +407,7 @@ O tema sobre controle de multirrotores voltou a ser estudado, graças a tecnologi
 
 Em \cite{nlpid} é projetado um controlador não linear baseado no esquema clássico de controle proporcional-integral-derivativo (PID) para controlar um quadrrotor com seis graus de liberdade. A posição horizontal do quadrirotor é controlada por ações PI, enquanto a orientação e a posição vertical são controladas por algorítmos PID. A performance é verificada por testes numéricos, embora apenas os efeitos da força gravitacional sejam compensados.
 
-%\cite{rbfarx} sugere um modelo MIMO RBF-ARX para representar a dinâmica não-linear de um quadrirrotor e, baseando-se em um modelo ARX linearizado obtido do RBF-ARX no ponto de operação, é proposto o controle por realimentação de estado com abordagem LQR. Por fim, a proposta é aplicada num quadriotor, confirmando a validade do modelo RBF-ARX.
+%\cite{rbfarx} sugere um modelo MIMO RBF-ARX para representar a dinâmica não-linear de um quadrrotor e, baseando-se em um modelo ARX linearizado obtido do RBF-ARX no ponto de operação, é proposto o controle por realimentação de estado com abordagem LQR. Por fim, a proposta é aplicada num quadriotor, confirmando a validade do modelo RBF-ARX.
 
 \citeonline{visionuav} revê o modelo matemático de um quadrirotor usando a equação de Lagrange. Então é proposto um método de controle linear baseado em imagens de duas câmeras, uma no quadrrotor e outro no solo.
 
@@ -658,29 +641,19 @@ transforma.}''\\
 
 Plataformas de desenvolvimento de veículos voadores autônomos são interessantes por permitirem a implementação de algoritmos e aplicativos de forma simples e rápida. Consegue-se isto isolando a aplicação dos outros módulos envolvidos no desenvolvimento de um multirrotor.
 
+\section{Resultados}
 
-\section{Fase do projeto}
+Ao longo deste semestre, resultados importantes foram obtidos:
+\begin{itemize}
+  \item definição da estrutura básica do multirrotor;
+  \item definição da arquitetura de hardware e software da platafoma;
+  \item definição de componentes básicos;
+  \item formação de uma base teórica sobre a construção de multirrotores e sobre arquitetura de hardware e software de sistemas embarcados.
+\end{itemize}
 
-    O projeto encontra-se na fase de desenvolvimento do protótipo. Todo o material teórico foi coletado e os componentes foram comprados.
-    Os ESCs estão em fase final de prototipagem. Toda a teoria necessária foi abordada e o ESC está em fase de teste. Após validar a teorida o circuito impresso será feito de modo que possa ser utilizado no multirrotor.
-    A parte do controle está em fase inicial de desenvolvimento. O algoritmo está sendo construido. A placa que será utilizada no módulo de controle já foi devidamente estudada esperando apenas a efetivação do algoritmo teórico para transporta-lo para a placa.
-    A comunicação I2c que será utilizada entre os ESCs e o módulo de controle já foi devidamente testada e em parte está implementada. Faltando apenas a construção dos dois módulos para efetuar o último teste.
-    A estrutura ainda não está pronta devido ao fato de que alguns componentes ainda não foram entregues. Porém uma estrutura de suporte já esta montada para caso necessário de algum teste.
-    As demais partes do projeto ainda estão em desenvolvimento inicial e a maior parte dos componentes ainda não chegaram, o que acarretará em um pequeno atraso no planejamento.
-    
-    % \section{Resultados}
+Espera-se ainda, ao final deste semestre, terminar a escolha definitiva dos componentes básicos e concluir a sua compra. Dessa forma, será possível seguir o cronograma apresentado e construir o sistema todo a tempo de poder testá-lo e corrigir eventuais erros de projeto.
 
-% Ao longo deste semestre, resultados importantes foram obtidos:
-% \begin{itemize}
-%   \item definição da estrutura básica do multirrotor;
-%   \item definição da arquitetura de hardware e software da platafoma;
-%   \item definição de componentes básicos;
-%   \item formação de uma base teórica sobre a construção de multirrotores e sobre arquitetura de hardware e software de sistemas embarcados.
-% \end{itemize}
-
-% Espera-se ainda, ao final deste semestre, terminar a escolha definitiva dos componentes básicos e concluir a sua compra. Dessa forma, será possível seguir o cronograma apresentado e construir o sistema todo a tempo de poder testá-lo e corrigir eventuais erros de projeto.
-
-% Um projeto completo de engenharia apresenta grandes dificuldades. Estudantes apresentam maior facilidade para resolver problemas fechados, como provas e exercícios pela sua maior prática com estes desafios. A disciplina de projeto de formatura proporciona uma oportunidade para que os alunos aprendam por experiência como lidar com um projeto de engenharia. Apesar de ser insuficiente para um preparo completo, esta disciplina é como uma incubadora,  permitindo os alunos a sobreviver no mercado de trabalho.
+Um projeto completo de engenharia apresenta grandes dificuldades. Estudantes apresentam maior facilidade para resolver problemas fechados, como provas e exercícios pela sua maior prática com estes desafios. A disciplina de projeto de formatura proporciona uma oportunidade para que os alunos aprendam por experiência como lidar com um projeto de engenharia. Apesar de ser insuficiente para um preparo completo, esta disciplina é como uma incubadora,  permitindo os alunos a sobreviver no mercado de trabalho.
 
 \section{Considerações sobre o Curso de Graduação}
 
@@ -700,10 +673,9 @@ A implementação do módulo de controle envolve as matérias de circuitos integrado
 % (AINDA FALTA)
 % Trata-se de uma lista de material bibliográfico consultado na pesquisa e que servirá de base para a realização do trabalho. Todavia, esta lista não está vinculada à citação no texto. É elemento opcional.
 % 
-% \begin{appendix}
-  
+\appendix
 
-\chapter{Apêndice A - Comparativos entre outros multirrotores}
+\chapter{Comparativos entre outros multirrotores}
 
 Existem diversas plataformas de multirrotores no mercado. A maioria composta por quadrirrotores. Entre estes, são notáveis: Aeroquad \citeonline{aeroquad}, Ardrone\citeonline{ardrone}, Microdrones\citeonline{microdrone}, Mikrokopter\citeonline{mikrokopter}.
 
@@ -713,65 +685,14 @@ ARDrone pertence à empresa Norte-Americana Parrot que atua na área de desenvolvi
 
 Microdrones é uma empresa alemã cujo foco é o desenvolvimento de pequenas aeronaves, principalmente quadrirrotores. Possui hoje dois modelos comerciais à venda.
 
-	Mikrokopter, é uma \textit{empresa} alemã dedicada a projetos de multirrotores, dentre as empresas pesquisadas, esta apresenta a maior quantidade de combinações. Há modelos com quatro, seis e oito hélices. Há documentação de muitos componentes, inclusive uma descrição detalhada sobre o tempo de vôo para diferentes configurações. Para mais informações, conferir \cite{mikrokopter}.
-	
-	% 
+	Mikrokopter, é um \textit{website} alemão dedicado a projetos de multirrotores, dentre eles, neste \textit{website} encontra-se a maior quantidade de combinações. Há modelos com quatro, seis e oito hélices. Há documentação de muitos componentes, inclusive uma descrição detalhada sobre o tempo de vôo para diferentes configurações. Para mais informações, visite \cite{mikrokopter}.
 
-% \chapter{Manual de Construção de um Multirrotor}
+%\anexo
+
+%\chapter{Apêndices e Anexos}
 %(AINDA FALTA)
-% Anexo consiste em um texto ou documento não elaborado pelo autor, que serve de fundamentação, comprovação e ilustração. Os anexos são identificados por letras maiúsculas consecutivas, travessão e pelos respectivos títulos. É elemento opcional. 
-
+%Anexo consiste em um texto ou documento não elaborado pelo autor, que serve de fundamentação, comprovação e ilustração. Os anexos são identificados por letras maiúsculas consecutivas, travessão e pelos respectivos títulos. É elemento opcional. 
 %Se houverem mais anexos, identifique-os como Anexo B, Anexo C e assim por diante.
-% \end{appendix}
 
-\part{Segunda Parte - Manual de Construção de um Multirrotor}
-\setcounter{chapter}{0}
-\chapter{Arquitetura}
-A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. Por isso, o software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
 
-Dessa maneira, é possível modificar o software ou o hardware pertencente a uma ou mais camadas de abstração sem se preocupar com as outras, desde que se observe a especificação das mensagens trocadas entre elas.
-
-Essas camadas ou domínios de tarefas são:
-
-\begin{enumerate}
-  \item     Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
-  \item     Camada de estabilização do vôo, responsável por garantir a estabilidade do vôo;
-  \item     Camada de navegação, responsável pela velocidade e pela direção do sistema;
-  \item     Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle e onde é possível acrescentar módulos personalizados.
-\end{enumerate}
-
-A figura \ref{fig.arquitsimp} dá uma visão geral da arquitetura, que será detalhada mais adiante.
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Arquitsimp.eps}
-  \caption[Arquitetura simplificada]
-  {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
-\end{figure}
-
-\section{Camada de excitação dos motores}
-\subsection{Descrição}
-
-Essa é a primeira camada, abaixo da camada de estabilização de vôo. Responsável por garantir que a rotação dos motores esteja de acordo com o determinado, por detectar e proteger os motores de sobrecorrentes e por fornecer a potência que eles necessitam para funcionar. Deve impedir que os motores queimem caso os rotores fiquem presos ou girem em aberto (sem hélices).
-
-\subsection{Componentes}
-
-É constituída pelos n motores, hélices e controladores eletrônicos de velocidade (eletronic speed controllers - ESCs), sendo n o número de rotores do multirrotor. Os ESCs, por sua vez, são constituídos por duas placas de circuito, sendo uma responsável pela lógica e a outra pelo fornecimento de potência aos motores.
-
-As hélices são presas nos eixos dos motores de forma que girem com ele. Cada motor é ligado à placa do circuito de potência do ESC correspondente, pela qual é alimentado. A placa de potência do ESC é ligada à sua placa de lógica e à bateria, a qual fornece a tensão e a corrente necessárias para o acionamento dos motores.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-      \item da camada de estabilização de vôo:
-      \begin{itemize}
-        \item rotação do motor (para cada ESC + rotor)
-      \end{itemize}
-\end{itemize}    
-        
-
-Saída:
-
-    para a camada de estabilização de vôo
-        status dos motores
 \end{document}
