@@ -296,7 +296,7 @@ As tarefas de chaveamento serão tratadas por interrupções, para que o chaveament
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=6in]{./Figuras/ESC-interrupt.eps}
+  \includegraphics[width=3in]{./Figuras/ESC-interrupt.eps}
   \caption
   {Fluxograma de interrupções}\label{fig.escint}
 \end{figure}
@@ -308,17 +308,16 @@ As leituras de corrente e da tensão contra-eletromotriz são feitas quando há tra
 Além destas medidas, é aplicado um filtro IIR passa-baixas digital na medida da tensão contra-eletromotriz, para evitar o chaveamento espúrio. O filtro possui esta forma:
 
 \begin{equation}
-  y = \over{ax_n + by_{n-1}{a+b}
+  y_n = \frac{ax_n + by_{n-1}}{a+b}.
 \end{equation}
 
 Este filtro possui resposta em frequência:
 
 \begin{equation}
-  
-H(e^{j\omega}) = \over{a}{a+b(1-e^{-j\omega}}
+H(e^{j\omega}) = \frac{a}{a+b(1-e^{-j\omega})}.
 \end{equation}
 
-Pode-se notar que ele possui ganho $\approx 1$ para baixas frequências e o ganho cai para $\over{a}{a+2b}$ para altas frequências.
+Pode-se notar que ele possui ganho $\approx 1$ para baixas frequências e o ganho cai para $\frac{a}{a+2b}$ para altas frequências.
 
 Para reduzir a complexidade da divisão e melhorar a estabilidade, $a+b$ devem ser uma potência de $2$, para que a divisão possa ser convertida em um deslocamento de bits. O manual \cite{avr444} sugere o uso de $a=1$ e $b=3$.
 
@@ -334,8 +333,19 @@ A carga deve estar numa faixa conhecida. Se a carga estiver muito abaixo do espe
 
   Os sinais de realimentação contém ruído, principalmente devido ao chaveamento dos transistores. Além disso, o nível do sinal pode não estar na faixa correta. Para que os sinais representem corretamente as informações de interesse, se utiliza de circuitos condicionadores de sinal.
   
-  Nesta aplicação, a maior parte deles é composta por um circuito divisor de tensão passa-baixas. Este circuito é bastante simples, podendo ser montado com apenas 3 componentes passivos.
- 
+  Nesta aplicação, a maior parte deles é composta por um circuito divisor de tensão passa-baixas. Este circuito é bastante simples, podendo ser montado com apenas 3 componentes passivos:
+  
+  \begin{figure}[h!]
+  \centering
+  \includegraphics[width=1in]{./Figuras/ESC-sigcond.eps}
+  \caption
+  {Condicionador de sinais}\label{fig.escsigcond}
+\end{figure}
+
+  Regulando os resistores e o capacitor pode-se escolher a faixa de tensão e resposta em frequência do circuito. Não é desejável que o filtro seja de banda estreia, pois ele se torna ``lento'' e deforma o sinal de interesse.
+  
+  Foram pesquisados diferentes combinações e decidiu-se por resistores de $4,7k\Omega$ e um capacitor de $100nF$. Estes valores proprocionam ganho de $0,5$ para baixas frequências e frequência de corte próxima a 2kHz, que equivale a 120000RPM, o que é uma ordem de grandeza maior que as rotações que espera-se do motor.
+
 \section{Bateria de lítio-polímero}
 
 A bateria é o elemento que provê a energia necessária ao funcionamento eletromecânico e eletrônico do multirrotor. É desejável que sua massa seja baixa, já que um peso maior significará mais empuxo nos motores e uma maior corrente drenada. Ao mesmo tempo, é desejável uma carga elétrica alta, para se ter mais autonomia.
@@ -365,7 +375,7 @@ Reação completa:
 LiMO_2 + C_n  \Longleftrightarrow Li_{(1-x)}MO_2 + C_nLi_x
 \end{equation}
 
-Em geral, o metal $''M''$ associado ao lítio no óxido do eletrodo positivo é o cobalto \cite{lipostatusquo,lipoeval}.
+Em geral, o metal $``M''$ associado ao lítio no óxido do eletrodo positivo é o cobalto \cite{lipostatusquo,lipoeval}.
 
 \subsection{Modelo}
 
@@ -621,16 +631,39 @@ No entanto, a disciplina foi capaz de expor estas deficências da equipe e exerci
   {Carta de Gantt do 2o. Semestre}\label{fig.crono2}
 \end{figure}
 
-%\chapter{Orçamento}
+\chapter{Orçamento}
 %(AINDA FALTA)
-%Motores (Hobby King)
-%Hélices (Hobby King)
-%Bateria (Hobby King)
-%Hastes (Hobby King)
-%Microcontroladores
-%Fios (chute)
-%Conectores (chute)
-%Sensores (ver sparkfun)
+\begin{tabular}{lr}
+Sensores e GPS: &\$174,85 \\
+~~ 1x IMU Digital Combo Board - ITG3200/ADXL345: & \$64.95 \\
+~~ 1x LS20031 GPS Receiver: & \$59.95 \\
+~~ 1x MicroMag 3-Axis Magnetometer: & \$49.95 \\
+\\
+ESC: & \$30 \\
+\\
+Módulo de controle: &\$29.95 \\
+~~ 1x LPC1114 LPCXpresso board &\$29.95\\
+\\
+Baterias: & \$26,51 \\
+~~ 2x ZIPPY Flightmax 5700mAh 2S3P 25C & \$26.51\\
+\\
+Motores: & \$65.52 \\
+~~ 6x Motores Turnigy 450 H2218 Brushless outrunner 3550KV & \$65.52\\
+\\
+Estrutura: & \$45.00\\
+~~ 2x Jogos com 6 hélices (3 de cada tipo) & \$7.00\\
+~~ 2x Barra de fibra 3mm & \$3.00  \\
+~~ 1x Placa de fibra 1mm & \$10.00\\
+~~ 4x Barra de fibra 6mm & \$11.00\\
+~~ 4x Adaptadores para hélices & \$8.00\\
+~~ 4x Proteção para motores & \$6.00\\
+\\
+Protótipo para estudo: & \$1785.00 \\
+~~ 1x MK Hexa2 Base Kit & \$1785.00\\
+
+Total: & \$2126.83 \\
+Total - Protótipo: & \$341.83 
+\end{tabular}
 
 \chapter{Análise de Risco}
 
