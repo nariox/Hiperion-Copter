@@ -725,7 +725,7 @@ Microdrones é uma empresa alemã cujo foco é o desenvolvimento de pequenas aerona
 % \end{appendix}
 
 \part{Segunda Parte - Manual de Construção de um Multirrotor}
-\setcounter{chapter}{0}
+%\setcounter{chapter}{0}
 \chapter{Arquitetura}
 A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. Por isso, o software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
 
@@ -771,7 +771,118 @@ Entrada:
         
 
 Saída:
+\begin{itemize}
+  \item para a camada de estabilização de vôo
+  \begin{itemize}
+    \item status dos motores
+  \end{itemize}
+\end{itemize}
+
+\subsection{Comportamento}
+
+O controlador eletrônico de velocidade (ESC) lê o parâmetro de rotação enviado pelo microcontrolador da camada de estabilização e aguarda um sinal do motor que indica que o enrolamento está alinhado com o campo do rotor. Quando isso ocorre, o ESC calcula o tempo ideal para o chavear a excitação do motor, espera esse tempo e realiza o chaveamento, depois do qual o ciclo recomeça.
+
+Para maiores detalhes sobre funcionamento do ESC, ver a seção \ref{sec:esc}.
+
+Abaixo, um diagrama que representa esse comportamento:
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=4in]{./Figuras/Excit-func.eps}
+  \caption[Funcionamento do ESC]
+  {visão geral do funcionamento do ESC}\label{fig.escfunc}
+\end{figure}
+
+\section{Camada de estabilização do vôo}
+Descrição
+
+Responsável por processar os sinais dos sensores de estabilização (acelerômetros e giroscópios) e os parâmetros de navegação (ângulos de Euler e potência total dos motores) e gerar os parâmetros de rotação de cada motor de forma a manter a estabilidade do vôo e controlar a velocidade de deslocamento e a velocidade angular do multirrotor.
+Componentes
+
+Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M) e por uma unidade de medida inercial (IMU - inertial measurement unit), que é um circuito que contém o acelerômetros e o giroscópio tridimensionais. O microcontrolador está ligado ao microcontrolador da camada de navegação por SPI e à  IMU por $I^2C$.
+Parâmetros de entrada e saída
+
+Entrada:
+
+    da camada de navegação
+        ângulos de Euler e potência total dos motores (parâmetros de navegação)
+
+Saídas:
+
+    para a camada de excitação dos motores
+        rotação de cada motor
+    para a camada de navegação
+        status dos motores
+        dados dos sensores de estabilização - acelerômetro e giroscópio
+
+Comportamento
+
+A camada de estabilização age através de um laço que começa com a leitura dos parâmetros de navegação obtidos do microcontrolador daquela camada e segue com a leitura dos sinais dos sensores de estabilização, ou seja, dos acelerômetros e dos giroscópios. O próximo passo é a execução dos algoritmos PID que geram os parâmetros de rotação dos motores, parâmetros os quais são enviados aos ESCs da camada de excitação.
+
+Os algoritmos que controlam a estabilidade são PIDs não-lineares, ver o capítulo ``Controle'' para mais detalhes.
+
+Abaixo, um diagrama que representa esse comportamento:
+
+Camada de navegação
+Descrição
+
+Responsável por processar os sinais dos sensores de navegação (GPS e magnetômetro) e os parâmetros de direção, velocidade e rotação e por gerar os parâmetros de navegação (ângulos de Euler e potência total dos motores) do multirrotor, de forma a fazê-lo mover-se com a direção e a velocidade pretendidas e/ou girar em torno de seu eixo vertical.
+Componentes
+
+Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M), pelo GPS, pelo magnetômetro e pelo receptor do rádio-controle. Esses sensores e o receptor são implementados como módulos e estão ligados ao microcontrolador pelo mesmo barramento SPI que o conecta aos módulos inteligentes da camada de aplicação. A ligação ao microcontrolador da camada de estabilização de vôo se dá por SPI.
+Parâmetros de entrada e saída
+
+Entradas:
+
+    da camada de periféricos
+        sinais dos sensores de navegação (GPS e magnetômetro)
+        parâmetros de direção, velocidade e rotação do multirrotor
+    da camada de estabilização de vôo
+        status dos motores
+        dados dos sensores de estabilização (acelerômetro e giroscópio)
+
+Saída:
 
     para a camada de estabilização de vôo
-        status dos motores
+        ângulos de Euler e potência total dos motores (parâmetros de navegação)
+    para a camada de periféricos
+        status dos motores (caso solicitado por algum módulo periférico)
+        dados dos sensores de estabilização - acelerômetro e giroscópio (caso solicitado por algum módulo periférico)
+
+Comportamento
+
+A camada de navegação possui um laço principal que tem início com a leitura dos parâmetros de direção, velocidade e rotação, os quais são obtidos do módulo de recepção do rádio-controle e/ou podem ser também gerados na camada de periféricos. Isso abre a possibilidade de que aplicações personalizadas determinem a direção, a velocidade de translação e a rotação do multirrotor.
+
+Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS e magnetômetro). A partir desses parâmetros e sinais é realizado o processamento que gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) que são enviados para o microcontrolador da camada de estabilização.
+
+Abaixo, um diagrama que representa esse comportamento:
+
+Figura 4: comportamento da camada de navegação
+Camada de periféricos
+Descrição
+
+A camada de periféricos abriga originalmente os módulos dos sensores de navegação e o módulo receptor do rádio-controle, que estão ligados entre si e ao microcontrolador da camada de navegação por um barramento I²C. Essa arquitetura foi concebida para que seja possível que qualquer pessoa com o conhecimento técnico necessário crie e adicione periféricos personalizados.
+
+Esses módulos periféricos podem, inclusive, assumir a qualquer momento a tarefa de gerar os parâmetros de direção, velocidade e rotação ao lado do receptor de rádio-controle, o que abre um leque de possibilidades de projetos futuros, dentre os quais citamos: controle de altura através de sensores como barômetro ou sensor de distância ultrassônico ou a laser, evasão de colisão usando sensores de distância, rastreamento e perseguição de objeto através de um módulo multimídia inteligente e transmissão de vídeo e áudio.
+Componentes
+
+Camada expansível constituída por módulos capazes de se comunicar por I²C. Os módulos implementados originalmente são os sensores de navegação, que contém o GPS e o magnetômetro, e o módulo receptor de rádio-controle.
+Parâmetros de entrada e saída
+
+Entrada:
+
+    sinal do rádio-controle
+
+
+Saída:
+
+    sinais dos sensores de navegação (GPS e magnetômetro)
+    parâmetros de direção, velocidade e rotação do multirrotor
+
+Comportamento
+
+Os sensores da camada de periféricos apenas esperam o pedido de leitura do microcontrolador da camada de navegação e/ou de algum outro módulo da própria camada. Quando isso acontece, eles provêem seus dados mais recentes.
+
+Módulos personalizados desta camada possuem comportamento que varia de acordo com suas funcionalidades. Mais detalhes devem ser obtidos da documentação dos próprios módulos.
+
 \end{document}

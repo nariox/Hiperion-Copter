@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2011.9.29)  30 SEP 2011 02:58
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2011.9.29)  30 SEP 2011 03:14
 entering extended mode
  %&-line parsing enabled.
 **rt1.tex
@@ -436,7 +436,7 @@ Cap\'{\i }tulo 8.
 ] [41
 
 ]
-Cap\'{\i }tulo 1.
+Cap\'{\i }tulo 9.
 File: ./Figuras/Arquitsimp.eps Graphic file (type eps)
 <./Figuras/Arquitsimp.eps>
 
@@ -445,18 +445,20 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 [42
 
 ] [43]
+File: ./Figuras/Excit-func.eps Graphic file (type eps)
+ <./Figuras/Excit-func.eps> [44]
 +-------------------------------------------------------------------+
 | Comentario, sugestao ou critica sobre o abnTeX? Entre em contato: |
 |                  http://abntex.codigolivre.org.br                 |
 +-------------------------------------------------------------------+
-[44] (./rt1.aux) ) 
+[45] (./rt1.aux) ) 
 Here is how much of TeX's memory you used:
- 2396 strings out of 495042
- 32555 string characters out of 1181920
- 86161 words of memory out of 3000000
- 5489 multiletter control sequences out of 15000+50000
+ 2399 strings out of 495042
+ 32606 string characters out of 1181920
+ 85161 words of memory out of 3000000
+ 5491 multiletter control sequences out of 15000+50000
  47355 words of font info for 54 fonts, out of 3000000 for 9000
  30 hyphenation exceptions out of 8191
  30i,10n,41p,828b,336s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on rt1.dvi (45 pages, 90408 bytes).
+Output written on rt1.dvi (46 pages, 94664 bytes).
