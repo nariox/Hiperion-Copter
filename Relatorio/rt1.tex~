@@ -97,6 +97,7 @@ A lista a seguir contém as abreviaturas e termos utilizados nesta monografia. As
 
 \tableofcontents{}
 
+\part{Primeira parte - Relatório do projeto}
 \chapter{Introdução\label{cap:introducao}}
 
 \begin{flushright}{}``\emph{Sobre hipérion, nos é dito que foi o primeiro a entender,\\
@@ -217,9 +218,8 @@ Um sistema operacional de tempo real (RTOS) será embarcado nos módulos controle 
 
 \chapter{Referencial Teórico\label{cap:referencialteorico}}
 
-\begin{flushright}{}``\emph{Navegar é preciso, viver não.}''\\
+\begin{flushright}{}``\emph{Navegar é preciso, viver não é preciso.}''\\
 {\small Luís de Camões}\end{flushright}{\small \par}
-
 
 \section{Considerações Iniciais}
 
@@ -277,7 +277,7 @@ A figura \ref{fig.escchav} demonstra o funcionamento do método:
 
 Para descrever o funcionamento do programa (baseado em \cite{avr444}) pode-se utilizar a máquina de estados representada na figura \ref{fig.escdia}.
 
-\begin{figure}[hb]
+\begin{figure}[h!]
   \centering
   \includegraphics[width=6in]{./Figuras/ESC-diagrama.eps}
   \caption
@@ -684,13 +684,7 @@ Plataformas de desenvolvimento de veículos voadores autônomos são interessantes 
 
 \section{Resultados}
 
-Ao longo deste semestre, resultados importantes foram obtidos:
-\begin{itemize}
-  \item definição da estrutura básica do multirrotor;
-  \item definição da arquitetura de hardware e software da platafoma;
-  \item definição de componentes básicos;
-  \item formação de uma base teórica sobre a construção de multirrotores e sobre arquitetura de hardware e software de sistemas embarcados.
-\end{itemize}
+\section{Fase do projeto}
 
 Espera-se ainda, ao final deste semestre, terminar a escolha definitiva dos componentes básicos e concluir a sua compra. Dessa forma, será possível seguir o cronograma apresentado e construir o sistema todo a tempo de poder testá-lo e corrigir eventuais erros de projeto.
 
