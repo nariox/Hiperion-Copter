@@ -35,7 +35,6 @@ float *myOutput;             //   This creates a hard link between the variables
 float *mySetpoint;           //   PID, freeing the user from having to constantly tell us
                              //   what these values are.  with pointers we'll just know.
 
-unsigned long lastTime;
 float ITerm, lastInput;
 
 int SampleTime;
@@ -58,7 +57,6 @@ void initialize(float* Input, float* Output, float* Setpoint,
     pid_setControllerDirection(ControllerDirection);
     pid_setTunings(Kp, Ki, Kd);
 
-    lastTime = millis()-SampleTime;
     inAuto = FALSE;
     myOutput = Output;
     myInput = Input;
@@ -73,30 +71,25 @@ void initialize(float* Input, float* Output, float* Setpoint,
  **********************************************************************************/
 void pid_compute()
 {
-   if(!inAuto) return;
-   unsigned long now = millis();
-   int timeChange = (now - lastTime);
-   if(timeChange>=SampleTime)
-   {
-      /*Compute all the working error variables*/
-	  float input = *myInput;
-      float error = *mySetpoint - input;
-      ITerm+= (ki * error);
-      if(ITerm > outMax) ITerm= outMax;
-      else if(ITerm < outMin) ITerm= outMin;
-      float dInput = (input - lastInput);
+	if(!inAuto) return; //não está no modo automático, ou seja, o PID está desabilitado
 
-      /*Compute PID Output*/
-      float output = kp * error + ITerm- kd * dInput;
+	/*Compute all the working error variables*/
+	float input = *myInput;
+	float error = *mySetpoint - input;
+	ITerm+= (ki * error);
+	if(ITerm > outMax) ITerm= outMax;
+	else if(ITerm < outMin) ITerm= outMin;
+	float dInput = (input - lastInput);
 
-	  if(output > outMax) output = outMax;
-      else if(output < outMin) output = outMin;
-	  *myOutput = output;
+	/*Compute PID Output*/
+	float output = kp * error + ITerm- kd * dInput;
 
-      /*Remember some variables for next time*/
-      lastInput = input;
-      lastTime = now;
-   }
+	if(output > outMax) output = outMax;
+	else if(output < outMin) output = outMin;
+	*myOutput = output;
+
+	/*Remember some variables for next time*/
+	lastInput = input;
 }//pid_compute
 
 
