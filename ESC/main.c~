@@ -178,12 +178,6 @@ static void InitPorts(void)
   DIDR0 = (1 << ADC4D) | (1 << ADC3D) | (1 << ADC2D) | (1 << ADC1D) | (1 << ADC0D);
 }
 
-
-/*! \brief Initializes timers (for commutation timing and PWM).
- *
- *  This function initializes Timer/counter0 for PWM operation for motor speed control
- *  and Timer/counter1 for commutation timing.
- */
 static void InitTimers(void)
 {
   // Set up Timer/counter0 for PWM, output on OCR0B, OCR0A as TOP value, prescaler = 1.
@@ -197,12 +191,6 @@ static void InitTimers(void)
   TCCR1B = (1 << CS11) | (0 << CS10);
 }
 
-
-/*! \brief Initializes the AD-converter.
- *
- *  This function initializes the AD-converter and makes a reading of the external
- *  reference voltage.
- */
 static void InitADC(void)
 {
   // First make a measurement of the external reference voltage.
