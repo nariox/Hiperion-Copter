@@ -8,6 +8,10 @@
 #ifndef DRIVER_CONFIG_H_
 #define DRIVER_CONFIG_H
 
+#ifdef __USE_CMSIS
+#include "LPC11xx.h"
+#endif
+
 #define CONFIG_ENABLE_DRIVER_I2C						1
 #define CONFIG_I2C_DEFAULT_I2C_IRQHANDLER				1
 

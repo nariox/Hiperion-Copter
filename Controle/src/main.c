@@ -8,10 +8,6 @@
 ===============================================================================
 */
 
-#ifdef __USE_CMSIS
-#include "LPC11xx.h"
-#endif
-
 #include <cr_section_macros.h>
 #include <NXP/crp.h>
 
@@ -48,7 +44,7 @@ pid_data_t pid_yaw;
 
 void inicializa() {
 	int i;
-	i2c_inicializa();
+    i2c_inicializa();
     for(i = 0; i < 3; ++i) {
         pid_angles[i] = malloc(sizeof(struct pid_data_t));
         pid_angles[i]->SampleTime = 100;            //default Controller Sample Time is 0.1 seconds

@@ -37,6 +37,7 @@
 								<option id="com.crt.advproject.gcc.hdrlib.1021515826" name="Use headers for C library" superClass="com.crt.advproject.gcc.hdrlib" value="com.crt.advproject.gcc.hdrlib.codered" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.97693160" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/CMSISv2p00_LPC11xx/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="../src"/>
 									<listOptionValue builtIn="false" value="../driver"/>
 								</option>
 								<inputType id="com.crt.advproject.compiler.input.1471536814" superClass="com.crt.advproject.compiler.input"/>
@@ -46,6 +47,7 @@
 								<option id="com.crt.advproject.gas.thumb.1368999029" name="Thumb mode" superClass="com.crt.advproject.gas.thumb" value="true" valueType="boolean"/>
 								<option id="gnu.both.asm.option.flags.crt.74436583" name="Assembler flags" superClass="gnu.both.asm.option.flags.crt" value="-c -x assembler-with-cpp -D__REDLIB__  -DDEBUG -D__CODE_RED " valueType="string"/>
 								<option id="com.crt.advproject.gas.hdrlib.1840146935" name="Use headers for C library" superClass="com.crt.advproject.gas.hdrlib" value="com.crt.advproject.gas.hdrlib.codered" valueType="enumerated"/>
+								<option id="gnu.both.asm.option.include.paths.611974830" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths"/>
 								<inputType id="com.crt.advproject.assembler.input.835312391" name="Additional Assembly Source Files" superClass="com.crt.advproject.assembler.input"/>
 							</tool>
 							<tool id="com.crt.advproject.link.cpp.exe.debug.1306158315" name="MCU C++ Linker" superClass="com.crt.advproject.link.cpp.exe.debug"/>
@@ -82,6 +84,7 @@
 					</fileInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="driver"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -765,6 +768,7 @@
 					</profile>
 				</scannerConfigBuildInfo>
 			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 		</cconfiguration>
 		<cconfiguration id="com.crt.advproject.config.exe.release.694702863">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="com.crt.advproject.config.exe.release.694702863" moduleId="org.eclipse.cdt.core.settings" name="Release">
@@ -1526,6 +1530,7 @@
 					</profile>
 				</scannerConfigBuildInfo>
 			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.language.mapping"/>
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -1535,10 +1540,7 @@
 		<projectStorage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;TargetConfig&gt;
 &lt;Properties property_0="" property_1="" property_2="" property_3="NXP" property_4="LPC1114/302" property_count="5" version="1"/&gt;
-&lt;infoList vendor="NXP"&gt;
-&lt;info chip="LPC1114/302" match_id="0x2540102b" name="LPC1114/302" stub="crt_emu_lpc11_13_nxp"&gt;
-&lt;chip&gt;
-&lt;name&gt;LPC1114/302&lt;/name&gt;
+&lt;infoList vendor="NXP"&gt;&lt;info chip="LPC1114/302" match_id="0x2540102b" name="LPC1114/302" stub="crt_emu_lpc11_13_nxp"&gt;&lt;chip&gt;&lt;name&gt;LPC1114/302&lt;/name&gt;
 &lt;family&gt;LPC11xx&lt;/family&gt;
 &lt;vendor&gt;NXP (formerly Philips)&lt;/vendor&gt;
 &lt;reset board="None" core="Real" sys="Real"/&gt;
@@ -1569,8 +1571,7 @@
 &lt;peripheralInstance derived_from="LPC11_13_WDT" determined="infoFile" id="WDT" location="0x40004000"/&gt;
 &lt;peripheralInstance derived_from="LPC11_13_ADC" determined="infoFile" id="ADC" location="0x4001c000"/&gt;
 &lt;/chip&gt;
-&lt;processor&gt;
-&lt;name gcc_name="cortex-m0"&gt;Cortex-M0&lt;/name&gt;
+&lt;processor&gt;&lt;name gcc_name="cortex-m0"&gt;Cortex-M0&lt;/name&gt;
 &lt;family&gt;Cortex-M&lt;/family&gt;
 &lt;/processor&gt;
 &lt;link href="nxp_lpc11_13_peripheral.xme" show="embed" type="simple"/&gt;
