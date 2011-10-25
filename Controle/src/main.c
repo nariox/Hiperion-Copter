@@ -20,9 +20,13 @@
 // See crp.h header for more information
 __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 
-// TODO: insert other include files here
+#include "driver_config.h"
 
 // TODO: insert other definitions and declarations here
+
+void inicializa() {
+	  i2c_inicializa();
+}
 
 int main(void) {
 	
