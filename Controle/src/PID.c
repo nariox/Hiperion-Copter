@@ -16,51 +16,25 @@
 #include "PID.h"
 #define FALSE 0
 
-void initialize(float* Input, float* Output, float* Setpoint,
-                float Kp, float Ki, float Kd, int ControllerDirection);
-void reinitialize();
-
-float dispKp;				// * we'll hold on to the tuning parameters in user-entered
-float dispKi;				//   format for display purposes
-float dispKd;				//
-
-float kp;                  // * (P)roportional Tuning Parameter
-float ki;                  // * (I)ntegral Tuning Parameter
-float kd;                  // * (D)erivative Tuning Parameter
-
-int controllerDirection;
-
-float *myInput;              // * Pointers to the Input, Output, and Setpoint variables
-float *myOutput;             //   This creates a hard link between the variables and the
-float *mySetpoint;           //   PID, freeing the user from having to constantly tell us
-                             //   what these values are.  with pointers we'll just know.
-
-float ITerm, lastInput;
-
-int SampleTime;
-float outMin, outMax;
-int inAuto;
-
-
 /*Constructor (...)*********************************************************
  *    The parameters specified here are those for for which we can't set up
  *    reliable defaults, so we need to have the user set them.
  ***************************************************************************/
-void initialize(float* Input, float* Output, float* Setpoint,
-                float Kp, float Ki, float Kd, int ControllerDirection)
+pid_data_t config_data(float Input, float Output, float Setpoint,
+                       float kp, float ki, float kd, int ControllerDirection)
 {
-	pid_setOutputLimits(0, 255);				//default output limit corresponds to
-												//the arduino pwm limits
+	pid_data_t pid_data;
+	pid_data.Input    = Input;
+	pid_data.Output   = Output;
+	pid_data.Setpoint = Setpoint;
 
+	pid_setOutputLimits(0, 255);				//default output limit
     SampleTime = 100;							//default Controller Sample Time is 0.1 seconds
 
     pid_setControllerDirection(ControllerDirection);
-    pid_setTunings(Kp, Ki, Kd);
+    pid_setTunings(kp, ki, kd);
 
     inAuto = FALSE;
-    myOutput = Output;
-    myInput = Input;
-    mySetpoint = Setpoint;
 }//initialize
 
 
@@ -166,22 +140,22 @@ void pid_setMode(int Mode)
     int newAuto = (Mode == PID_AUTOMATIC);
     if(newAuto == !inAuto)
     {  /*we just went from manual to auto*/
-    	reinitialize();
+    	initialize();
     }
     inAuto = newAuto;
 }//pid_setMode
 
-/* reinitialize()****************************************************************
+/* initialize()****************************************************************
  *	does all the things that need to happen to ensure a bumpless transfer
  *  from manual to automatic mode.
  ******************************************************************************/
-void reinitialize()
+void initialize()
 {
    ITerm = *myOutput;
    lastInput = *myInput;
    if(ITerm > outMax) ITerm = outMax;
    else if(ITerm < outMin) ITerm = outMin;
-}//reinitialize
+}//initialize
 
 /* pid_setControllerDirection(...)*************************************************
  * The PID will either be connected to a DIRECT acting process (+Output leads
