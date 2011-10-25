@@ -24,11 +24,26 @@
 #define PID_DIRECT  0
 #define PID_REVERSE  1
 
-//commonly used functions **************************************************************************
-//TODO: Implementar a funcionalidade do construtor em uma função
-//PID::PID(float* Input, float* Output, float* Setpoint,
-//        float Kp, float Ki, float Kd, int ControllerDirection)
+typedef struct pid_data_t {
+    float Input;
+    float Output;
+    float Setpoint;
+    float kp;                      // * (P)roportional Tuning Parameter
+    float ki;                      // * (I)ntegral Tuning Parameter
+    float kd;                      // * (D)erivative Tuning Parameter
+    float dispKp;				   // * we'll hold on to the tuning parameters in user-entered
+    float dispKi;				   //   format for display purposes
+    float dispKd;				   //
+    int   ControllerDirection;
+    float ITerm, lastInput;
+    int   SampleTime;
+    float outMin, outMax;
+    int   inAuto;
+}* pid_data_t;
 
+//commonly used functions **************************************************************************
+pid_data_t config_data(float* Input, float* Output, float* Setpoint,
+                       float Kp, float Ki, float Kd, int ControllerDirection);
 void pid_setMode(int);                   // * sets PID to either PID_MANUAL (0) or PID_AUTOMATIC (non-0)
 void pid_compute();                      // * performs the PID calculation.
 void pid_setOutputLimits(float, float);  // * sets the output to a specific range. 0-255 by default
@@ -38,6 +53,7 @@ void pid_setOutputLimits(float, float);  // * sets the output to a specific rang
 void pid_setTunings(float, float, float);   //  Kp, Ki, Kd
 void pid_setControllerDirection(int);	    // * PID_DIRECT ou PID_REVERSE
 void pid_setSampleTime(int);                // * NewSampleTime
+void initialize();
 
 //Display functions ****************************************************************
 float pid_getKp();						  // These functions query the pid for interal values.
