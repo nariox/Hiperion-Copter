@@ -77,15 +77,25 @@ void le_nav(nav_params_t params)
 
 int main(void)
 {
+    uint8_t i;
+
 	inicializa();
 
 	//Loop principal
 	while(1) {
 		//Lê sinais dos sensores
-		//le_IMU(&IMU_sigs);
+		//le_IMU();
 
 		//Lê parâmetros de navegação
-		//le_nav(&nav_params);
+		//le_nav();
+
+	    //Realiza o processamento PID
+	    for(i = 0; i < 3; ++i) {
+	        pid_compute(pid_angles[i]);
+	    }
+
+	    //Envia as rotações dos motores aos ESCs
+	    //envia_rotacoes();
 	}
 
 	// Enter an infinite loop, just incrementing a counter
