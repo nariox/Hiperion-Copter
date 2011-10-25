@@ -13,7 +13,10 @@
  * This Code is licensed under a Creative Commons Attribution-ShareAlike 3.0 Unported License.
  **********************************************************************************************/
 
+#include <stdlib.h>
+
 #include "PID.h"
+
 #define FALSE 0
 
 /*Constructor (...)*********************************************************
@@ -23,19 +26,20 @@
 pid_data_t config_data(float Input, float Output, float Setpoint,
                        float kp, float ki, float kd, int ControllerDirection)
 {
-	pid_data_t pid_data;
-	pid_data.Input    = Input;
-	pid_data.Output   = Output;
-	pid_data.Setpoint = Setpoint;
+	pid_data_t pid_data = malloc(sizeof(struct pid_data_t));
+	pid_data->Input    = Input;
+	pid_data->Output   = Output;
+	pid_data->Setpoint = Setpoint;
+    pid_data->inAuto   = FALSE;
 
-	pid_setOutputLimits(0, 255);				//default output limit
-    SampleTime = 100;							//default Controller Sample Time is 0.1 seconds
+	pid_setOutputLimits(pid_data, 0, 255);                //default output limit
+	pid_data->SampleTime = 100;	                //default Controller Sample Time is 0.1 seconds
 
-    pid_setControllerDirection(ControllerDirection);
-    pid_setTunings(kp, ki, kd);
+    pid_setControllerDirection(pid_data, ControllerDirection);
+    pid_setTunings(pid_data, kp, ki, kd);
 
-    inAuto = FALSE;
-}//initialize
+    return pid_data;
+}//config_data
 
 
 /* pid_compute() **********************************************************************
@@ -43,27 +47,29 @@ pid_data_t config_data(float Input, float Output, float Setpoint,
  *   every time "void loop()" executes.  the function will decide for itself whether a new
  *   pid Output needs to be computed
  **********************************************************************************/
-void pid_compute()
+void pid_compute(pid_data_t pid_data)
 {
-	if(!inAuto) return; //não está no modo automático, ou seja, o PID está desabilitado
+	if(!pid_data->inAuto) return; //não está no modo automático, ou seja, o PID está desabilitado
 
 	/*Compute all the working error variables*/
-	float input = *myInput;
-	float error = *mySetpoint - input;
-	ITerm+= (ki * error);
-	if(ITerm > outMax) ITerm= outMax;
-	else if(ITerm < outMin) ITerm= outMin;
-	float dInput = (input - lastInput);
+	float input = pid_data->Input;
+	float error = pid_data->Setpoint - input;
+	pid_data->ITerm += (pid_data->ki * error);
+	if(pid_data->ITerm > pid_data->outMax)
+		pid_data->ITerm = pid_data->outMax;
+	else if(pid_data->ITerm < pid_data->outMin)
+		pid_data->ITerm = pid_data->outMin;
+	float dInput = (input - pid_data->lastInput);
 
 	/*Compute PID Output*/
-	float output = kp * error + ITerm- kd * dInput;
+	float output = pid_data->kp * error + pid_data->ITerm- pid_data->kd * dInput;
 
-	if(output > outMax) output = outMax;
-	else if(output < outMin) output = outMin;
-	*myOutput = output;
+	if(output > pid_data->outMax) output = pid_data->outMax;
+	else if(output < pid_data->outMin) output = pid_data->outMin;
+	pid_data->Output = output;
 
 	/*Remember some variables for next time*/
-	lastInput = input;
+	pid_data->lastInput = input;
 }//pid_compute
 
 
@@ -72,37 +78,37 @@ void pid_compute()
  * it's called automatically from the constructor, but tunings can also
  * be adjusted on the fly during normal operation
  ******************************************************************************/
-void pid_setTunings(float Kp, float Ki, float Kd)
+void pid_setTunings(pid_data_t pid_data, float Kp, float Ki, float Kd)
 {
    if (Kp<0 || Ki<0 || Kd<0) return;
 
-   dispKp = Kp; dispKi = Ki; dispKd = Kd;
+   pid_data->dispKp = Kp; pid_data->dispKi = Ki; pid_data->dispKd = Kd;
 
-   float SampleTimeInSec = ((float)SampleTime)/1000;
-   kp = Kp;
-   ki = Ki * SampleTimeInSec;
-   kd = Kd / SampleTimeInSec;
+   float SampleTimeInSec = ((float)pid_data->SampleTime)/1000;
+   pid_data->kp = Kp;
+   pid_data->ki = Ki * SampleTimeInSec;
+   pid_data->kd = Kd / SampleTimeInSec;
 
-  if(controllerDirection == PID_REVERSE)
+  if(pid_data->controllerDirection == PID_REVERSE)
    {
-      kp = (0 - kp);
-      ki = (0 - ki);
-      kd = (0 - kd);
+	  pid_data->kp = (0 - pid_data->kp);
+	  pid_data->ki = (0 - pid_data->ki);
+	  pid_data->kd = (0 - pid_data->kd);
    }
 }//pid_setTunings
 
-/* pid_setTunings(...) *********************************************************
+/* pid_setSampleTime(...) *********************************************************
  * sets the period, in Milliseconds, at which the calculation is performed
  ******************************************************************************/
-void pid_setSampleTime(int NewSampleTime)
+void pid_setSampleTime(pid_data_t pid_data, int NewSampleTime)
 {
    if (NewSampleTime > 0)
    {
       float ratio  = (float)NewSampleTime
-                      / (float)SampleTime;
-      ki *= ratio;
-      kd /= ratio;
-      SampleTime = (unsigned long)NewSampleTime;
+                      / (float)pid_data->SampleTime;
+      pid_data->ki *= ratio;
+      pid_data->kd /= ratio;
+      pid_data->SampleTime = (unsigned long)NewSampleTime;
    }
 }//pid_setSampleTime
 
@@ -114,19 +120,23 @@ void pid_setSampleTime(int NewSampleTime)
  *  want to clamp it from 0-125.  who knows.  at any rate, that can all be done
  *  here.
  **************************************************************************/
-void pid_setOutputLimits(float Min, float Max)
+void pid_setOutputLimits(pid_data_t pid_data, float Min, float Max)
 {
-   if(Min >= Max) return;
-   outMin = Min;
-   outMax = Max;
+   if(Min >= Max) return;        //TODO: reportar erro
+   pid_data->outMin = Min;
+   pid_data->outMax = Max;
 
-   if(inAuto)
+   if(pid_data->inAuto)
    {
-	   if(*myOutput > outMax) *myOutput = outMax;
-	   else if(*myOutput < outMin) *myOutput = outMin;
+	   if(pid_data->Output > pid_data->outMax)
+		   pid_data->Output = pid_data->outMax;
+	   else if(pid_data->Output < pid_data->outMin)
+		   pid_data->Output = pid_data->outMin;
 
-	   if(ITerm > outMax) ITerm= outMax;
-	   else if(ITerm < outMin) ITerm= outMin;
+	   if(pid_data->ITerm > pid_data->outMax)
+		   pid_data->ITerm = pid_data->outMax;
+	   else if(pid_data->ITerm < pid_data->outMin)
+		   pid_data->ITerm = pid_data->outMin;
    }
 }//pid_setOutputLimits
 
@@ -135,26 +145,28 @@ void pid_setOutputLimits(float Min, float Max)
  * when the transition from manual to auto occurs, the controller is
  * automatically initialized
  ******************************************************************************/
-void pid_setMode(int Mode)
+void pid_setMode(pid_data_t pid_data, int Mode)
 {
     int newAuto = (Mode == PID_AUTOMATIC);
-    if(newAuto == !inAuto)
+    if(newAuto == !pid_data->inAuto)
     {  /*we just went from manual to auto*/
-    	initialize();
+    	initialize(pid_data);
     }
-    inAuto = newAuto;
+    pid_data->inAuto = newAuto;
 }//pid_setMode
 
 /* initialize()****************************************************************
  *	does all the things that need to happen to ensure a bumpless transfer
  *  from manual to automatic mode.
  ******************************************************************************/
-void initialize()
+void initialize(pid_data_t pid_data)
 {
-   ITerm = *myOutput;
-   lastInput = *myInput;
-   if(ITerm > outMax) ITerm = outMax;
-   else if(ITerm < outMin) ITerm = outMin;
+   pid_data->ITerm = pid_data->Output;
+   pid_data->lastInput = pid_data->Input;
+   if(pid_data->ITerm > pid_data->outMax)
+	   pid_data->ITerm = pid_data->outMax;
+   else if(pid_data->ITerm < pid_data->outMin)
+	   pid_data->ITerm = pid_data->outMin;
 }//initialize
 
 /* pid_setControllerDirection(...)*************************************************
@@ -163,15 +175,15 @@ void initialize()
  * know which one, because otherwise we may increase the output when we should
  * be decreasing.  This is called from the constructor.
  ******************************************************************************/
-void pid_setControllerDirection(int Direction)
+void pid_setControllerDirection(pid_data_t pid_data, int Direction)
 {
-   if(inAuto && Direction !=controllerDirection)
+   if(pid_data->inAuto && Direction != pid_data->controllerDirection)
    {
-	  kp = (0 - kp);
-      ki = (0 - ki);
-      kd = (0 - kd);
+	  pid_data-> kp = (0 - pid_data->kp);
+	  pid_data-> ki = (0 - pid_data->ki);
+	  pid_data-> kd = (0 - pid_data->kd);
    }
-   controllerDirection = Direction;
+   pid_data->controllerDirection = Direction;
 }//pid_setControllerDirection
 
 /* Status Funcions*************************************************************
@@ -179,9 +191,9 @@ void pid_setControllerDirection(int Direction)
  * functions query the internal state of the PID.  they're here for display
  * purposes.  this are the functions the PID Front-end uses for example
  ******************************************************************************/
-float pid_getKp(){ return  dispKp; }
-float pid_getKi(){ return  dispKi;}
-float pid_getKd(){ return  dispKd;}
-int pid_getMode(){ return  inAuto ? PID_AUTOMATIC : PID_MANUAL;}
-int pid_getDirection(){ return controllerDirection;}
+float pid_getKp(pid_data_t pid_data){ return  pid_data->dispKp; }
+float pid_getKi(pid_data_t pid_data){ return  pid_data->dispKi;}
+float pid_getKd(pid_data_t pid_data){ return  pid_data->dispKd;}
+int pid_getMode(pid_data_t pid_data){ return  pid_data->inAuto ? PID_AUTOMATIC : PID_MANUAL;}
+int pid_getDirection(pid_data_t pid_data){ return pid_data->controllerDirection;}
 

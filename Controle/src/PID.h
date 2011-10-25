@@ -34,7 +34,7 @@ typedef struct pid_data_t {
     float dispKp;				   // * we'll hold on to the tuning parameters in user-entered
     float dispKi;				   //   format for display purposes
     float dispKd;				   //
-    int   ControllerDirection;
+    int   controllerDirection;
     float ITerm, lastInput;
     int   SampleTime;
     float outMin, outMax;
@@ -42,25 +42,25 @@ typedef struct pid_data_t {
 }* pid_data_t;
 
 //commonly used functions **************************************************************************
-pid_data_t config_data(float* Input, float* Output, float* Setpoint,
-                       float Kp, float Ki, float Kd, int ControllerDirection);
-void pid_setMode(int);                   // * sets PID to either PID_MANUAL (0) or PID_AUTOMATIC (non-0)
-void pid_compute();                      // * performs the PID calculation.
-void pid_setOutputLimits(float, float);  // * sets the output to a specific range. 0-255 by default
+pid_data_t config_data(float Input, float Output, float Setpoint,
+		               float kp, float ki, float kd, int ControllerDirection);
+void pid_setMode(pid_data_t, int);                   // * sets PID to either PID_MANUAL (0) or PID_AUTOMATIC (non-0)
+void pid_compute(pid_data_t pid_data);               // * performs the PID calculation.
+void pid_setOutputLimits(pid_data_t, float, float);  // * sets the output to a specific range. 0-255 by default
 
 
 //available but not commonly used functions ********************************************************
-void pid_setTunings(float, float, float);   //  Kp, Ki, Kd
-void pid_setControllerDirection(int);	    // * PID_DIRECT ou PID_REVERSE
-void pid_setSampleTime(int);                // * NewSampleTime
-void initialize();
+void pid_setTunings(pid_data_t,float, float, float);    // pid_data, Kp, Ki, Kd
+void pid_setControllerDirection(pid_data_t, int);	    // pid_data, PID_DIRECT ou PID_REVERSE
+void pid_setSampleTime(pid_data_t, int);                // pid_data, NewSampleTime
+void initialize(pid_data_t);
 
 //Display functions ****************************************************************
-float pid_getKp();						  // These functions query the pid for interal values.
-float pid_getKi();						  //  they were created mainly for the pid front-end,
-float pid_getKd();						  // where it's important to know what is actually
-int pid_getMode();						  //  inside the PID.
-int pid_getDirection();					  //
+float pid_getKp(pid_data_t);						  // These functions query the pid for interal values.
+float pid_getKi(pid_data_t);						  //  they were created mainly for the pid front-end,
+float pid_getKd(pid_data_t);						  // where it's important to know what is actually
+int pid_getMode(pid_data_t);						  //  inside the PID.
+int pid_getDirection(pid_data_t);					  //
 
 #endif
 
