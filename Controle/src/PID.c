@@ -17,8 +17,6 @@
 
 #include "PID.h"
 
-#define FALSE 0
-
 /*config_data (...)*********************************************************
  *    The parameters specified here are those for for which we can't set up
  *    reliable defaults, so we need to have the user set them.
@@ -88,7 +86,7 @@ void pid_setTunings(pid_data_t pid_data, float Kp, float Ki, float Kd)
 /* pid_setSampleTime(...) *********************************************************
  * sets the period, in Milliseconds, at which the calculation is performed
  ******************************************************************************/
-void pid_setSampleTime(pid_data_t pid_data, int NewSampleTime)
+void pid_setSampleTime(pid_data_t pid_data, uint16_t NewSampleTime)
 {
    if (NewSampleTime > 0)
    {
@@ -133,9 +131,9 @@ void pid_setOutputLimits(pid_data_t pid_data, float Min, float Max)
  * when the transition from manual to auto occurs, the controller is
  * automatically initialized
  ******************************************************************************/
-void pid_setMode(pid_data_t pid_data, int Mode)
+void pid_setMode(pid_data_t pid_data, uint8_t Mode)
 {
-    int newAuto = (Mode == PID_AUTOMATIC);
+    uint8_t newAuto = (Mode == PID_AUTOMATIC);
     if(newAuto == !pid_data->inAuto)
     {  /*we just went from manual to auto*/
     	pid_initialize(pid_data);
@@ -163,7 +161,7 @@ void pid_initialize(pid_data_t pid_data)
  * know which one, because otherwise we may increase the output when we should
  * be decreasing.  This is called from the constructor.
  ******************************************************************************/
-void pid_setControllerDirection(pid_data_t pid_data, int Direction)
+void pid_setControllerDirection(pid_data_t pid_data, uint8_t Direction)
 {
    if(pid_data->inAuto && Direction != pid_data->controllerDirection)
    {
@@ -182,6 +180,6 @@ void pid_setControllerDirection(pid_data_t pid_data, int Direction)
 float pid_getKp(pid_data_t pid_data){ return  pid_data->dispKp; }
 float pid_getKi(pid_data_t pid_data){ return  pid_data->dispKi;}
 float pid_getKd(pid_data_t pid_data){ return  pid_data->dispKd;}
-int pid_getMode(pid_data_t pid_data){ return  pid_data->inAuto ? PID_AUTOMATIC : PID_MANUAL;}
-int pid_getDirection(pid_data_t pid_data){ return pid_data->controllerDirection;}
+uint8_t pid_getMode(pid_data_t pid_data){ return  pid_data->inAuto ? PID_AUTOMATIC : PID_MANUAL;}
+uint8_t pid_getDirection(pid_data_t pid_data){ return pid_data->controllerDirection;}
 

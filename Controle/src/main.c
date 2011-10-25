@@ -37,14 +37,25 @@ typedef struct nav_params_t {
 	int throttle;          // Potência total dos motores, variando de 0 a 255
 }* nav_params_t;
 
+IMU_sigs_t IMU_sigs;
+nav_params_t nav_params;
+
 pid_data_t pid_angles[3];
 pid_data_t pid_pitch;
 pid_data_t pid_roll;
 pid_data_t pid_yaw;
 
+IMU_sigs_t init_IMU_sigs() { return malloc(sizeof(struct IMU_sigs_t)); }
+nav_params_t init_nav_params() { return malloc(sizeof(struct nav_params_t)); }
+
 void inicializa() {
-	int i;
+    uint8_t i;
+
     i2c_inicializa();
+
+	IMU_sigs = init_IMU_sigs();
+	nav_params = init_nav_params();
+
     for(i = 0; i < 3; ++i) {
         pid_angles[i] = malloc(sizeof(struct pid_data_t));
         pid_angles[i]->SampleTime = 100;            //default Controller Sample Time is 0.1 seconds
@@ -53,9 +64,6 @@ void inicializa() {
 	pid_roll  = pid_angles[1];
 	pid_yaw   = pid_angles[2];
 }
-
-IMU_sigs_t init_IMU_sigs() { return malloc(sizeof(struct IMU_sigs_t)); }
-IMU_sigs_t init_nav_params() { return malloc(sizeof(struct nav_params_t)); }
 
 void le_IMU(IMU_sigs_t sigs)
 {
@@ -69,9 +77,6 @@ void le_nav(nav_params_t params)
 
 int main(void)
 {
-	//IMU_sigs_t IMU_sigs = init_IMU_sigs();
-	//nav_params_t nav_params = init_nav_params();
-
 	inicializa();
 
 	//Loop principal
@@ -81,15 +86,8 @@ int main(void)
 
 		//Lê parâmetros de navegação
 		//le_nav(&nav_params);
-
-
-
 	}
 
 	// Enter an infinite loop, just incrementing a counter
-	volatile static int i = 0 ;
-	while(1) {
-		i++ ;
-	}
 	return 0;
 }
