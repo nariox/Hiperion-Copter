@@ -20,9 +20,10 @@
 // See crp.h header for more information
 __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 
-#include "PID.h"
 #include <stdlib.h>
 
+#include "PID.h"
+#include "driver_config.h"
 
 typedef struct IMU_sigs_t {
     int accel_x, accel_y, accel_z;  // Sinal tridimensional do acelerômetro
@@ -34,6 +35,9 @@ typedef struct nav_params_t {
 	int throttle;          // Potência total dos motores, variando de 0 a 255
 }* nav_params_t;
 
+void inicializa() {
+	  i2c_inicializa();
+}
 
 IMU_sigs_t init_IMU_sigs() { return malloc(sizeof(struct IMU_sigs_t)); }
 IMU_sigs_t init_nav_params() { return malloc(sizeof(struct nav_params_t)); }
@@ -72,5 +76,5 @@ int main(void)
 	while(1) {
 		i++ ;
 	}
-	return 0 ;
+	return 0;
 }
