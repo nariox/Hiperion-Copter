@@ -25,10 +25,4 @@ MUDA_NUMERO_DE_TENTATIVAS
 MUDA_SENTIDO_DE_ROTACAO
 */
 
-// Estados
-#define SEND_DATA             0x01
-#define REQUEST_DATA          0x02
-#define READ_DATA_FROM_BUFFER 0x03
-
-
  
