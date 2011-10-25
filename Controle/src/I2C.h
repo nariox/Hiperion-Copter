@@ -10,7 +10,7 @@
 
 #include "driver_config.h"
 #include "type.h"
-#include "i2c.h"
+#include "i2c_driver.h"
 
 extern volatile uint8_t I2CMasterBuffer[BUFSIZE];
 extern volatile uint8_t I2CSlaveBuffer[BUFSIZE];

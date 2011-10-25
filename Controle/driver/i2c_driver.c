@@ -21,7 +21,7 @@
 #include "driver_config.h"
 #if CONFIG_ENABLE_DRIVER_I2C==1
 #include "type.h"
-#include "i2c.h"
+#include "i2c_driver.h"
 
 volatile uint32_t I2CMasterState = I2C_IDLE;
 volatile uint32_t I2CSlaveState = I2C_IDLE;
