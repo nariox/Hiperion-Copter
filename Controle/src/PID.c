@@ -19,27 +19,16 @@
 
 #define FALSE 0
 
-/*Constructor (...)*********************************************************
+/*config_data (...)*********************************************************
  *    The parameters specified here are those for for which we can't set up
  *    reliable defaults, so we need to have the user set them.
  ***************************************************************************/
-pid_data_t config_data(float Input, float Output, float Setpoint,
-                       float kp, float ki, float kd, int ControllerDirection)
+void pid_update_data(pid_data_t pid_data, float Input, float Setpoint)
 {
-	pid_data_t pid_data = malloc(sizeof(struct pid_data_t));
 	pid_data->Input    = Input;
-	pid_data->Output   = Output;
 	pid_data->Setpoint = Setpoint;
-    pid_data->inAuto   = FALSE;
 
-	pid_setOutputLimits(pid_data, 0, 255);                //default output limit
-	pid_data->SampleTime = 100;	                //default Controller Sample Time is 0.1 seconds
-
-    pid_setControllerDirection(pid_data, ControllerDirection);
-    pid_setTunings(pid_data, kp, ki, kd);
-
-    return pid_data;
-}//config_data
+}//pid_update_data
 
 
 /* pid_compute() **********************************************************************
@@ -52,14 +41,13 @@ void pid_compute(pid_data_t pid_data)
 	if(!pid_data->inAuto) return; //não está no modo automático, ou seja, o PID está desabilitado
 
 	/*Compute all the working error variables*/
-	float input = pid_data->Input;
-	float error = pid_data->Setpoint - input;
+	float error = pid_data->Setpoint - pid_data->Input;
 	pid_data->ITerm += (pid_data->ki * error);
 	if(pid_data->ITerm > pid_data->outMax)
 		pid_data->ITerm = pid_data->outMax;
 	else if(pid_data->ITerm < pid_data->outMin)
 		pid_data->ITerm = pid_data->outMin;
-	float dInput = (input - pid_data->lastInput);
+	float dInput = (pid_data->Input - pid_data->lastInput);
 
 	/*Compute PID Output*/
 	float output = pid_data->kp * error + pid_data->ITerm- pid_data->kd * dInput;
@@ -69,7 +57,7 @@ void pid_compute(pid_data_t pid_data)
 	pid_data->Output = output;
 
 	/*Remember some variables for next time*/
-	pid_data->lastInput = input;
+	pid_data->lastInput = pid_data->Input;
 }//pid_compute
 
 
@@ -150,7 +138,7 @@ void pid_setMode(pid_data_t pid_data, int Mode)
     int newAuto = (Mode == PID_AUTOMATIC);
     if(newAuto == !pid_data->inAuto)
     {  /*we just went from manual to auto*/
-    	initialize(pid_data);
+    	pid_initialize(pid_data);
     }
     pid_data->inAuto = newAuto;
 }//pid_setMode
@@ -159,7 +147,7 @@ void pid_setMode(pid_data_t pid_data, int Mode)
  *	does all the things that need to happen to ensure a bumpless transfer
  *  from manual to automatic mode.
  ******************************************************************************/
-void initialize(pid_data_t pid_data)
+void pid_initialize(pid_data_t pid_data)
 {
    pid_data->ITerm = pid_data->Output;
    pid_data->lastInput = pid_data->Input;

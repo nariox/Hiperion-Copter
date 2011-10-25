@@ -20,10 +20,16 @@
 // See crp.h header for more information
 __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 
+/////////////////////////////////////////////////////////////////
+
 #include <stdlib.h>
 
-#include "PID.h"
+// Drivers
+#include "type.h"
+
 #include "driver_config.h"
+#include "PID.h"
+#include "I2C.h"
 
 typedef struct IMU_sigs_t {
     int accel_x, accel_y, accel_z;  // Sinal tridimensional do acelerômetro
@@ -35,8 +41,21 @@ typedef struct nav_params_t {
 	int throttle;          // Potência total dos motores, variando de 0 a 255
 }* nav_params_t;
 
+pid_data_t pid_angles[3];
+pid_data_t pid_pitch;
+pid_data_t pid_roll;
+pid_data_t pid_yaw;
+
 void inicializa() {
-	  i2c_inicializa();
+	int i;
+	i2c_inicializa();
+    for(i = 0; i < 3; ++i) {
+        pid_angles[i] = malloc(sizeof(struct pid_data_t));
+        pid_angles[i]->SampleTime = 100;            //default Controller Sample Time is 0.1 seconds
+    }
+    pid_pitch = pid_angles[0];
+	pid_roll  = pid_angles[1];
+	pid_yaw   = pid_angles[2];
 }
 
 IMU_sigs_t init_IMU_sigs() { return malloc(sizeof(struct IMU_sigs_t)); }
@@ -57,7 +76,7 @@ int main(void)
 	//IMU_sigs_t IMU_sigs = init_IMU_sigs();
 	//nav_params_t nav_params = init_nav_params();
 
-	// TODO: inicializa();
+	inicializa();
 
 	//Loop principal
 	while(1) {
