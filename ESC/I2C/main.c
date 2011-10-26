@@ -57,7 +57,7 @@ void main( void )
   /* DDRB  = 0xFF; // Set to output
      PORTB = 0x55; // Startup pattern */
 
-  DDRC  = ~((1 << 0) | (1 << 1) | (1 << 2)); //Bits 0-2 como entrada
+  DDRC  = ~((1 << 0) | (1 << 1) | (1 << 2)); //Bits 
 
   // Own TWI slave address
   TWI_slaveAddress     = (0x10<<TWI_ADR_BITS);
