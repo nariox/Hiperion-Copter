@@ -21,17 +21,17 @@
 *****************************************************************************/
 
 #include "BLDC.h"
-#include "TWI_slave.h"
 
 #include <ioavr.h>
 #include <inavr.h>
 
-
-//! Tabela com a ordem de excitação
+//! Array of power stage enable signals for each commutation step.
 unsigned char driveTable[6];
-//! Tabela com o canal do A/D a ser usado
+
+//! Array of ADC channel selections for each commutation step.
 unsigned char ADMUXTable[6];
-//! Tabela com os atrasos para a partida
+
+//! Array holding the intercommutation delays used during startup.
 unsigned int startupDelays[STARTUP_NUM_COMMUTATIONS];
 
 /*! \brief Filtered commutation timer variable and speed indicator.
@@ -92,7 +92,6 @@ void main(void)
   InitPorts();
   InitTimers();
   InitADC();
-  InitTWI();
   MakeTables();
   InitAnalogComparator();
 
@@ -168,22 +167,28 @@ static void ResetHandler(void)
 }
 
 
-// Inicializa portas
+/*! \brief Initializes I/O ports.
+ *
+ *  Initializes I/O ports.
+ */
 static void InitPorts(void)
 {
-  // Inicia DRIVE_DDR para excitar o motor
+  // Init DRIVE_DDR for motor driving.
   DRIVE_DDR = (1 << UL) | (1 << UH) | (1 << VL) | (1 << VH) | (1 << WL) | (1 << WH);
 
-  // Designa PD5 como saida do PWM
+  // Init PORTD for PWM on PD5.
   DDRD = (1 << PD5);
 
-  // Desativa os buffers das entradas dos ADC
+  // Disable digital input buffers on ADC channels.
   DIDR0 = (1 << ADC4D) | (1 << ADC3D) | (1 << ADC2D) | (1 << ADC1D) | (1 << ADC0D);
-
-  // PC0-2 definem o número do motor
-  DDRC  = ~((1 << 0) | (1 << 1) | (1 << 2)); //Bits 0-2 como entrada
 }
 
+
+/*! \brief Initializes timers (for commutation timing and PWM).
+ *
+ *  This function initializes Timer/counter0 for PWM operation for motor speed control
+ *  and Timer/counter1 for commutation timing.
+ */
 static void InitTimers(void)
 {
   // Set up Timer/counter0 for PWM, output on OCR0B, OCR0A as TOP value, prescaler = 1.
@@ -197,20 +202,12 @@ static void InitTimers(void)
   TCCR1B = (1 << CS11) | (0 << CS10);
 }
 
-static void InitTWI(void)
-{
 
-  // PD0-2 sao lidas como entradas
-  TWI_slaveAddress = 0x10 + 0b00000111 & PORTD;
-
-  // Inicializa modulo TWI como escravo
-  TWI_Slave_Initialise( (unsigned char)((TWI_slaveAddress<<TWI_ADR_BITS) | (TRUE<<TWI_GEN_BIT) )); 
-  
-  // Inicia o transceptor
-  TWI_Start_Transceiver();
-
-}
-
+/*! \brief Initializes the AD-converter.
+ *
+ *  This function initializes the AD-converter and makes a reading of the external
+ *  reference voltage.
+ */
 static void InitADC(void)
 {
   // First make a measurement of the external reference voltage.
@@ -241,7 +238,10 @@ static void InitAnalogComparator(void)
 }
 
 
-// Inicializa temporizador "Watchdog"
+/*! \brief Initializes the watchdog timer
+ *
+ *  This function initializes the watchdog timer for stall restart.
+ */
 static void WatchdogTimerEnable(void)
 {
   __disable_interrupt();
@@ -250,11 +250,15 @@ static void WatchdogTimerEnable(void)
   WDTCSR |= (1 << WDCE) | (1 << WDE);
 
   WDTCSR = (1 << WDIF) | (1 << WDIE) | (1 << WDE) | (1 << WDP2);
-
+  __enable_interrupt();
 }
 
 
-// Inicializa Tabelas 
+/*! \brief Initializes arrays for motor driving and AD channel selection.
+ *
+ *  This function initializes the arrays used for motor driving and AD channel
+ *  selection that changes for each commutation step.
+ */
 static void MakeTables(void)
 {
 #if DIRECTION_OF_ROTATION == CCW
@@ -299,9 +303,11 @@ static void MakeTables(void)
 }
 
 
-/* Sequencia de partida do motor
-   Posiciona o motor em uma posicao conhecida e entao chaveia usando a tabela de "StartupDelay 	
-*/
+/*! \brief Executes the motor startup sequence.
+ *
+ *  This function locks the motor into a known position and fires off a
+ *  commutation sequence controlled by the Timer/counter1 overflow interrupt.
+ */
 static void StartMotor(void)
 {
   unsigned char i;
@@ -310,7 +316,7 @@ static void StartMotor(void)
 
   nextCommutationStep = 0;
 
-  //Posiciona
+  //Preposition.
   DRIVE_PORT = driveTable[nextCommutationStep];
   StartupDelay(STARTUP_LOCK_DELAY);
   nextCommutationStep++;
@@ -323,7 +329,7 @@ static void StartMotor(void)
 
     ADMUX = ADMUXTable[nextCommutationStep];
 
-    // Se nextCommutationStep for par (ou zero) pega a borda de descida, se impar a de subida
+    // Use LSB of nextCommutationStep to determine zero crossing polarity.
     zcPolarity = nextCommutationStep & 0x01;
 
     nextCommutationStep++;
@@ -334,7 +340,7 @@ static void StartMotor(void)
     nextDrivePattern = driveTable[nextCommutationStep];
   }
 
-  // Comuta para malha fechada
+  // Switch to sensorless commutation.
   TCNT1 = 0;
   TIMSK1 = (1 << OCIE1A);
 
