@@ -31,6 +31,7 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 
 #include "PID.h"
 #include "I2C.h"
+#include "SSP.h"
 
 #define GPIOMaskAddress(port,bits) ((volatile uint16_t * const) (LPC_GPIO_BASE + (0x10000*(port)) + (4*(bits))))
 #define ToggleGPIOBits(port,bits) ( *GPIOMaskAddress((port),(bits)) = ~(*GPIOMaskAddress((port),(bits))) )
