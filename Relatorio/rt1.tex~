@@ -416,7 +416,7 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
 	
 % O protocolo é interessante para ser usado em aplicações embarcadas onde consumo de energia seja um fator limitante e não se necessite de altas taxas de transmissão. O foco é definido como propósito geral, baratas e auto-organizadas redes em malhas que podem ser usadas para controle industrial, sensores embarcados, coleta de dados médicos, alarmes de fumaça ou intruso, automação de prédios, automação doméstica, etc. \cite{zigbee,zigbeedeetc}.
 
-\section{Controle}\label{sec:controle}
+\section{Controle}
 
 O tema sobre controle de multirrotores voltou a ser estudado, graças a tecnologias novas e o grande interesse em \textit{VANTs}. Há diversas pesquisas já publicadas e os métodos desenvolvidos obtem resultados satisfatório, apesar de não haver o estabelecimento de uma teoria clássica especificamente para multirrotores. Abaixo são relatados alguns trabalhos desenvolvidos com esse tema que propõem diferentes abordagens para essa tarefa.
 
@@ -682,29 +682,13 @@ transforma.}''\\
 
 Plataformas de desenvolvimento de veículos voadores autônomos são interessantes por permitirem a implementação de algoritmos e aplicativos de forma simples e rápida. Consegue-se isto isolando a aplicação dos outros módulos envolvidos no desenvolvimento de um multirrotor.
 
+\section{Resultados}
 
 \section{Fase do projeto}
 
-    O projeto encontra-se na fase de desenvolvimento do protótipo. Todo o material teórico foi coletado e os componentes foram comprados.
-    Os ESCs estão em fase final de prototipagem. Toda a teoria necessária foi abordada e o ESC está em fase de teste. Após validar a teorida o circuito impresso será feito de modo que possa ser utilizado no multirrotor.
-    A parte do controle está em fase inicial de desenvolvimento. O algoritmo está sendo construido. A placa que será utilizada no módulo de controle já foi devidamente estudada esperando apenas a efetivação do algoritmo teórico para transporta-lo para a placa.
-    A comunicação I2c que será utilizada entre os ESCs e o módulo de controle já foi devidamente testada e em parte está implementada. Faltando apenas a construção dos dois módulos para efetuar o último teste.
-    A estrutura ainda não está pronta devido ao fato de que alguns componentes ainda não foram entregues. Porém uma estrutura de suporte já esta montada para caso necessário de algum teste.
-    As demais partes do projeto ainda estão em desenvolvimento inicial e a maior parte dos componentes ainda não chegaram, o que acarretará em um pequeno atraso no planejamento.
-    
-    % \section{Resultados}
+Espera-se ainda, ao final deste semestre, terminar a escolha definitiva dos componentes básicos e concluir a sua compra. Dessa forma, será possível seguir o cronograma apresentado e construir o sistema todo a tempo de poder testá-lo e corrigir eventuais erros de projeto.
 
-% Ao longo deste semestre, resultados importantes foram obtidos:
-% \begin{itemize}
-%   \item definição da estrutura básica do multirrotor;
-%   \item definição da arquitetura de hardware e software da platafoma;
-%   \item definição de componentes básicos;
-%   \item formação de uma base teórica sobre a construção de multirrotores e sobre arquitetura de hardware e software de sistemas embarcados.
-% \end{itemize}
-
-% Espera-se ainda, ao final deste semestre, terminar a escolha definitiva dos componentes básicos e concluir a sua compra. Dessa forma, será possível seguir o cronograma apresentado e construir o sistema todo a tempo de poder testá-lo e corrigir eventuais erros de projeto.
-
-% Um projeto completo de engenharia apresenta grandes dificuldades. Estudantes apresentam maior facilidade para resolver problemas fechados, como provas e exercícios pela sua maior prática com estes desafios. A disciplina de projeto de formatura proporciona uma oportunidade para que os alunos aprendam por experiência como lidar com um projeto de engenharia. Apesar de ser insuficiente para um preparo completo, esta disciplina é como uma incubadora,  permitindo os alunos a sobreviver no mercado de trabalho.
+Um projeto completo de engenharia apresenta grandes dificuldades. Estudantes apresentam maior facilidade para resolver problemas fechados, como provas e exercícios pela sua maior prática com estes desafios. A disciplina de projeto de formatura proporciona uma oportunidade para que os alunos aprendam por experiência como lidar com um projeto de engenharia. Apesar de ser insuficiente para um preparo completo, esta disciplina é como uma incubadora,  permitindo os alunos a sobreviver no mercado de trabalho.
 
 \section{Considerações sobre o Curso de Graduação}
 
@@ -724,10 +708,9 @@ A implementação do módulo de controle envolve as matérias de circuitos integrado
 % (AINDA FALTA)
 % Trata-se de uma lista de material bibliográfico consultado na pesquisa e que servirá de base para a realização do trabalho. Todavia, esta lista não está vinculada à citação no texto. É elemento opcional.
 % 
-% \begin{appendix}
-  
+\appendix
 
-\chapter{Apêndice A - Comparativos entre outros multirrotores}
+\chapter{Comparativos entre outros multirrotores}
 
 Existem diversas plataformas de multirrotores no mercado. A maioria composta por quadrirrotores. Entre estes, são notáveis: Aeroquad \citeonline{aeroquad}, Ardrone\citeonline{ardrone}, Microdrones\citeonline{microdrone}, Mikrokopter\citeonline{mikrokopter}.
 
@@ -737,210 +720,14 @@ ARDrone pertence à empresa Norte-Americana Parrot que atua na área de desenvolvi
 
 Microdrones é uma empresa alemã cujo foco é o desenvolvimento de pequenas aeronaves, principalmente quadrirrotores. Possui hoje dois modelos comerciais à venda.
 
-	Mikrokopter, é uma \textit{empresa} alemã dedicada a projetos de multirrotores, dentre as empresas pesquisadas, esta apresenta a maior quantidade de combinações. Há modelos com quatro, seis e oito hélices. Há documentação de muitos componentes, inclusive uma descrição detalhada sobre o tempo de vôo para diferentes configurações. Para mais informações, conferir \cite{mikrokopter}.
-	
-	% 
+	Mikrokopter, é um \textit{website} alemão dedicado a projetos de multirrotores, dentre eles, neste \textit{website} encontra-se a maior quantidade de combinações. Há modelos com quatro, seis e oito hélices. Há documentação de muitos componentes, inclusive uma descrição detalhada sobre o tempo de vôo para diferentes configurações. Para mais informações, visite \cite{mikrokopter}.
 
-% \chapter{Manual de Construção de um Multirrotor}
+%\anexo
+
+%\chapter{Apêndices e Anexos}
 %(AINDA FALTA)
-% Anexo consiste em um texto ou documento não elaborado pelo autor, que serve de fundamentação, comprovação e ilustração. Os anexos são identificados por letras maiúsculas consecutivas, travessão e pelos respectivos títulos. É elemento opcional. 
-
+%Anexo consiste em um texto ou documento não elaborado pelo autor, que serve de fundamentação, comprovação e ilustração. Os anexos são identificados por letras maiúsculas consecutivas, travessão e pelos respectivos títulos. É elemento opcional. 
 %Se houverem mais anexos, identifique-os como Anexo B, Anexo C e assim por diante.
-% \end{appendix}
 
-\part{Segunda Parte - Manual de Construção de um Multirrotor}
-%\setcounter{chapter}{0}
-\chapter{Arquitetura}
-A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. Por isso, o software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
-
-Dessa maneira, é possível modificar o software ou o hardware pertencente a uma ou mais camadas de abstração sem se preocupar com as outras, desde que se observe a especificação das mensagens trocadas entre elas.
-
-Essas camadas ou domínios de tarefas são:
-\begin{enumerate}
-  \item Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
-  \item Camada de estabilização do vôo, responsável por garantir a estabilidade do vôo;
-  \item Camada de navegação, responsável pela velocidade e pela direção do sistema;
-  \item Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle e onde é possível acrescentar módulos personalizados.
-\end{enumerate}
-
-A figura \ref{fig.arquitsimp} dá uma visão geral da arquitetura, que será detalhada mais adiante.
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Arquitsimp.eps}
-  \caption[Arquitetura simplificada]
-  {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
-\end{figure}
-
-\section{Camada de excitação dos motores}
-\subsection{Descrição}
-
-Essa é a primeira camada, abaixo da camada de estabilização de vôo. Responsável por garantir que a rotação dos motores esteja de acordo com o determinado, por detectar e proteger os motores de sobrecorrentes e por fornecer a potência que eles necessitam para funcionar. Deve impedir que os motores queimem caso os rotores fiquem presos ou girem em aberto (sem hélices).
-
-\subsection{Componentes}
-
-É constituída pelos n motores, hélices e controladores eletrônicos de velocidade (eletronic speed controllers - ESCs), sendo n o número de rotores do multirrotor. Os ESCs, por sua vez, são constituídos por duas placas de circuito, sendo uma responsável pela lógica e a outra pelo fornecimento de potência aos motores.
-
-As hélices são presas nos eixos dos motores de forma que girem com ele. Cada motor é ligado à placa do circuito de potência do ESC correspondente, pela qual é alimentado. A placa de potência do ESC é ligada à sua placa de lógica e à bateria, a qual fornece a tensão e a corrente necessárias para o acionamento dos motores.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-      \item da camada de estabilização de vôo:
-      \begin{itemize}
-        \item rotação do motor (para cada ESC + rotor)
-      \end{itemize}
-\end{itemize}    
-        
-
-Saída:
-\begin{itemize}
-  \item para a camada de estabilização de vôo
-  \begin{itemize}
-    \item status dos motores
-  \end{itemize}
-\end{itemize}
-
-\subsection{Comportamento}
-
-O controlador eletrônico de velocidade (ESC) lê o parâmetro de rotação enviado pelo microcontrolador da camada de estabilização e aguarda um sinal do motor que indica que o enrolamento está alinhado com o campo do rotor. Quando isso ocorre, o ESC calcula o tempo ideal para o chavear a excitação do motor, espera esse tempo e realiza o chaveamento, depois do qual o ciclo recomeça.
-
-Para maiores detalhes sobre funcionamento do ESC, ver a seção \ref{sec:esc}.
-
-Abaixo, um diagrama que representa esse comportamento:
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Excit-func.eps}
-  \caption[Funcionamento do ESC]
-  {visão geral do funcionamento do ESC}\label{fig.escfunc}
-\end{figure}
-
-\section{Camada de estabilização do vôo}
-\subsection{Descrição}
-
-Responsável por processar os sinais dos sensores de estabilização (acelerômetros e giroscópios) e os parâmetros de navegação (ângulos de Euler e potência total dos motores) e gerar os parâmetros de rotação de cada motor de forma a manter a estabilidade do vôo e controlar a velocidade de deslocamento e a velocidade angular do multirrotor.
-
-\subsection{Componentes}
-
-Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M) e por uma unidade de medida inercial (IMU - inertial measurement unit), que é um circuito que contém o acelerômetros e o giroscópio tridimensionais. O microcontrolador está ligado ao microcontrolador da camada de navegação por SPI e à  IMU por $I^2C$.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-  \item da camada de navegação:
-  \begin{itemize}
-    \item ângulos de Euler e potência total dos motores (parâmetros de navegação)
-  \end{itemize}
-\end{itemize}
-Saídas:
-\begin{itemize}
-  \item para a camada de excitação dos motores
-  \begin{itemize}
-    \item rotação de cada motor
-  \end{itemize}
-  \item para a camada de navegação
-  \begin{itemize}
-    \item status dos motores
-    \item dados dos sensores de estabilização - acelerômetro e giroscópio
-  \end{itemize}
-\end{itemize}
-
-\subsection{Comportamento}
-
-A camada de estabilização age através de um laço que começa com a leitura dos parâmetros de navegação obtidos do microcontrolador daquela camada e segue com a leitura dos sinais dos sensores de estabilização, ou seja, dos acelerômetros e dos giroscópios. O próximo passo é a execução dos algoritmos PID que geram os parâmetros de rotação dos motores, parâmetros os quais são enviados aos ESCs da camada de excitação.
-
-Os algoritmos que controlam a estabilidade são PIDs não-lineares, ver a seção \ref{sec:controle} para mais detalhes. A figura \ref{fig.estabfunc} representa esse comportamento.
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Estab-func.eps}
-  \caption[Funcionamento da camada de estabilização]
-  {visão geral do funcionamento da camada de estabilização}\label{fig.estabfunc}
-\end{figure}
-
-\section{Camada de navegação}
-\subsection{Descrição}
-
-Responsável por processar os sinais dos sensores de navegação (GPS e magnetômetro) e os parâmetros de direção, velocidade e rotação e por gerar os parâmetros de navegação (ângulos de Euler e potência total dos motores) do multirrotor, de forma a fazê-lo mover-se com a direção e a velocidade pretendidas e/ou girar em torno de seu eixo vertical.
-
-\subsection{Componentes}
-
-Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M), pelo GPS, pelo magnetômetro e pelo receptor do rádio-controle. Esses sensores e o receptor são implementados como módulos e estão ligados ao microcontrolador pelo mesmo barramento SPI que o conecta aos módulos inteligentes da camada de aplicação. A ligação ao microcontrolador da camada de estabilização de vôo se dá por SPI.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entradas:
-\begin{itemize}
-  \item da camada de periféricos
-    \begin{itemize}
-      \item sinais dos sensores de navegação (GPS e magnetômetro)
-      \item parâmetros de direção, velocidade e rotação do multirrotor 
-    \end{itemize}
-  \item da camada de estabilização de vôo
-  \begin{itemize}
-    \item status dos motores
-    \item dados dos sensores de estabilização (acelerômetro e giroscópio)
-  \end{itemize}
-\end{itemize}
-
-Saída:
-\begin{itemize}
-  \item para a camada de estabilização de vôo
-  \begin{itemize}
-    \item ângulos de Euler e potência total dos motores (parâmetros de navegação)
-  \end{itemize}
-  \item para a camada de periféricos
-  \begin{itemize}
-    \item status dos motores (caso solicitado por algum módulo periférico)
-    \item dados dos sensores de estabilização - acelerômetro e giroscópio (caso solicitado por algum módulo periférico)
-  \end{itemize}
-\end{itemize}
-
-\subsubsection{Comportamento}
-
-A camada de navegação possui um laço principal que tem início com a leitura dos parâmetros de direção, velocidade e rotação, os quais são obtidos do módulo de recepção do rádio-controle e/ou podem ser também gerados na camada de periféricos. Isso abre a possibilidade de que aplicações personalizadas determinem a direção, a velocidade de translação e a rotação do multirrotor.
-
-Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS e magnetômetro). A partir desses parâmetros e sinais é realizado o processamento que gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) que são enviados para o microcontrolador da camada de estabilização. A figura \ref{fig.navfunc} representa esse comportamento.
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Navega-func.eps}
-  \caption[Funcionamento da camada de navegação]
-  {visão geral do funcionamento da camada de navegação}\label{fig.navfunc}
-\end{figure}
-
-\section{Camada de periféricos}
-\subsection{Descrição}
-
-A camada de periféricos abriga originalmente os módulos dos sensores de navegação e o módulo receptor do rádio-controle, que estão ligados entre si e ao microcontrolador da camada de navegação por um barramento $I^2C$. Essa arquitetura foi concebida para que seja possível que qualquer pessoa com o conhecimento técnico necessário crie e adicione periféricos personalizados.
-
-Esses módulos periféricos podem, inclusive, assumir a qualquer momento a tarefa de gerar os parâmetros de direção, velocidade e rotação ao lado do receptor de rádio-controle, o que abre um leque de possibilidades de projetos futuros, dentre os quais citamos: controle de altura através de sensores como barômetro ou sensor de distância ultrassônico ou a laser, evasão de colisão usando sensores de distância, rastreamento e perseguição de objeto através de um módulo multimídia inteligente e transmissão de vídeo e áudio.
-
-\subsection{Componentes}
-
-Camada expansível constituída por módulos capazes de se comunicar por $I^2C$. Os módulos implementados originalmente são os sensores de navegação, que contém o GPS e o magnetômetro, e o módulo receptor de rádio-controle.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-  \item sinal do rádio-controle
-\end{itemize}
-Saída:
-\begin{itemize}
-  \item   para a camada de navegação
-  \begin{itemize}
-    \item sinais dos sensores de navegação (GPS e magnetômetro);
-    \item parâmetros de direção, velocidade e rotação do multirrotor.
-  \end{itemize}
-\end{itemize}
-
-\subsection{Comportamento}
-
-Os sensores da camada de periféricos apenas esperam o pedido de leitura do microcontrolador da camada de navegação e/ou de algum outro módulo da própria camada. Quando isso acontece, eles provêem seus dados mais recentes.
-
-Módulos personalizados desta camada possuem comportamento que varia de acordo com suas funcionalidades. Mais detalhes devem ser obtidos da documentação dos próprios módulos.
 
 \end{document}

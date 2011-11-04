@@ -21,9 +21,11 @@
 *****************************************************************************/
 
 #include "BLDC.h"
+#include "TWI_slave.h"
 
 #include <ioavr.h>
 #include <inavr.h>
+
 
 //! Tabela com a ordem de excitação
 unsigned char driveTable[6];
@@ -90,6 +92,7 @@ void main(void)
   InitPorts();
   InitTimers();
   InitADC();
+  InitTWI();
   MakeTables();
   InitAnalogComparator();
 
@@ -168,14 +171,17 @@ static void ResetHandler(void)
 // Inicializa portas
 static void InitPorts(void)
 {
-  // Init DRIVE_DDR for motor driving.
+  // Inicia DRIVE_DDR para excitar o motor
   DRIVE_DDR = (1 << UL) | (1 << UH) | (1 << VL) | (1 << VH) | (1 << WL) | (1 << WH);
 
-  // Designa PD7 como saida do PWM
-  DDRD = (1 << PD7);
+  // Designa PD5 como saida do PWM
+  DDRD = (1 << PD5);
 
-  // Disable digital input buffers on ADC channels.
+  // Desativa os buffers das entradas dos ADC
   DIDR0 = (1 << ADC4D) | (1 << ADC3D) | (1 << ADC2D) | (1 << ADC1D) | (1 << ADC0D);
+
+  // PC0-2 definem o número do motor
+  DDRC  = ~((1 << 0) | (1 << 1) | (1 << 2)); //Bits 0-2 como entrada
 }
 
 static void InitTimers(void)
@@ -189,6 +195,20 @@ static void InitTimers(void)
 
   // Set up Timer/counter1 for commutation timing, prescaler = 8.
   TCCR1B = (1 << CS11) | (0 << CS10);
+}
+
+static void InitTWI(void)
+{
+
+  // PD0-2 sao lidas como entradas
+  TWI_slaveAddress = 0x10 + 0b00000111 & PORTD;
+
+  // Inicializa modulo TWI como escravo
+  TWI_Slave_Initialise( (unsigned char)((TWI_slaveAddress<<TWI_ADR_BITS) | (TRUE<<TWI_GEN_BIT) )); 
+  
+  // Inicia o transceptor
+  TWI_Start_Transceiver();
+
 }
 
 static void InitADC(void)
@@ -230,7 +250,7 @@ static void WatchdogTimerEnable(void)
   WDTCSR |= (1 << WDCE) | (1 << WDE);
 
   WDTCSR = (1 << WDIF) | (1 << WDIE) | (1 << WDE) | (1 << WDP2);
-  __enable_interrupt();
+
 }
 
 
