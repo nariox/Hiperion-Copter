@@ -390,26 +390,6 @@ __interrupt void MotorPWMBottom()
     // Disable Timer/Counter0 overflow ISR.
     DISABLE_ALL_TIMER0_INTS;
 
-    // Read speed reference.
-
-    // Make sure that a sample is not in progress.
-    while (ADCSRA & (1 << ADSC))
-    {
-
-    }
-    // Change channel
-    ADMUX = ADMUX_SPEED_REF;
-
-    // Start conversion manually.
-    ADCSRA |= (1 << ADSC);
-
-    // Wait for conversion to complete.
-    while((ADCSRA & (1 << ADSC)))
-    {
-
-    }
-    speedReferenceADC = ADCH;
-
     // Read voltage reference.
     // Change ADC channel.
     ADMUX = ADMUX_REF_VOLTAGE;
@@ -602,60 +582,68 @@ void StartupDelay(unsigned int delay)
 }
 
 
-
-#ifdef SPEED_CONTROL_CLOSED_LOOP
-/*! \brief Controls the PWM duty cycle based on speed set-point and current consumption.
- *
- *  This function controls the PWM duty cycle by calling a speed controller and a
- *  current controller. The speed controller signal is directly applied to the duty
- *  cycle. The current controller signal is used to limit the maximum duty cycle.
- */
-static void PWMControl(void)
-{
-  signed int speedCompensation;
-  static unsigned char currentCompensation = 0;
-  static signed int duty = STARTUP_PWM_COMPARE_VALUE;
-
-  // Run speed control only if a new speed measurement is available.
- if (speedUpdated)
-  {
-    speedCompensation = SpeedControl();
-    speedUpdated = FALSE;
-    duty += speedCompensation;
-  }
-
-  // Run current control only if a new current measurement is available.
-  if (currentUpdated)
-  {
-     currentCompensation = CurrentControl();
-     currentUpdated = FALSE;
-  }
-
- // Keep duty cycle within limits.
-  if (duty < MIN_PWM_COMPARE_VALUE)
-  {
-    duty = MIN_PWM_COMPARE_VALUE;
-  }
-  if (duty > (MAX_PWM_COMPARE_VALUE - currentCompensation))
-  {
-    duty = MAX_PWM_COMPARE_VALUE - currentCompensation;
-  }
-
-  SET_PWM_COMPARE_VALUE((unsigned char)duty);
-}
-#endif
-
-#ifdef SPEED_CONTROL_OPEN_LOOP
 static void PWMControl(void)
 {
   // Only update duty cycle if a new speed reference measurement has been made. (Done right after speed measurement is ready)
+
+  for(;;)
+  {    
+    
+    // Check if the TWI Transceiver has completed an operation.
+    if ( ! TWI_Transceiver_Busy() )                              
+    {
+      // Check if the last operation was successful
+      if ( TWI_statusReg.lastTransOK )
+      {
+        // Confere se ha algo no buffer
+        if ( TWI_statusReg.RxDataInBuf )
+        {
+          TWI_Get_Data_From_Transceiver(messageBuf, 2);         
+          // Confere se o ultimo pedido foi um General Call
+          if ( TWI_statusReg.genAddressCall )
+          {
+            // Trata o "broadcast"
+            PORTB = messageBuf[0];
+          }               
+          else // Ends up here if the last operation was a reception as Slave Address Match   
+          {
+            // Example of how to interpret a command and respond.
+            
+            // TWI_CMD_MASTER_WRITE stores the data to PORTB
+            if (messageBuf[0] == TWI_CMD_MASTER_WRITE)
+            {
+              PORTB = messageBuf[1];                            
+            }
+            // TWI_CMD_MASTER_READ prepares the data from PINB in the transceiver buffer for the TWI master to fetch.
+            if (messageBuf[0] == TWI_CMD_MASTER_READ)
+            {
+              messageBuf[0] = PINB;
+              TWI_Start_Transceiver_With_Data( messageBuf, 1 );
+            }
+          }
+        }                
+        // Apos a operacao ele reinicia o receptor
+        if ( ! TWI_Transceiver_Busy() )
+        {
+          TWI_Start_Transceiver();
+        }
+      }
+      else // Trata erro de transmissao
+      {
+        TrataErroTransI2C( TWI_Get_State_Info() );
+      }
+    }
+  }
+}
+
+
   if (speedUpdated)
   {
     // Calculate duty cycle from speed reference value.
     SET_PWM_COMPARE_VALUE(MIN_PWM_COMPARE_VALUE + speedReferenceADC * (MAX_PWM_COMPARE_VALUE - MIN_PWM_COMPARE_VALUE) / ADC_RESOLUTION);
   }
 }
-#endif
+
 
 
 /*! \brief Calculates the current speed in electrical RPM.
