@@ -2,7 +2,9 @@
 #define ITG3200_h
 
 #include <stdint.h>
-
+#include "driver_config.h"
+#include "type.h"
+#include "i2c_driver.h"
 
 int Gyro_X;
 int Gyro_Y;
@@ -16,7 +18,7 @@ float Gyro_Tempr;
 void Gyro_Init();
 void Gyro_Read(char register_addr, char * value);
 void Gyro_Write(char register_addr, char value);
-void Gyro_Update()();
+void Gyro_Update();
 void Gyro_GetX();
 void Gyro_GetY();
 void Gyro_GetZ();

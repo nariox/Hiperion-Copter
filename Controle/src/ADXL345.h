@@ -2,33 +2,24 @@
 #define ADXL345_h
 
 #include <stdint.h>
+#include "driver_config.h"
+#include "type.h"
+#include "i2c_driver.h"
 
-class cADXL345
-{
-	public:
-		char updated;
-	
-		cADXL345(char i2c_address);
-		char begin(void);
-		char read(char register_addr, char * value);
-		char write(char register_addr, char value);
-		void powerDown(void);
-		char update(void);
-		
-		float getX(void);
-		float getY(void);
-		float getZ(void);
-		
-	private:
-		char _i2c_address;
-		int16_t x;
-		int16_t y;
-		int16_t z;
-		float xg;
-		float yg;
-		float zg;
-		char value;
-};
+int Accel_X;
+int Accel_Y;
+int Accel_Z;
+float Accel_Xr;
+float Accel_Yr;
+float Accel_Zr;
+
+void Accel_Init();
+void Accel_Read(char register_addr, char * value);
+void Accel_Write(char register_addr, char value);
+void Accel_Update();
+void Accel_GetX();
+void Accel_GetY();
+void Accel_GetZ();
 
 extern cADXL345 accelerometer;
 //**********************************************************

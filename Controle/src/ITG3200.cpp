@@ -54,9 +54,9 @@ void Gyro_Init()
 void Gyro_Read(char register_addr, char * value){
 	I2CWriteLength = 2;
 	I2CReadLength = 1;
-	I2CMasterBuffer[0] = GYRO_ADDR;
+	I2CMasterBuffer[0] = ITG_ADDR;
 	I2CMasterBuffer[1] = register_addr;
-	I2CMasterBuffer[2] = GYRO_ADDR | RD_BIT;
+	I2CMasterBuffer[2] = ITG_ADDR | RD_BIT;
 	I2CEngine();
 	*value = (I2CMasterBuffer[I2CWriteLength+2]);
 }
