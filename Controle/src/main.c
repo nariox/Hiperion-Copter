@@ -31,6 +31,8 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 
 #include "PID.h"
 #include "I2C.h"
+#include "ITG3200.h"
+#include "ADXL345.h"
 #include "SSP.h"
 
 #define GPIOMaskAddress(port,bits) ((volatile uint16_t * const) (LPC_GPIO_BASE + (0x10000*(port)) + (4*(bits))))
@@ -67,18 +69,21 @@ nav_params_t init_nav_params() { return malloc(sizeof(struct nav_params_t)); }
 uint8_t still_running;
 
 void inicializa() {
-    uint8_t i;
+	uint8_t i;
 
-    i2c_inicializa();
+	I2CInit();
+	Accel_Init();
+	Gyro_Init();
 
 	IMU_sigs = init_IMU_sigs();
 	nav_params = init_nav_params();
 
-    for(i = 0; i < 3; ++i) {
-        pid_angles[i] = malloc(sizeof(struct pid_data_t));
-        pid_angles[i]->SampleTime = Tamostragem;            //default Controller Sample Time is 0.1 seconds
-    }
-    pid_pitch = pid_angles[0];
+	for(i = 0; i < 3; ++i) {
+		pid_angles[i] = malloc(sizeof(struct pid_data_t));
+		pid_angles[i]->SampleTime = Tamostragem;            //default Controller Sample Time is 0.1 seconds
+	}
+	
+	pid_pitch = pid_angles[0];
 	pid_roll  = pid_angles[1];
 	pid_yaw   = pid_angles[2];
 
@@ -97,10 +102,8 @@ void inicializa() {
 
 void le_IMU(IMU_sigs_t sigs)
 {
-    //TODO: implementar
-    //O IMU é esse http://www.sparkfun.com/products/10121
-    //Ele já tem uma biblioteca
-    //https://github.com/a1ronzo/6DOF-Digital
+	Gyro_Update();
+	Accel_Update();
 }
 
 void le_nav(nav_params_t params)

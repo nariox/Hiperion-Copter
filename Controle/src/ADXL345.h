@@ -5,6 +5,7 @@
 #include "driver_config.h"
 #include "type.h"
 #include "i2c_driver.h"
+#include "I2C.h"
 
 int Accel_X;
 int Accel_Y;
@@ -14,20 +15,12 @@ float Accel_Yr;
 float Accel_Zr;
 
 void Accel_Init();
-void Accel_Read(char register_addr, char * value);
-void Accel_Write(char register_addr, char value);
 void Accel_Update();
 void Accel_GetX();
 void Accel_GetY();
 void Accel_GetZ();
 
 extern cADXL345 accelerometer;
-//**********************************************************
-//
-//                  	Macros
-//
-//**********************************************************
-
 
 //**********************************************************
 //

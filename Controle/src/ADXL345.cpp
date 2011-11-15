@@ -19,10 +19,10 @@ void Accel_Init()
 {
 
 	//Put the accelerometer in MEASURE mode
-	Accel_Write(POWER_CTL, MEASURE);
+	I2C_write(ADXL_ADDR, POWER_CTL, MEASURE);
 	
 	//Set the Range to +/- 4G
-	Accel_Write(DATA_FORMAT, RANGE_0);
+	I2C_write(ADXL_ADDR, DATA_FORMAT, RANGE_0);
 	
 	//default ADXL345 rate is 100 Hz. Perfect!
 }
@@ -33,31 +33,7 @@ void Accel_Init()
 //post: value contains the value of the register that was Accel_Read
 //returns: 1-Success
 //		   TWSR-Failure (Check out twi.h for TWSR error codes)
-//usage: status = accelerometer.Accel_Read(DEVID, &value); //value is created as an 'int' in main.cpp
-void Accel_Accel_Read(char register_addr, char * value){
-	I2CWriteLength = 2;
-	I2CReadLength = 1;
-	I2CMasterBuffer[0] = ADXL_ADDR;
-	I2CMasterBuffer[1] = register_addr;
-	I2CMasterBuffer[2] = ADXL_ADDR | RD_BIT;
-	I2CEngine();
-	*value = (I2CMasterBuffer[I2CWriteLength+2]);
-}
-
-//Write a value to a register
-//pre: register_addre is the register to Accel_Write to
-//	   value is the value to place in the register
-//returns: 1-Success
-//		   TWSR- Failure
-//usage status=accelerometer.Accel_Write(register_addr, value);
-void Accel_Write(char register_addr, char value){
-	I2CWriteLength = 2;
-	I2CReadLength = 1;
-	I2CMasterBuffer[0] = ADXL_ADDR;
-	I2CMasterBuffer[1] = register_addr;
-	I2CMasterBuffer[2] = value;
-	I2CEngine();
-}
+//usage: status = accelerometer.I2C_read(ADXL_ADDR, DEVID, &value); //value is created as an 'int' in main.cpp
 
 //Reads the x,y and z registers and stores the contents into x,y and z variables
 //returns 1
@@ -68,16 +44,16 @@ void Accel_Update(void)
 {
 	char aux0=0,aux1=0;
 
-	Accel_Read(DATAX0, &aux0);
-	Accel_Read(DATAX1, &aux1);
+	I2C_read(ADXL_ADDR, DATAX0, &aux0);
+	I2C_read(ADXL_ADDR, DATAX1, &aux1);
 	Accel_X = (aux1<<8)|aux0;
 	
-	Accel_Read(DATAY0, &aux0);
-	Accel_Read(DATAY1, &aux1);
+	I2C_read(ADXL_ADDR, DATAY0, &aux0);
+	I2C_read(ADXL_ADDR, DATAY1, &aux1);
 	Accel_Y = (aux1<<8)|aux0;
 
-	Accel_Read(DATAZ0, &aux0);
-	Accel_Read(DATAZ1, &aux1);
+	I2C_read(ADXL_ADDR, DATAZ0, &aux0);
+	I2C_read(ADXL_ADDR, DATAZ1, &aux1);
 	Accel_Z = (aux1<<8)|aux0;
 }
 

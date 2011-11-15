@@ -15,7 +15,7 @@
 extern volatile uint8_t I2CMasterBuffer[BUFSIZE];
 extern volatile uint8_t I2CSlaveBuffer[BUFSIZE];
 extern volatile uint32_t I2CReadLength, I2CWriteLength;
-
-void i2c_inicializa();
+void I2C_read(char sla_addr, char reg_addr, char * value);
+void I2C_write(char sla_addr, char reg_addr, char value);
 
 #endif /* I2C_H_ */
