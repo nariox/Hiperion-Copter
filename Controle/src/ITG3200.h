@@ -16,8 +16,6 @@ float Gyro_Zr;
 float Gyro_Tempr;
 
 void Gyro_Init();
-void Gyro_Read(char register_addr, char * value);
-void Gyro_Write(char register_addr, char value);
 void Gyro_Update();
 void Gyro_GetX();
 void Gyro_GetY();
