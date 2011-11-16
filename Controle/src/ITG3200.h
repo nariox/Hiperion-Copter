@@ -6,6 +6,12 @@
 #include "type.h"
 #include "i2c_driver.h"
 
+typedef struct gyro_data_t {
+    int x, y, z;     // Sinal tridimensional do giroscópio
+    int temp;        // Temperatura do giroscópio
+}* gyro_data_t;
+
+/* TODO: remover
 int Gyro_X;
 int Gyro_Y;
 int Gyro_Z;
@@ -14,13 +20,16 @@ float Gyro_Xr;
 float Gyro_Yr;
 float Gyro_Zr;
 float Gyro_Tempr;
+*/
 
 void Gyro_Init();
 void Gyro_Update();
+/* TODO: remover
 void Gyro_GetX();
 void Gyro_GetY();
 void Gyro_GetZ();
-void Gyro_GetTemp();
+*/
+float Gyro_GetTemp(gyro_data_t gyro_data);
 
 /* ************************ Register map for the ITG3200 ****************************/
 #define ITG_ADDR	0xD0 //0xD0 if tied low, 0xD2 if tied high

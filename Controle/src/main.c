@@ -47,11 +47,6 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 
 #define Tamostragem 100             // O tempo de amostragem em ms
 
-/*typedef struct IMU_sigs_t {
-    int accel_x, accel_y, accel_z;  // Sinal tridimensional do acelerômetro
-    int giro_x, giro_y, giro_z;     // Sinal tridimensional da IMU
-}* IMU_sigs_t; */
-
 typedef struct nav_params_t {
 	int pitch, roll, yaw;  // Ângulos de Euler, variando de -128 a 127
 	int throttle;          // Potência total dos motores, variando de 0 a 255

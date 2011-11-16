@@ -40,21 +40,21 @@ void Accel_Init()
 //usage: accelerometer.update();
 //Note: update must be called before using the getX, getY or getZ functions in order
 //      to obtain the most recent values from the accelerometer
-void Accel_Update(void)
+void Accel_Update(accel_data_t accel_data)
 {
 	char aux0=0,aux1=0;
 
 	I2C_read(ADXL_ADDR, DATAX0, &aux0);
 	I2C_read(ADXL_ADDR, DATAX1, &aux1);
-	Accel_X = (aux1<<8)|aux0;
+	accel_data.x = (aux1<<8)|aux0;
 	
 	I2C_read(ADXL_ADDR, DATAY0, &aux0);
 	I2C_read(ADXL_ADDR, DATAY1, &aux1);
-	Accel_Y = (aux1<<8)|aux0;
+	accel_data.y = (aux1<<8)|aux0;
 
 	I2C_read(ADXL_ADDR, DATAZ0, &aux0);
 	I2C_read(ADXL_ADDR, DATAZ1, &aux1);
-	Accel_Z = (aux1<<8)|aux0;
+	accel_data.z = (aux1<<8)|aux0;
 }
 
 /*
@@ -63,6 +63,7 @@ The conversion is based on a +/-4G range.
 If range is changed, make sure to update the scaling in the get functions
 usage: printf("Xg = %1.3fg", (double)accelerometer.getX()
 */
+/* TODO: remover
 void Accel_GetX(void)
 {
 	Accel_Xr = (float)Accel_X*0.0078;	
@@ -77,3 +78,4 @@ void Accel_GetZ(void)
 {
 	Accel_Zr = (float)Accel_Z*0.0078;
 }
+*/
