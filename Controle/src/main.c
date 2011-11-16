@@ -28,7 +28,6 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 #include "timer16.h"
 #include "gpio.h"
 #include "type.h"
-#include "debug.h"
 
 // Libraries
 #include "PID.h"
@@ -125,9 +124,6 @@ int main(void)
 	Gyro_GetX();
 	Gyro_GetY();
 	Gyro_GetZ();
-	
-	debug_puts("IMU GX: %1.3f GY: %1.3f GZ: %1.3f\n",Gyro_Xr,Gyro_Yr,Gyro_Zr);
-	debug_puts("IMU AX: %1.3f AY: %1.3f AZ: %1.3f\n",Accel_Xr,Accel_Yr,Accel_Zr);
 
 	//Lê parâmetros de navegação
 	//le_nav();
