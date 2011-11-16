@@ -51,16 +51,19 @@ typedef struct nav_params_t {
 	int throttle;          // Potência total dos motores, variando de 0 a 255
 }* nav_params_t;
 
-//IMU_sigs_t IMU_sigs;
 nav_params_t nav_params;
+gyro_data_t gyro_data;
+accel_data_t accel_data;
 
 pid_data_t pid_angles[3];
 pid_data_t pid_pitch;
 pid_data_t pid_roll;
 pid_data_t pid_yaw;
 
-//IMU_sigs_t init_IMU_sigs() { return malloc(sizeof(struct IMU_sigs_t)); }
 nav_params_t init_nav_params() { return malloc(sizeof(struct nav_params_t)); }
+gyro_data_t init_gyro_data() { return malloc(sizeof(struct gyro_data_t)); }
+accel_data_t init_accel_data() { return malloc(sizeof(struct accel_data_t)); }
+pid_data_t init_pid_data() { return malloc(sizeof(struct pid_data_t)); }
 
 uint8_t still_running;
 
@@ -71,13 +74,21 @@ void inicializa() {
 	    //TODO: sinalizar o erro de alguma forma no futuro
 	    while ( 1 );                /* Fatal error */
 	}
-	Accel_Init();
-	Gyro_Init();
+	Gyro_Init();     //Inicializa o giroscópio
+	Accel_Init();    //Inicializa o acelerômetro
 
+	//Inicializa a estrutura de dados dos parâmetros de navegação
 	nav_params = init_nav_params();
 
+	//Inicializa a estrutura de dados do giroscópio
+	gyro_data = init_gyro_data();
+
+	//Inicializa a estrutura de dados do acelerômetro
+	accel_data = init_accel_data();
+
+	//Inicializa as estruturas de dados dos PIDs
 	for(i = 0; i < 3; ++i) {
-		pid_angles[i] = malloc(sizeof(struct pid_data_t));
+		pid_angles[i] = init_pid_data();
 		pid_angles[i]->SampleTime = Tamostragem;            //default Controller Sample Time is 0.1 seconds
 	}
 	
@@ -119,13 +130,8 @@ int main(void)
 	while(1) {
 	still_running = TRUE;
 	//Lê sinais dos sensores
-	/*le_IMU();
-	Accel_GetX();
-	Accel_GetY();
-	Accel_GetZ();
-	Gyro_GetX();
-	Gyro_GetY();
-	Gyro_GetZ();*/
+	Gyro_Update(gyro_data);
+	Accel_Update(accel_data);
 
 	//Lê parâmetros de navegação
 	//le_nav();

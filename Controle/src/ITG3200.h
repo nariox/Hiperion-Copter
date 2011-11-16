@@ -23,7 +23,7 @@ float Gyro_Tempr;
 */
 
 void Gyro_Init();
-void Gyro_Update();
+void Gyro_Update(gyro_data_t gyro_data);
 /* TODO: remover
 void Gyro_GetX();
 void Gyro_GetY();

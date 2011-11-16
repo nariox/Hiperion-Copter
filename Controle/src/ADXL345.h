@@ -21,7 +21,7 @@ float Accel_Zr;
 */
 
 void Accel_Init();
-void Accel_Update();
+void Accel_Update(accel_data_t accel_data);
 /* TODO: remover
 void Accel_GetX();
 void Accel_GetY();
