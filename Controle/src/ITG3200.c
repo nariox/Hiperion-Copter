@@ -10,14 +10,13 @@
 */
 
 #include "ITG3200.h"
-#include <avr/io.h>
 #include <stdlib.h>
 
 #include "driver_config.h"
 #include "target_config.h"
 
 #include "type.h"
-#include "i2c.h"
+#include "I2C.h"
 
 extern volatile uint32_t I2CCount;
 extern volatile uint8_t I2CMasterBuffer[BUFSIZE];
