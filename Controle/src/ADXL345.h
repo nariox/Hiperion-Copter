@@ -7,12 +7,18 @@
 #include "i2c_driver.h"
 #include "I2C.h"
 
+typedef struct accel_data_t {
+    int x, y, z;  // Sinal tridimensional do acelerômetro
+}* accel_data_t;
+
 int Accel_X;
 int Accel_Y;
 int Accel_Z;
+/* TODO: remover
 float Accel_Xr;
 float Accel_Yr;
 float Accel_Zr;
+*/
 
 void Accel_Init();
 void Accel_Update();

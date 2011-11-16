@@ -49,25 +49,25 @@ void Gyro_Init()
 //usage: gyro.update();
 //Note: update must be called before using the getX, getY or getZ functions in order
 //      to obtain the most recent values from the gyro
-void Gyro_Update()
+void Gyro_Update(gyro_data_t gyro_data)
 {
 	char aux0=0,aux1=0;
 
 	I2C_read(ITG_ADDR, GYRO_XOUT_H, &aux1);
 	I2C_read(ITG_ADDR, GYRO_XOUT_L, &aux0);
-	Gyro_X = (aux1<<8)|aux0;
+	gyro_data.x = (aux1<<8)|aux0;
 	
 	I2C_read(ITG_ADDR, GYRO_YOUT_H, &aux1);
 	I2C_read(ITG_ADDR, GYRO_YOUT_L, &aux0);
-	Gyro_Y = (aux1<<8)|aux0;
+	gyro_data.y = (aux1<<8)|aux0;
 
 	I2C_read(ITG_ADDR, GYRO_ZOUT_H, &aux1);
 	I2C_read(ITG_ADDR, GYRO_ZOUT_L, &aux0);
-	Gyro_Z = (aux1<<8)|aux0;
+	gyro_data.z = (aux1<<8)|aux0;
 
 	I2C_read(ITG_ADDR, TEMP_OUT_H, &aux1);
 	I2C_read(ITG_ADDR, TEMP_OUT_L, &aux0);
-	Gyro_Temp = (aux1<<8)|aux0;
+	gyro_data.temp = (aux1<<8)|aux0;
 }
 
 /*
@@ -75,6 +75,7 @@ get functions return the g value of the specified axis
 usage: printf("Xg = %1.3fg", (double)gyro.getX()
 */
 
+/* TODO: remover
 void Gyro_GetX()
 {
 	Gyro_Xr = (float)Gyro_X/14.375;
@@ -89,10 +90,11 @@ void Gyro_GetZ()
 {
 	Gyro_Zr = (float)Gyro_Z/14.375;
 }
+*/
 
-void Gyro_GetTemp()
+float Gyro_GetTemp(gyro_data_t gyro_data)
 {
-	Gyro_Temp = -13200-Gyro_Temp;	//Get the offset temp
-	Gyro_Tempr = (float)Gyro_Temp/280;	//Convert the offset to degree C
-	Gyro_Tempr += 35;	//Add 35 degrees C to compensate for the offset
+    int Gyro_Temp = -13200-gyro_data.temp;    //Get the offset temp
+    float Gyro_Tempr = (float)Gyro_Temp/280;    //Convert the offset to degree C
+	return Gyro_Tempr + 35;    //Add 35 degrees C to compensate for the offset
 }
