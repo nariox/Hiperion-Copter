@@ -46,15 +46,15 @@ void Accel_Update(accel_data_t accel_data)
 
 	I2C_read(ADXL_ADDR, DATAX0, &aux0);
 	I2C_read(ADXL_ADDR, DATAX1, &aux1);
-	accel_data.x = (aux1<<8)|aux0;
+	accel_data->x = (aux1<<8)|aux0;
 	
 	I2C_read(ADXL_ADDR, DATAY0, &aux0);
 	I2C_read(ADXL_ADDR, DATAY1, &aux1);
-	accel_data.y = (aux1<<8)|aux0;
+	accel_data->y = (aux1<<8)|aux0;
 
 	I2C_read(ADXL_ADDR, DATAZ0, &aux0);
 	I2C_read(ADXL_ADDR, DATAZ1, &aux1);
-	accel_data.z = (aux1<<8)|aux0;
+	accel_data->z = (aux1<<8)|aux0;
 }
 
 /*

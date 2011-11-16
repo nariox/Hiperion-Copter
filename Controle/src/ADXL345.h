@@ -22,11 +22,11 @@ float Accel_Zr;
 
 void Accel_Init();
 void Accel_Update();
+/* TODO: remover
 void Accel_GetX();
 void Accel_GetY();
 void Accel_GetZ();
-
-extern cADXL345 accelerometer;
+*/
 
 //**********************************************************
 //

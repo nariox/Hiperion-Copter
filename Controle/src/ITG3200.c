@@ -55,19 +55,19 @@ void Gyro_Update(gyro_data_t gyro_data)
 
 	I2C_read(ITG_ADDR, GYRO_XOUT_H, &aux1);
 	I2C_read(ITG_ADDR, GYRO_XOUT_L, &aux0);
-	gyro_data.x = (aux1<<8)|aux0;
+	gyro_data->x = (aux1<<8)|aux0;
 	
 	I2C_read(ITG_ADDR, GYRO_YOUT_H, &aux1);
 	I2C_read(ITG_ADDR, GYRO_YOUT_L, &aux0);
-	gyro_data.y = (aux1<<8)|aux0;
+	gyro_data->y = (aux1<<8)|aux0;
 
 	I2C_read(ITG_ADDR, GYRO_ZOUT_H, &aux1);
 	I2C_read(ITG_ADDR, GYRO_ZOUT_L, &aux0);
-	gyro_data.z = (aux1<<8)|aux0;
+	gyro_data->z = (aux1<<8)|aux0;
 
 	I2C_read(ITG_ADDR, TEMP_OUT_H, &aux1);
 	I2C_read(ITG_ADDR, TEMP_OUT_L, &aux0);
-	gyro_data.temp = (aux1<<8)|aux0;
+	gyro_data->temp = (aux1<<8)|aux0;
 }
 
 /*
@@ -94,7 +94,7 @@ void Gyro_GetZ()
 
 float Gyro_GetTemp(gyro_data_t gyro_data)
 {
-    int Gyro_Temp = -13200-gyro_data.temp;    //Get the offset temp
+    int Gyro_Temp = -13200-gyro_data->temp;    //Get the offset temp
     float Gyro_Tempr = (float)Gyro_Temp/280;    //Convert the offset to degree C
 	return Gyro_Tempr + 35;    //Add 35 degrees C to compensate for the offset
 }

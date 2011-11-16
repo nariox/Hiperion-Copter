@@ -67,11 +67,13 @@ uint8_t still_running;
 void inicializa() {
 	uint8_t i;
 
-	I2CInit();
+	if ( I2CInit( (uint32_t)I2CMASTER ) == FALSE )    /* initialize I2c */ {
+	    //TODO: sinalizar o erro de alguma forma no futuro
+	    while ( 1 );                /* Fatal error */
+	}
 	Accel_Init();
 	Gyro_Init();
 
-	IMU_sigs = init_IMU_sigs();
 	nav_params = init_nav_params();
 
 	for(i = 0; i < 3; ++i) {
@@ -96,11 +98,11 @@ void inicializa() {
 	GPIOSetDir( LED_PORT, LED_BIT, 1 );
 }
 
-void le_IMU(IMU_sigs_t sigs)
+/*void le_IMU()
 {
 	Gyro_Update();
 	Accel_Update();
-}
+}*/
 
 void le_nav(nav_params_t params)
 {
@@ -117,13 +119,13 @@ int main(void)
 	while(1) {
 	still_running = TRUE;
 	//Lê sinais dos sensores
-	le_IMU();
+	/*le_IMU();
 	Accel_GetX();
 	Accel_GetY();
 	Accel_GetZ();
 	Gyro_GetX();
 	Gyro_GetY();
-	Gyro_GetZ();
+	Gyro_GetZ();*/
 
 	//Lê parâmetros de navegação
 	//le_nav();
