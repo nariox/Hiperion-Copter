@@ -74,6 +74,11 @@ void inicializa() {
 	    //TODO: sinalizar o erro de alguma forma no futuro
 	    while ( 1 );                /* Fatal error */
 	}
+
+	GPIOInit();
+	/* Set LED port pin to output */
+	GPIOSetDir( LED_PORT, LED_BIT, 1 );
+
 	Gyro_Init();     //Inicializa o giroscópio
 	Accel_Init();    //Inicializa o acelerômetro
 
@@ -98,31 +103,26 @@ void inicializa() {
 
 	//Setup timer
 	/* Initialize 16-bit timer 0. TIME_INTERVAL is defined as 10mS */
-	init_timer16(0, Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
+	init_timer16(0, 100*Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
 	/* Enable the TIMER0 Interrupt */
 	NVIC_EnableIRQ(TIMER_16_0_IRQn);
 	/* Enable timer 0. */
 	enable_timer16(0);
 	/* Initialize GPIO (sets up clock) */
-	GPIOInit();
-	/* Set LED port pin to output */
-	GPIOSetDir( LED_PORT, LED_BIT, 1 );
+	//delayMs(0, 2000);
 }
-
-/*void le_IMU()
-{
-	Gyro_Update();
-	Accel_Update();
-}*/
 
 void le_nav(nav_params_t params)
 {
     //TODO: implementar
 }
 
+float temp=0;
+
 int main(void)
 {
 	uint8_t i;
+
 
 	inicializa();
 
@@ -132,6 +132,7 @@ int main(void)
 	//Lê sinais dos sensores
 	Gyro_Update(gyro_data);
 	Accel_Update(accel_data);
+	temp = Gyro_GetTemp(gyro_data);
 
 	//Lê parâmetros de navegação
 	//le_nav();
@@ -159,6 +160,7 @@ void TIMER16_0_IRQHandler(void)
         NVIC_DisableIRQ(TIMER_16_0_IRQn); // Desabilita a interrupção do timer,
         delayMs(0, 2000);                 // espera...
         ClrGPIOBit( LED_PORT, LED_BIT );  // Mantém o LED aceso para indicar o erro.
+        //disable_timer16(0);               // Desliga o timer 0.
     }
     if ( LPC_TMR16B0->IR & 0x01 )
         LPC_TMR16B0->IR = 1;          /* clear interrupt flag */

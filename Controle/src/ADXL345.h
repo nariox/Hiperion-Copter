@@ -8,7 +8,7 @@
 #include "I2C.h"
 
 typedef struct accel_data_t {
-    int x, y, z;  // Sinal tridimensional do acelerômetro
+	int16_t x, y, z;  // Sinal tridimensional do acelerômetro
 }* accel_data_t;
 
 int Accel_X;

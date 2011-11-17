@@ -7,8 +7,8 @@
 #include "i2c_driver.h"
 
 typedef struct gyro_data_t {
-    int x, y, z;     // Sinal tridimensional do giroscópio
-    int temp;        // Temperatura do giroscópio
+	int16_t x, y, z;     // Sinal tridimensional do giroscópio
+	int16_t temp;        // Temperatura do giroscópio
 }* gyro_data_t;
 
 /* TODO: remover
