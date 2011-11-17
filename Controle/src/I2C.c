@@ -20,7 +20,7 @@ void I2C_read(char sla_addr, char reg_addr, char * value) {
 	I2CMasterBuffer[2] = sla_addr | RD_BIT;
 	I2CEngine();
 
-	*value = I2CMasterBuffer[I2CWriteLength+2];
+	*value = I2CSlaveBuffer[0];
 	
 }
 
