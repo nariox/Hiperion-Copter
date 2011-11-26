@@ -430,17 +430,24 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
 
 \section{Controle}\label{sec:controle}
 
-O tema sobre controle de multirrotores voltou a ser estudado, graças a tecnologias novas e o grande interesse em \textit{VANTs}. Há diversas pesquisas já publicadas e os métodos desenvolvidos obtem resultados satisfatório, apesar de não haver o estabelecimento de uma teoria clássica especificamente para multirrotores. Abaixo são relatados alguns trabalhos desenvolvidos com esse tema que propõem diferentes abordagens para essa tarefa.
+O tema sobre controle de multirrotores voltou a ser estudado, graças a tecnologias novas e o grande interesse em \textit{VANTs}. Há diversas pesquisas já publicadas e os métodos desenvolvidos obtém resultados satisfatório, apesar de não haver o estabelecimento de uma teoria clássica especificamente para multirrotores. 
 
-\citeonline{modellingpid} apresenta um modelo para um quadrirotor e é desenvolvido um método de controle proporcional-integral-derivativo (PID) clássico, com quatro forças de entrada que são os empuxos gerados pelos quatro rotores.
+O controle de um veiculo multirrotor apresenta diversas diferenças em relação a sistemas lineares invariantes no tempo, que são estudados mais a fundo no curso. Primeiramente, se trata de um sistema de múltiplas entradas e múltiplas saídas, sendo que todas as entradas influenciam todas as saídas. Além disto, é um sistema não-linear e dinâmico.
 
-Em \cite{nlpid} é projetado um controlador não linear baseado no esquema clássico de controle proporcional-integral-derivativo (PID) para controlar um quadrrotor com seis graus de liberdade. A posição horizontal do quadrirotor é controlada por ações PI, enquanto a orientação e a posição vertical são controladas por algorítmos PID. A performance é verificada por testes numéricos, embora apenas os efeitos da força gravitacional sejam compensados.
+Observa-se que os motores apresentam relação não-linear entre a potência consumida e o empuxo gerado. No entanto, é uma curva monotônica, cuja derivada apresenta pequenas variações nas proximidades de qualquer ponto. Isto permite que se utilize de aproximações lineares. Foi estudada a possibilidade do uso de aproximações afins ou tabelar os valores, todavia essas opções se mostraram muito mais computacionalmente custosas e não ofereciam desempenho muito superior. Como conhecemos a região de uso do motor, foi utilizada uma solução linear de mínimos quadrados, considerando uma distribuição uniforme ao longo dos ciclos de trabalho enviáveis ao motor. 
 
-%\cite{rbfarx} sugere um modelo MIMO RBF-ARX para representar a dinâmica não-linear de um quadrirrotor e, baseando-se em um modelo ARX linearizado obtido do RBF-ARX no ponto de operação, é proposto o controle por realimentação de estado com abordagem LQR. Por fim, a proposta é aplicada num quadriotor, confirmando a validade do modelo RBF-ARX.
+O sistema também apresenta características dinâmicas e não-lineares (semelhante a um pêndulo). Dependendo dos ângulos de Euler, as forças e torques geradas pelos motores serão diferentes. Apesar das magnitudes iguais, terão direções diferentes e, portanto, suas componentes serão diferentes. Ao mesmo tempo, a componente da gravidade se mantém na mesma direção 
 
-\citeonline{visionuav} revê o modelo matemático de um quadrirotor usando a equação de Lagrange. Então é proposto um método de controle linear baseado em imagens de duas câmeras, uma no quadrrotor e outro no solo.
+Os sensores também apresentam um problema para esta aplicação Os acelerômetros medem a aceleração que o veiculo sofre e não os ângulos Os giroscópios medem apenas a velocidade de variação dos ângulos Se o veiculo estiver em movimento inercial, e possível inferir os ângulos a partir da aceleração da gravidade, mas esta situação não existe na pratica. E possível integrar as leituras do giroscópio, mas haverá um erro na leitura que se acumula com o tempo. Pode-se utilizar outros sensores para se obter leituras mais confiáveis, como \ref{visionuav} que revisa modelo matemático de um quadrirotor usando a equação de Lagrange e propõe um método de controle linear baseado em imagens de duas câmeras, uma no quadrrotor e outro no solo.
+
+Por último, o sistema apresenta diversas entradas (para cada motor) e diversas saídas (três ângulos de Euler e aceleração nesta direção). Foram conferidos alguns artigos no assunto e como que alguns produtos comerciais controlam seus motores.
+
+\citeonline{modellingpid} apresenta um modelo para um quadrirotor e é desenvolvido um método de controle proporcional-integral-derivativo (PID) clássico, com quatro forças de entrada que são os empuxos gerados pelos quatro rotores. Em \cite{nlpid} é projetado um controlador não linear baseado no esquema clássico de controle PID para controlar um quadrirotor. A posição horizontal do quadrirotor é controlada por ações PI, enquanto a orientação e a posição vertical são controladas por algorítmos PID. A performance é verificada por testes numéricos, embora apenas os efeitos da força gravitacional sejam compensados.
 
 \citeonline{fuzzycontrol} formula um sistema de controle inteligente de quadrrotores baseado na lógica fuzzy. As entradas para o sistemas são o valores desejados para altura e os ângulos em relação aos três eixos de referência que passam pelo centro de massa, e as saídas são as potências de cada um dos quatro rotores para se atender à especificação. Por fim, são feitas simulações para validar a eficiência da estratégia de controle.
+
+As variáveis criadas serão denominadas A, B, C e D. Blablablá explicar o funcionamento do controle 
+
 
 \section{Considerações finais}
 
