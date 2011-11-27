@@ -4,6 +4,7 @@
 \usepackage[alf]{abntcite}
 %\usepackage[alf,iso-690-1987}{abntcite}
 \usepackage{graphicx}
+\usepackage[section]{placeins}
 
 \renewcommand{\ABNTbibliographyname}{Referências}
 
@@ -157,10 +158,10 @@ As camadas são:
   \item Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle, e onde é possível acrescentar módulos personalizados.
 \end{enumerate}
 
-A figura \ref{fig.arquitsimp} dá uma visão geral da arquitetura, que será detalhada mais adiante.
+A figura \ref{fig.arquitsimp} apresenta uma visão geral da arquitetura, que será detalhada mais adiante:
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=4in]{./Figuras/Arquitsimp.eps}
+  \includegraphics[width=6in]{./Figuras/Arquitsimp.eps}
   \caption[Arquitetura simplificada]
   {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
 \end{figure}
@@ -539,27 +540,25 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
 Sensores de distância podem ser utilizados para diversas funções em veículos voadores, como evitar colisões, medir distâncias ou velocidades. Para cada tipo de aplicação, deve-se considerar o ângulo de visada (que é a abertura onde o sensor consegue detectar obstáculos), distância máxima detectável, preço e precisão. 
 
 \subsubsection{Sensores de Infravermelhos}
-Sensores infravermelhos sao sensores de baixo custo que detectam a reflexão de raios infravermelhos. 
+
+Sensores infravermelhos são sensores de baixo custo que detectam a reflexão de raios infravermelhos. 
 
 Esses sensores são compostos por um emissor LED que emite ondas infravermelhas e um detector (fotorresistor ou fototransistor). O LED e o sensor são dispostos de forma que a luz emitida pelo LED seja refletida por objetos que se aproximam e seja detectada pelo sensor. 
 
 Esses sensores são de baixo custo e podem se utilizados também para transmissão de dados (como em controles remotos convencionais) e desacoplamento de chaves (relés ópticos). 
 
-A reflexão depende bastante das caracteristicas do material, como rugosidade e material. Isto torna o sensor impreciso e incapaz de detectar objetos escuros e opacos. Apesar de versáteis, não apresentam as características desejadas. 
+Nos conjuntos LED/Sensor pesquisados, a distância máxima está na ordem de milímetros a centímetros. A reflexão depende bastante das caracteristicas do material, como rugosidade e material. Isto torna o sensor impreciso e incapaz de detectar objetos escuros e opacos. Apesar de versáteis e baratos, estes não apresentam as características desejadas para este projeto.
 
-\subsubsection{Sensores supersonicos}
+\subsubsection{Sensores superssônicos}
 
-Ondas acusticas supersonicas apresentam qualidades interessantes. Seu comprimento de onda e da ordem de milimetros, portanto e possivel produzir transdutores bastante direcionais em dimensoes diminutas (lobo principal de poucos graus em um transdutor de menos de 1 centimetro de raio). Alem disto, tambem e grande o suficiente para apresentar resposta indiferente a rugosidade da maioria dos materiais. 
+Ondas acústicas superssônicas apresentam qualidades interessantes. Seu comprimento de onda é da ordem de milímetros, portanto é possível produzir transdutores bastante direcionais em dimensões diminutas (lobo principal de poucos graus em um transdutor de menos de 1 centímetro de raio). Ao mesmo tempo, também é grande o suficiente para apresentar resposta indiferente à rugosidade da maioria dos materiais. 
 
-Como a distancia e medida pelo tempo (ao inves da inves da intensidade como no sensor infravermelho), atenuacao tambem nao apresenta problemas a deteccao e precisao. 
+Como a distancia e medida pelo tempo (ao invés da intensidade como no sensor infravermelho), atenuação tambem não apresenta problemas a detecção e precisão. 
 
-O modulo utilizado contem ainda a logica para a geracao e deteccao dos sinais. Basta que o microcontrolador envie o sinal de acionamento (trigger) e meca o tempo ate o pino eco (echo) ficar ativo. Isto permite que o modulo central execute outras funcoes e confere maior confiabilidade aos dados, ja que ele trabalha em tempo real. 
+O módulo utilizado, modelo $HC-SR04$ produzido por diversos fabricantes, contém ainda a lógica para a geração e detecção dos sinais. Basta que o microcontrolador envie o sinal de acionamento (trigger) e meça o tempo até o pino eco (echo) ficar ativo. Isto permite que o modulo central execute outras funções e confere maior confiabilidade aos dados, já que ele trabalha em tempo real.
 
-O modulo comprado apresenta alcance de ate 4,5 metros, o que e o suficiente para controle de altura e prevencao de colisoes. No projeto foi utilizado um modulo para controle de altura, mas o codigo desenvolvido pode ser facilmente adaptado para outras funcoes. 
+O $HC-SR04$ apresenta alcance de ate $4,5$ metros e abertura de $15^o$, o que é suficiente para controle de altura e prevenção de colisões. Neste projeto foi utilizado para controle de altura, mas o código desenvolvido pode ser facilmente adaptado para outras funcoes. 
 
-Sensor a laser 
-
-estes sensores possuem boa precisao e alcance.
 % \section{Zigbee}
 	
 % 	Zigbee é um protocolo de comunicação de redes sem fio baseado na norma 802.15.4 do IEEE \cite{norma80215} cuja ênfase é o baixo consumo de energia.
