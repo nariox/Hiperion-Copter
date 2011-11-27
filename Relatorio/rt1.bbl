@@ -3,7 +3,7 @@
 \setlength{\labelsep}{0pt}\begin{thebibliography}{}
 \providecommand{\abntrefinfo}[3]{}
 \providecommand{\abntbstabout}[1]{}
-\abntbstabout{1.52 }
+\abntbstabout{1.53 }
 
 \bibitem[Aeroquad 1999]{aeroquad}
 \abntrefinfo{Aeroquad}{AEROQUAD}{1999}
@@ -111,7 +111,8 @@ ISSN 1944-9925.}
 \abntrefinfo{{Segway Inc.}}{{Segway Inc.}}{2001}
 {{Segway Inc.} \emph{About Segway - Press Release}: Site. 2001.
 URL:
-  http://www.segway.com/about-segway/media-center/press\_releases/pr\_030105c.php.
+  http://www.segway.com/about-segway/media-center/press\_releases/pr\_030105c.%
+php.
 Acesso em: 20 jun. 2011.}
 
 \bibitem[Siemeintcoski e Wackerhagen 2008]{spiusart}
