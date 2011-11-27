@@ -571,7 +571,9 @@ O $HC-SR04$ apresenta alcance de ate $4,5$ metros e abertura de $15^o$, o que é 
 
 O tema sobre controle de multirrotores voltou a ser estudado, graças a tecnologias novas e o grande interesse em \textit{VANTs}. Há diversas pesquisas já publicadas e os métodos desenvolvidos obtém resultados satisfatório, apesar de não haver o estabelecimento de uma teoria clássica especificamente para multirrotores. 
 
-O controle de um veiculo multirrotor apresenta diversas diferenças em relação a sistemas lineares invariantes no tempo, que são estudados mais a fundo no curso. Primeiramente, se trata de um sistema de múltiplas entradas e múltiplas saídas, sendo que todas as entradas influenciam todas as saídas. Além disto, é um sistema não-linear e dinâmico.
+\subsection{Características}
+
+O controle de um veículo multirrotor apresenta diversas diferenças em relação a sistemas lineares invariantes no tempo, que são estudados mais a fundo no curso. Primeiramente, se trata de um sistema de múltiplas entradas e múltiplas saídas, sendo que todas as entradas influenciam todas as saídas. Além disto, é um sistema não-linear e dinâmico.
 
 Observa-se que os motores apresentam relação não-linear entre a potência consumida e o empuxo gerado. No entanto, é uma curva monotônica, cuja derivada apresenta pequenas variações nas proximidades de qualquer ponto. Isto permite que se utilize de aproximações lineares. Foi estudada a possibilidade do uso de aproximações afins ou tabelar os valores, todavia essas opções se mostraram muito mais computacionalmente custosas e não ofereciam desempenho muito superior. Como conhecemos a região de uso do motor, foi utilizada uma solução linear de mínimos quadrados, considerando uma distribuição uniforme ao longo dos ciclos de trabalho enviáveis ao motor. 
 
@@ -585,6 +587,9 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \citeonline{fuzzycontrol} formula um sistema de controle inteligente de quadrrotores baseado na lógica fuzzy. As entradas para o sistemas são o valores desejados para altura e os ângulos em relação aos três eixos de referência que passam pelo centro de massa, e as saídas são as potências de cada um dos quatro rotores para se atender à especificação. Por fim, são feitas simulações para validar a eficiência da estratégia de controle.
 
+\subsection{Implementação}
+
+Para controlar os ângulos e aceleração vertical independentemente 
 As variáveis criadas serão denominadas A, B, C e D. Blablablá explicar o funcionamento do controle 
 
 
