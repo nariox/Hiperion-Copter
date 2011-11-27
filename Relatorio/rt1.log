@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=latex 2011.11.26)  27 NOV 2011 15:46
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=latex 2011.11.26)  27 NOV 2011 16:27
 entering extended mode
  restricted \write18 enabled.
  Source specials enabled.
@@ -248,6 +248,9 @@ File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 \Gin@req@height=\dimen113
 \Gin@req@width=\dimen114
 )
+(/usr/share/texmf/tex/latex/placeins/placeins.sty
+Package: placeins 2005/04/18  v 2.2
+)
 (/usr/share/texmf/tex/generic/babel/babel.sty
 Package: babel 2008/07/06 v3.8l The Babel package
 
@@ -264,78 +267,78 @@ Package babel Info: Making " an active character on input line 145.
 )) (./rt1.aux)
 \openout1 = `rt1.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Try loading font information for T1+ptm on input line 14.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
+LaTeX Font Info:    ... okay on input line 15.
+LaTeX Font Info:    Try loading font information for T1+ptm on input line 15.
 
 (/usr/share/texmf/tex/latex/psnfss/t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 )
 \big@size=\dimen116
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `T1/ptm/b/n' tried instead on input line 40.
-LaTeX Font Info:    Try loading font information for OT1+ztmcm on input line 40
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 41.
+LaTeX Font Info:    Try loading font information for OT1+ztmcm on input line 41
 .
 
 (/usr/share/texmf/tex/latex/psnfss/ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
-LaTeX Font Info:    Try loading font information for OML+ztmcm on input line 40
+LaTeX Font Info:    Try loading font information for OML+ztmcm on input line 41
 .
 
 (/usr/share/texmf/tex/latex/psnfss/omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
-LaTeX Font Info:    Try loading font information for OMS+ztmcm on input line 40
+LaTeX Font Info:    Try loading font information for OMS+ztmcm on input line 41
 .
 
 (/usr/share/texmf/tex/latex/psnfss/omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
-LaTeX Font Info:    Try loading font information for OMX+ztmcm on input line 40
+LaTeX Font Info:    Try loading font information for OMX+ztmcm on input line 41
 .
 
 (/usr/share/texmf/tex/latex/psnfss/omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
-LaTeX Font Info:    Try loading font information for OT1+ptm on input line 40.
+LaTeX Font Info:    Try loading font information for OT1+ptm on input line 41.
 
 (/usr/share/texmf/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 40.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 41.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 40.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 41.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 40.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 41.
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <20.74> not available
-(Font)              Font shape `T1/ptm/b/n' tried instead on input line 40.
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 41.
 LaTeX Font Info:    Font shape `T1/ptm/bx/it' in size <20.74> not available
-(Font)              Font shape `T1/ptm/b/it' tried instead on input line 40.
+(Font)              Font shape `T1/ptm/b/it' tried instead on input line 41.
  [0
 
 ] [1]
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <24.88> not available
-(Font)              Font shape `T1/ptm/b/n' tried instead on input line 52.
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 53.
 LaTeX Font Info:    Font shape `T1/ptm/bx/it' in size <24.88> not available
-(Font)              Font shape `T1/ptm/b/it' tried instead on input line 52.
+(Font)              Font shape `T1/ptm/b/it' tried instead on input line 53.
  [2
 
 
 ]
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `T1/ptm/b/n' tried instead on input line 76.
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 77.
  [3
 
 ] [4] (./rt1.lof)
@@ -360,17 +363,17 @@ LaTeX Font Info:    Font shape `T1/ptm/bx/it' in size <12> not available
 ]
 Cap\'{\i }tulo 1.
 LaTeX Font Info:    Font shape `T1/ptm/bx/n' in size <17.28> not available
-(Font)              Font shape `T1/ptm/b/n' tried instead on input line 111.
+(Font)              Font shape `T1/ptm/b/n' tried instead on input line 112.
 [10
 
 ] [11]
-LaTeX Font Info:    Try loading font information for OMS+ptm on input line 132.
+LaTeX Font Info:    Try loading font information for OMS+ptm on input line 133.
 
  (/usr/share/texmf/tex/latex/psnfss/omsptm.fd
 File: omsptm.fd 
 )
 LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 132.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 133.
  [12] [13]
 Cap\'{\i }tulo 2.
 File: ./Figuras/Arquitsimp.eps Graphic file (type eps)
@@ -382,20 +385,24 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 ] [15]
 File: ./Figuras/Excit-func.eps Graphic file (type eps)
- <./Figuras/Excit-func.eps> [16] [17]
+ <./Figuras/Excit-func.eps>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[16] [17]
 File: ./Figuras/Estab-func.eps Graphic file (type eps)
- <./Figuras/Estab-func.eps>
-[18] [19]
+ <./Figuras/Estab-func.eps> [18] [19]
 File: ./Figuras/Navega-func.eps Graphic file (type eps)
- <./Figuras/Navega-func.eps> [20] [21]
+ <./Figuras/Navega-func.eps>
+[20] [21]
 Cap\'{\i }tulo 3.
 LaTeX Font Info:    Font shape `T1/ptm/bx/it' in size <17.28> not available
-(Font)              Font shape `T1/ptm/b/it' tried instead on input line 350.
+(Font)              Font shape `T1/ptm/b/it' tried instead on input line 351.
 [22
 
 ]
 LaTeX Font Info:    Font shape `T1/ptm/bx/it' in size <14.4> not available
-(Font)              Font shape `T1/ptm/b/it' tried instead on input line 382.
+(Font)              Font shape `T1/ptm/b/it' tried instead on input line 383.
  [23]
 File: ./Figuras/ESC-chaveamento.eps Graphic file (type eps)
  <./Figuras/ESC-chaveamento.eps>
@@ -420,7 +427,7 @@ File: ./Figuras/modelo.eps Graphic file (type eps)
  <./Figuras/modelo.eps> [29]
 [30]
 
-LaTeX Warning: Reference `visionuav' on page 31 undefined on input line 551.
+LaTeX Warning: Reference `visionuav' on page 31 undefined on input line 552.
 
 [31] [32]
 Cap\'{\i }tulo 4.
@@ -446,7 +453,7 @@ Cap\'{\i }tulo 8.
 [43
 
 ]
-Overfull \hbox (7.88823pt too wide) in paragraph at lines 846--847
+Overfull \hbox (7.88823pt too wide) in paragraph at lines 847--848
 [][]\T1/ptm/m/n/12 A im-ple-men-ta-ção do mó-dulo de con-trole en-volve as ma-t
 é-rias de cir-cui-tos in-te-gra-dos PSI2451,
  []
@@ -481,12 +488,12 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 2402 strings out of 493634
- 32176 string characters out of 3150861
- 87971 words of memory out of 3500000
- 5610 multiletter control sequences out of 15000+200000
+ 2418 strings out of 493634
+ 32461 string characters out of 3150861
+ 88095 words of memory out of 3500000
+ 5622 multiletter control sequences out of 15000+200000
  47355 words of font info for 54 fonts, out of 3000000 for 9000
  831 hyphenation exceptions out of 8191
  30i,10n,41p,828b,336s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on rt1.dvi (53 pages, 118748 bytes).
+Output written on rt1.dvi (53 pages, 118764 bytes).
