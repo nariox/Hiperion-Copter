@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=latex 2011.11.26)  27 NOV 2011 15:20
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (TeX Live 2011) (format=latex 2011.11.26)  27 NOV 2011 15:46
 entering extended mode
  restricted \write18 enabled.
  Source specials enabled.
@@ -382,19 +382,12 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 ] [15]
 File: ./Figuras/Excit-func.eps Graphic file (type eps)
- <./Figuras/Excit-func.eps> [16]
+ <./Figuras/Excit-func.eps> [16] [17]
 File: ./Figuras/Estab-func.eps Graphic file (type eps)
  <./Figuras/Estab-func.eps>
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[17] [18]
+[18] [19]
 File: ./Figuras/Navega-func.eps Graphic file (type eps)
- <./Figuras/Navega-func.eps>
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[19] [20] [21]
+ <./Figuras/Navega-func.eps> [20] [21]
 Cap\'{\i }tulo 3.
 LaTeX Font Info:    Font shape `T1/ptm/bx/it' in size <17.28> not available
 (Font)              Font shape `T1/ptm/b/it' tried instead on input line 350.
@@ -496,4 +489,4 @@ Here is how much of TeX's memory you used:
  831 hyphenation exceptions out of 8191
  30i,10n,41p,828b,336s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on rt1.dvi (53 pages, 118752 bytes).
+Output written on rt1.dvi (53 pages, 118748 bytes).

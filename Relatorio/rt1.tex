@@ -149,6 +149,14 @@ A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adap
 
 Dessa maneira, é possível modificar o software ou o hardware pertencente a uma ou mais camadas de abstração sem se preocupar com as outras, desde que se observe a especificação das mensagens trocadas entre elas.
 
+A figura \ref{fig.arquitsimp} apresenta uma visão geral da arquitetura, que será detalhada mais adiante.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=6in]{./Figuras/Arquitsimp.eps}
+  \caption[Arquitetura simplificada]
+  {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
+\end{figure}
+
 As camadas são:
 \begin{enumerate}
   \item Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
@@ -156,14 +164,6 @@ As camadas são:
   \item Camada de navegação, responsável pela velocidade e pela direção do sistema;
   \item Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle, e onde é possível acrescentar módulos personalizados.
 \end{enumerate}
-
-A figura \ref{fig.arquitsimp} dá uma visão geral da arquitetura, que será detalhada mais adiante.
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Arquitsimp.eps}
-  \caption[Arquitetura simplificada]
-  {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
-\end{figure}
 
 \section{Camada de excitação dos motores}
 \subsection{Descrição}
