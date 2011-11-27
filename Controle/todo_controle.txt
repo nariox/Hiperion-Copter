@@ -1,0 +1,3 @@
+TODO:
+
+A IMU tem startup time de 50ms. Fazer o uC esperar 100 ms antes de começar a procesamento.
