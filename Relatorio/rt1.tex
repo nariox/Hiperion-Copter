@@ -154,7 +154,7 @@ As camadas são:
 \begin{enumerate}
   \item Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
   \item Camada de estabilização do vôo, responsável por garantir a estabilidade do vôo;
-  \item Camada de navegação, responsável pela velocidade e pela direção do sistema;
+  \item Camada de navegação, responsável pela velocidade e pela direção de deslocamento do sistema;
   \item Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle, e onde é possível acrescentar módulos personalizados.
 \end{enumerate}
 
@@ -173,30 +173,11 @@ Essa é a primeira camada, abaixo da camada de estabilização de vôo. Responsável 
 
 \subsection{Componentes}
 
-É constituída pelos n motores, hélices e controladores eletrônicos de velocidade (eletronic speed controllers - ESCs), sendo n o número de rotores do multirrotor. Os ESCs, por sua vez, são constituídos por duas placas de circuito, sendo uma responsável pela lógica e a outra pelo fornecimento de potência aos motores.
+É constituída pelos $n$ motores, hélices e controladores eletrônicos de velocidade ({\it eletronic speed controllers} - ESCs), sendo n o número de rotores do multirrotor. Os ESCs, por sua vez, são constituídos por duas placas de circuito, sendo uma responsável pela lógica e a outra pelo fornecimento de potência aos motores.
 
-As hélices são presas nos eixos dos motores de forma que girem com ele. Cada motor é ligado à placa do circuito de potência do ESC correspondente, pela qual é alimentado. A placa de potência do ESC é ligada à sua placa de lógica e à bateria, a qual fornece a tensão e a corrente necessárias para o acionamento dos motores.
+Cada ESC precisa comunicar-se com o microcontrolador ARM da camada de estabilização de vôo. O ESC projetado o faz através do protocolo I$^2$C, enquanto que a maior parte dos ESCs comerciais recebe um PWM como entrada. Devido ao alto custo de fabricação em baixa escala, foram usados ESCs comerciais no protótipo do multirrotor. Apenas um ESC projetado foi construído, como prova de conceito.
 
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-      \item da camada de estabilização de vôo:
-      \begin{itemize}
-        \item rotação do motor (para cada ESC + rotor)
-      \end{itemize}
-\end{itemize}    
-        
-
-Saída:
-\begin{itemize}
-  \item para a camada de estabilização de vôo
-  \begin{itemize}
-    \item status dos motores
-  \end{itemize}
-\end{itemize}
-
-\subsection{Comportamento}
+\subsection{Comportamento\label{subsec:exccomp}}
 
 O controlador eletrônico de velocidade (ESC) lê o parâmetro de rotação enviado pelo microcontrolador da camada de estabilização e aguarda um sinal do motor que indica que o enrolamento está alinhado com o campo do rotor. Quando isso ocorre, o ESC calcula o tempo ideal para o chavear a excitação do motor, espera esse tempo e realiza o chaveamento, depois do qual o ciclo recomeça.
 
@@ -206,10 +187,29 @@ Abaixo, um diagrama que representa esse comportamento:
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=4in]{./Figuras/Excit-func.eps}
+  \includegraphics[width=6in]{./Figuras/Excit-func.eps}
   \caption[Funcionamento do ESC]
   {visão geral do funcionamento do ESC}\label{fig.escfunc}
 \end{figure}
+
+\subsection{Parâmetros de entrada e saída}
+
+Entrada:
+\begin{itemize}
+      \item da camada de estabilização de vôo:
+      \begin{itemize}
+        \item rotação do motor (para cada ESC + rotor), por I$^2$C ou PWM (ver o item \ref{subsec:exccomp})
+      \end{itemize}
+\end{itemize}    
+        
+
+Saída:
+\begin{itemize}
+  \item para a camada de estabilização de vôo:
+  \begin{itemize}
+    \item estado de cada motor: funcinamento correto ou erro (apenas o ESC projetado, por I$^2$C)
+  \end{itemize}
+\end{itemize}
 
 \section{Camada de estabilização do vôo}
 \subsection{Descrição}
@@ -218,7 +218,20 @@ Responsável por processar os sinais dos sensores de estabilização (acelerômetros
 
 \subsection{Componentes}
 
-Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M) e por uma unidade de medida inercial (IMU - inertial measurement unit), que é um circuito que contém o acelerômetros e o giroscópio tridimensionais. O microcontrolador está ligado ao microcontrolador da camada de navegação por SPI e à  IMU por $I^2C$.
+Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M) e por uma unidade de medida inercial (IMU - inertial measurement unit), que é um circuito que contém o acelerômetro e o giroscópio tridimensionais. O microcontrolador está ligado ao microcontrolador da camada de navegação por UART e à  IMU por $I^2C$.
+
+\subsection{Comportamento}
+
+A camada de estabilização age através de um laço que começa com a leitura dos parâmetros de navegação obtidos do microcontrolador daquela camada e segue com a leitura dos sinais dos sensores de estabilização, ou seja, dos acelerômetros e dos giroscópios. O próximo passo é a execução dos algoritmos PID que geram os parâmetros de rotação dos motores, parâmetros os quais são enviados aos ESCs da camada de excitação.
+
+Os algoritmos que controlam a estabilidade são PIDs não-lineares, ver a seção \ref{sec:controle} para mais detalhes. A figura \ref{fig.estabfunc} representa esse comportamento.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=6in]{./Figuras/Estab-func.eps}
+  \caption[Funcionamento da camada de estabilização]
+  {visão geral do funcionamento da camada de estabilização}\label{fig.estabfunc}
+\end{figure}
 
 \subsection{Parâmetros de entrada e saída}
 
@@ -241,19 +254,6 @@ Saídas:
     \item dados dos sensores de estabilização - acelerômetro e giroscópio
   \end{itemize}
 \end{itemize}
-
-\subsection{Comportamento}
-
-A camada de estabilização age através de um laço que começa com a leitura dos parâmetros de navegação obtidos do microcontrolador daquela camada e segue com a leitura dos sinais dos sensores de estabilização, ou seja, dos acelerômetros e dos giroscópios. O próximo passo é a execução dos algoritmos PID que geram os parâmetros de rotação dos motores, parâmetros os quais são enviados aos ESCs da camada de excitação.
-
-Os algoritmos que controlam a estabilidade são PIDs não-lineares, ver a seção \ref{sec:controle} para mais detalhes. A figura \ref{fig.estabfunc} representa esse comportamento.
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Estab-func.eps}
-  \caption[Funcionamento da camada de estabilização]
-  {visão geral do funcionamento da camada de estabilização}\label{fig.estabfunc}
-\end{figure}
 
 \section{Camada de navegação}
 \subsection{Descrição}
@@ -301,7 +301,7 @@ Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS e magnetôm
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=4in]{./Figuras/Navega-func.eps}
+  \includegraphics[width=6in]{./Figuras/Navega-func.eps}
   \caption[Funcionamento da camada de navegação]
   {visão geral do funcionamento da camada de navegação}\label{fig.navfunc}
 \end{figure}
