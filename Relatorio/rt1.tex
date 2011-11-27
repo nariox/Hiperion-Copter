@@ -144,90 +144,200 @@ Este trabalho possui mais 8 capítulos, além dos anexos, referências e bibliograf
 Nos capítulos 5, 6, 7 e 8 serão apresentados os tópicos relacionados ao orçamento do projeto, cronogramas, riscos e gerência de projeto.
 Para finalizar, o capítulo 9 concluirá o trabalho, apresentado uma síntese de tudo que foi visto e, neste capítulo, também serão mostrados os resultados obtidos. Nas referências, bibliografias e nos anexos serão apresentados complementos e fontes de informações relevantes ao projeto.
 
-\chapter{Modelo da Arquitetura}
+\chapter{Arquitetura}
+A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. O software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
 
-\section{Considerações Iniciais}
+Dessa maneira, é possível modificar o software ou o hardware pertencente a uma ou mais camadas de abstração sem se preocupar com as outras, desde que se observe a especificação das mensagens trocadas entre elas.
 
-Uma parte importante do projeto Hipérion é a sua arquitetura de hardware e software. Foi escolhido uma arquitetura modular para hardware e para software.
-A idéia será separar fisicamente e funcionalmente os dispositivos eletrônicos que irão compor o sistema embarcado da VANT em vários módulos eletrônicos inteligentes independentes. Os módulos serão inteligentes porque eles deverão processar as informações obtidas do meio externo (no caso dos sensores) e também processar as informações internas (passagem de parâmetros e mensagens de \textit{feedback}). Tais módulos eletrônicos se comunicarão através de interfaces pré-definidas, seguindo uma hierarquia também pré-definida.
+As camadas são:
+\begin{enumerate}
+  \item Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
+  \item Camada de estabilização do vôo, responsável por garantir a estabilidade do vôo;
+  \item Camada de navegação, responsável pela velocidade e pela direção do sistema;
+  \item Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle, e onde é possível acrescentar módulos personalizados.
+\end{enumerate}
 
-A figura \ref{fig.arquitetura} mostra de forma simplificada a arquitetura de hardware do VANT. 
+A figura \ref{fig.arquitsimp} dá uma visão geral da arquitetura, que será detalhada mais adiante.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=4in]{./Figuras/Arquitsimp.eps}
+  \caption[Arquitetura simplificada]
+  {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
+\end{figure}
+
+\section{Camada de excitação dos motores}
+\subsection{Descrição}
+
+Essa é a primeira camada, abaixo da camada de estabilização de vôo. Responsável por garantir que a rotação dos motores esteja de acordo com o determinado, por detectar e proteger os motores de sobrecorrentes e por fornecer a potência que eles necessitam para funcionar. Deve impedir que os motores queimem caso os rotores fiquem presos ou girem em aberto (sem hélices).
+
+\subsection{Componentes}
+
+É constituída pelos n motores, hélices e controladores eletrônicos de velocidade (eletronic speed controllers - ESCs), sendo n o número de rotores do multirrotor. Os ESCs, por sua vez, são constituídos por duas placas de circuito, sendo uma responsável pela lógica e a outra pelo fornecimento de potência aos motores.
+
+As hélices são presas nos eixos dos motores de forma que girem com ele. Cada motor é ligado à placa do circuito de potência do ESC correspondente, pela qual é alimentado. A placa de potência do ESC é ligada à sua placa de lógica e à bateria, a qual fornece a tensão e a corrente necessárias para o acionamento dos motores.
+
+\subsection{Parâmetros de entrada e saída}
+
+Entrada:
+\begin{itemize}
+      \item da camada de estabilização de vôo:
+      \begin{itemize}
+        \item rotação do motor (para cada ESC + rotor)
+      \end{itemize}
+\end{itemize}    
+        
+
+Saída:
+\begin{itemize}
+  \item para a camada de estabilização de vôo
+  \begin{itemize}
+    \item status dos motores
+  \end{itemize}
+\end{itemize}
+
+\subsection{Comportamento}
+
+O controlador eletrônico de velocidade (ESC) lê o parâmetro de rotação enviado pelo microcontrolador da camada de estabilização e aguarda um sinal do motor que indica que o enrolamento está alinhado com o campo do rotor. Quando isso ocorre, o ESC calcula o tempo ideal para o chavear a excitação do motor, espera esse tempo e realiza o chaveamento, depois do qual o ciclo recomeça.
+
+Para maiores detalhes sobre funcionamento do ESC, ver a seção \ref{sec:esc}.
+
+Abaixo, um diagrama que representa esse comportamento:
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=6in]{./Figuras/arquitetura.eps}
-  \caption[Modelo de abstração]
-  {Diagrama relacionando as camadas de abstração com o Hardware}\label{fig.arquitetura}
+  \includegraphics[width=4in]{./Figuras/Excit-func.eps}
+  \caption[Funcionamento do ESC]
+  {visão geral do funcionamento do ESC}\label{fig.escfunc}
 \end{figure}
 
-As camadas principais são:
-\begin{enumerate}
-  \item Motores;
-  \item periféricos e Controle de Vôo;
-  \item controle de Navegação;
-  \item periféricos de Navegação.
-\end{enumerate}
+\section{Camada de estabilização do vôo}
+\subsection{Descrição}
 
-\section{Camada Motores}
+Responsável por processar os sinais dos sensores de estabilização (acelerômetros e giroscópios) e os parâmetros de navegação (ângulos de Euler e potência total dos motores) e gerar os parâmetros de rotação de cada motor de forma a manter a estabilidade do vôo e controlar a velocidade de deslocamento e a velocidade angular do multirrotor.
 
-A camada Motores será composta pelos motores \textit{brushless}, que serão responsáveis pelas manobras da aeronave, e pelos ESCs, que serão responsáveis pelo controle dos motores \textit{brushless}. Tal camada receberá comandos da camada superior (Periféricos e Controle de Vôo), tais como: aumentar/diminuir rotação dos motores, desligar motores ou ligar motores. Além disso, esta camada também deverá enviar mensagens de feedback para sua camada superior.
+\subsection{Componentes}
 
-\section{Camada Periféricos e Controle de Vôo}
-A camada Periféricos e Controle de Vôo será composta pelos módulos: acelerômetros, giroscópio e controle de vôo. Os módulos desta camada serão responsáveis pela estabilidade da aeronave durante as manobras de vôo (subir, descer, girar, parar, etc) e durante o repouso também. 
+Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M) e por uma unidade de medida inercial (IMU - inertial measurement unit), que é um circuito que contém o acelerômetros e o giroscópio tridimensionais. O microcontrolador está ligado ao microcontrolador da camada de navegação por SPI e à  IMU por $I^2C$.
 
-O módulo Controle de Vôo receberá comandos de navegação do módulo superior (Navegação) e deverá executar a manobra definida pelo respectivo comando. Para isso, um algoritmo de controle, inserido no módulo controle de vôo, deverá ler os valores das variáveis de vôo oriundas dos módulos acelerômetros e giroscópio e atuar nos motores de vôo, através do envio de comandos para a camada inferior (Motores de Vôo). A camada também deverá manter a estabilidade da aeronave nas situações de ausência de comandos, que poderá corresponder a uma situação de repouso ou de emergência. Além disso, mensagens de feedback também serão enviadas para sua camada superior (Controle de Navegação).
+\subsection{Parâmetros de entrada e saída}
 
-\section{Camada Controle de Navegação}
-
-A camada Controle de Navegação será composta por um único módulo: módulo de Navegação. Neste módulo estarão presentes as várias rotinas de navegação que dependerão das aplicações pretendidas para a aeronave, como por exemplo: navegação manual, navegação por GPS, etc. Esta camada receberá comandos, valores e parâmetros dos periféricos da camada superior (Periféricos de Navegação), que poderão ser:
-
+Entrada:
 \begin{itemize}
-  \item Altura, através do módulo barômetro;
-  \item posição geográfica, através do módulo GPS;
-  \item posição em relação a um alv,; através do módulo multimídia;
-  \item comandos manuais de navegação, através do módulo controle remoto.
+  \item da camada de navegação:
+  \begin{itemize}
+    \item ângulos de Euler e potência total dos motores (parâmetros de navegação)
+  \end{itemize}
+\end{itemize}
+Saídas:
+\begin{itemize}
+  \item para a camada de excitação dos motores
+  \begin{itemize}
+    \item rotação de cada motor
+  \end{itemize}
+  \item para a camada de navegação
+  \begin{itemize}
+    \item status dos motores
+    \item dados dos sensores de estabilização - acelerômetro e giroscópio
+  \end{itemize}
 \end{itemize}
 
-\section{Camada Periféricos de Navegação}
+\subsection{Comportamento}
 
-A camada Periféricos de Navegação será composta por módulos que auxiliarão um determinado tipo de navegação. Para este projeto, pretende-se criar os seguintes tipos de navegação:
+A camada de estabilização age através de um laço que começa com a leitura dos parâmetros de navegação obtidos do microcontrolador daquela camada e segue com a leitura dos sinais dos sensores de estabilização, ou seja, dos acelerômetros e dos giroscópios. O próximo passo é a execução dos algoritmos PID que geram os parâmetros de rotação dos motores, parâmetros os quais são enviados aos ESCs da camada de excitação.
 
+Os algoritmos que controlam a estabilidade são PIDs não-lineares, ver a seção \ref{sec:controle} para mais detalhes. A figura \ref{fig.estabfunc} representa esse comportamento.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=4in]{./Figuras/Estab-func.eps}
+  \caption[Funcionamento da camada de estabilização]
+  {visão geral do funcionamento da camada de estabilização}\label{fig.estabfunc}
+\end{figure}
+
+\section{Camada de navegação}
+\subsection{Descrição}
+
+Responsável por processar os sinais dos sensores de navegação (GPS e magnetômetro) e os parâmetros de direção, velocidade e rotação e por gerar os parâmetros de navegação (ângulos de Euler e potência total dos motores) do multirrotor, de forma a fazê-lo mover-se com a direção e a velocidade pretendidas e/ou girar em torno de seu eixo vertical.
+
+\subsection{Componentes}
+
+Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M), pelo GPS, pelo magnetômetro e pelo receptor do rádio-controle. Esses sensores e o receptor são implementados como módulos e estão ligados ao microcontrolador pelo mesmo barramento SPI que o conecta aos módulos inteligentes da camada de aplicação. A ligação ao microcontrolador da camada de estabilização de vôo se dá por SPI.
+
+\subsection{Parâmetros de entrada e saída}
+
+Entradas:
 \begin{itemize}
-  \item Navegação manual;
-  \item navegação por GPS;
-  %\item navegação por vídeo.
+  \item da camada de periféricos
+    \begin{itemize}
+      \item sinais dos sensores de navegação (GPS e magnetômetro)
+      \item parâmetros de direção, velocidade e rotação do multirrotor 
+    \end{itemize}
+  \item da camada de estabilização de vôo
+  \begin{itemize}
+    \item status dos motores
+    \item dados dos sensores de estabilização (acelerômetro e giroscópio)
+  \end{itemize}
 \end{itemize}
 
-A navegação manual consistirá em pilotar a aeronave através de um rádio controle. Para tanto, um módulo de controle remoto será inserido e irá criar um link de comunicação remoto entre a aeronave e o usuário que a está pilotando.
+Saída:
+\begin{itemize}
+  \item para a camada de estabilização de vôo
+  \begin{itemize}
+    \item ângulos de Euler e potência total dos motores (parâmetros de navegação)
+  \end{itemize}
+  \item para a camada de periféricos
+  \begin{itemize}
+    \item status dos motores (caso solicitado por algum módulo periférico)
+    \item dados dos sensores de estabilização - acelerômetro e giroscópio (caso solicitado por algum módulo periférico)
+  \end{itemize}
+\end{itemize}
 
-A navegação por GPS consistirá em fazer a aeronave seguir um trajeto determinado, usando informações oriundas do módulo GPS e processadas pelo módulo de navegação. Além disso, o módulo GPS também servirá como um instrumento de localização para a aeronave.
+\subsubsection{Comportamento}
 
-%A navegação por vídeo consistirá em obter uma imagem de vídeo do ambiente através do módulo multimídia e processá-la neste mesmo módulo. O resultado do processamento desta imagem será transformado em parâmetros que serão enviados para sua respectiva rotina de navegação no módulo de navegação. Pretende-se com isso fazer a nave perseguir um alvo específico ou utilizar a imagem para qualquer outra aplicação, como vigilância por exemplo.
+A camada de navegação possui um laço principal que tem início com a leitura dos parâmetros de direção, velocidade e rotação, os quais são obtidos do módulo de recepção do rádio-controle e/ou podem ser também gerados na camada de periféricos. Isso abre a possibilidade de que aplicações personalizadas determinem a direção, a velocidade de translação e a rotação do multirrotor.
 
-A comunicação entre os módulos será realizada através de interfaces $I^2C$ e SPI. A interface $SPI$ será utilizada para ligar os módulos acelerômetros e giroscópio ao módulo controle de vôo. Apesar desta interface ser destinada a topologia ponto a ponto, é possível ligar mais de dois periféricos através desta interface \cite{spiusart}.
+Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS e magnetômetro). A partir desses parâmetros e sinais é realizado o processamento que gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) que são enviados para o microcontrolador da camada de estabilização. A figura \ref{fig.navfunc} representa esse comportamento.
 
-A interface $I^2C$ ligará os módulos ESC ao módulo controle de vôo. Este tipo de interface funcionará ligando vários módulos através de um único barramento \cite{protoi2c}. , ligará os módulos da camada Periféricos de Navegação ao módulo de Navegação da camada Controle de Navegação. De forma semelhante à interface $I^2C$, a interface $CAN$ também ligará os módulos através de um barramento. As especificações desta interface encontram-se em \citeonline{protocan}.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=4in]{./Figuras/Navega-func.eps}
+  \caption[Funcionamento da camada de navegação]
+  {visão geral do funcionamento da camada de navegação}\label{fig.navfunc}
+\end{figure}
 
-Nos módulos Controle de Vôo e controle de Navegação serão utilizados os microcontroladores ARM, devido a sua boa relação custo-benefício em termos de periféricos presentes, processamento e memória de programa.
+\section{Camada de periféricos}
+\subsection{Descrição}
 
-Assim como o hardware, o software também será modular. As rotinas do software embarcado do VANT também estarão fisicamente separadas, pois estarão contidas em seus respectivos módulos e seguiram uma hierarquia pré-definida. Dessa forma, o desenvolvimento do software embarcado do VANT seguirá uma metodologia de programação semelhante à programação orientada a objetos.
+A camada de periféricos abriga originalmente os módulos dos sensores de navegação e o módulo receptor do rádio-controle, que estão ligados entre si e ao microcontrolador da camada de navegação por um barramento $I^2C$. Essa arquitetura foi concebida para que seja possível que qualquer pessoa com o conhecimento técnico necessário crie e adicione periféricos personalizados.
 
-Um sistema operacional de tempo real (RTOS) será embarcado nos módulos controle de vôo e no módulo controle de navegação. Optou-se pelo uso de um RTOS, porque pretende-se criar uma camada de software que separe as rotinas de controle e navegação das rotinas de acesso ao hardware, como proposto em \citeonline{controlrtos} . 
+Esses módulos periféricos podem, inclusive, assumir a qualquer momento a tarefa de gerar os parâmetros de direção, velocidade e rotação ao lado do receptor de rádio-controle, o que abre um leque de possibilidades de projetos futuros, dentre os quais citamos: controle de altura através de sensores como barômetro ou sensor de distância ultrassônico ou a laser, evasão de colisão usando sensores de distância, rastreamento e perseguição de objeto através de um módulo multimídia inteligente e transmissão de vídeo e áudio.
 
-%Foi feita uma pesquisa sobre os sistemas operacionais de tempo real (RTOS) disponíveis. Foi encontrado uma grande variedade de RTOS. Optou-se pelo FreeRTOS, devido às suas características mostradas em \cite{freertos}, tais como: software aberto, requisitos de tempo real, possibilidade de ser embarcado para um microcontrolador, etc.
+\subsection{Componentes}
 
-\section{Sensores}
+Camada expansível constituída por módulos capazes de se comunicar por $I^2C$. Os módulos implementados originalmente são os sensores de navegação, que contém o GPS e o magnetômetro, e o módulo receptor de rádio-controle.
 
-% falta falta falta
+\subsection{Parâmetros de entrada e saída}
 
-\subsection{Sensor de distância}
+Entrada:
+\begin{itemize}
+  \item sinal do rádio-controle
+\end{itemize}
+Saída:
+\begin{itemize}
+  \item   para a camada de navegação
+  \begin{itemize}
+    \item sinais dos sensores de navegação (GPS e magnetômetro);
+    \item parâmetros de direção, velocidade e rotação do multirrotor.
+  \end{itemize}
+\end{itemize}
 
-Sensores de distância podem ser utilizados em diversas aplicações em multirrotores, como evitar colisões ou medir distâncias e velocidades. Para cada tipo de aplicação, deve-se considerar o ângulo de visada (que é a abertura onde o sensor consegue detectar obstáculos), distância máxima detectável, preço e precisão. Abaixo segue uma lista dos sensores estudados:
+\subsection{Comportamento}
+
+Os sensores da camada de periféricos apenas esperam o pedido de leitura do microcontrolador da camada de navegação e/ou de algum outro módulo da própria camada. Quando isso acontece, eles provêem seus dados mais recentes.
+
+Módulos personalizados desta camada possuem comportamento que varia de acordo com suas funcionalidades. Mais detalhes devem ser obtidos da documentação dos próprios módulos.
 
 
-\subsubsection{Sensor supersônico}
-
-Estes sensores emitem rajadas acústicas supersônicas e calculam o tempo para o eco. Devid
 \chapter{Referencial Teórico\label{cap:referencialteorico}}
 
 \begin{flushright}{}``\emph{Navegar é preciso, viver não é preciso.}''\\
@@ -769,197 +879,90 @@ Microdrones é uma empresa alemã cujo foco é o desenvolvimento de pequenas aerona
 
 \part{Segunda Parte - Manual de Construção de um Multirrotor}
 %\setcounter{chapter}{0}
-\chapter{Arquitetura}
-A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. Por isso, o software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
 
-Dessa maneira, é possível modificar o software ou o hardware pertencente a uma ou mais camadas de abstração sem se preocupar com as outras, desde que se observe a especificação das mensagens trocadas entre elas.
+\chapter{Modelo da Arquitetura}
 
-Essas camadas ou domínios de tarefas são:
+\section{Considerações Iniciais}
+
+Uma parte importante do projeto Hipérion é a sua arquitetura de hardware e software. Foi escolhido uma arquitetura modular para hardware e para software.
+A idéia será separar fisicamente e funcionalmente os dispositivos eletrônicos que irão compor o sistema embarcado da VANT em vários módulos eletrônicos inteligentes independentes. Os módulos serão inteligentes porque eles deverão processar as informações obtidas do meio externo (no caso dos sensores) e também processar as informações internas (passagem de parâmetros e mensagens de \textit{feedback}). Tais módulos eletrônicos se comunicarão através de interfaces pré-definidas, seguindo uma hierarquia também pré-definida.
+
+A figura \ref{fig.arquitetura} mostra de forma simplificada a arquitetura de hardware do VANT. 
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=6in]{./Figuras/arquitetura.eps}
+  \caption[Modelo de abstração]
+  {Diagrama relacionando as camadas de abstração com o Hardware}\label{fig.arquitetura}
+\end{figure}
+
+As camadas principais são:
 \begin{enumerate}
-  \item Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
-  \item Camada de estabilização do vôo, responsável por garantir a estabilidade do vôo;
-  \item Camada de navegação, responsável pela velocidade e pela direção do sistema;
-  \item Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle e onde é possível acrescentar módulos personalizados.
+  \item Motores;
+  \item periféricos e Controle de Vôo;
+  \item controle de Navegação;
+  \item periféricos de Navegação.
 \end{enumerate}
 
-A figura \ref{fig.arquitsimp} dá uma visão geral da arquitetura, que será detalhada mais adiante.
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Arquitsimp.eps}
-  \caption[Arquitetura simplificada]
-  {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
-\end{figure}
+\section{Camada Motores}
 
-\section{Camada de excitação dos motores}
-\subsection{Descrição}
+A camada Motores será composta pelos motores \textit{brushless}, que serão responsáveis pelas manobras da aeronave, e pelos ESCs, que serão responsáveis pelo controle dos motores \textit{brushless}. Tal camada receberá comandos da camada superior (Periféricos e Controle de Vôo), tais como: aumentar/diminuir rotação dos motores, desligar motores ou ligar motores. Além disso, esta camada também deverá enviar mensagens de feedback para sua camada superior.
 
-Essa é a primeira camada, abaixo da camada de estabilização de vôo. Responsável por garantir que a rotação dos motores esteja de acordo com o determinado, por detectar e proteger os motores de sobrecorrentes e por fornecer a potência que eles necessitam para funcionar. Deve impedir que os motores queimem caso os rotores fiquem presos ou girem em aberto (sem hélices).
+\section{Camada Periféricos e Controle de Vôo}
+A camada Periféricos e Controle de Vôo será composta pelos módulos: acelerômetros, giroscópio e controle de vôo. Os módulos desta camada serão responsáveis pela estabilidade da aeronave durante as manobras de vôo (subir, descer, girar, parar, etc) e durante o repouso também. 
 
-\subsection{Componentes}
+O módulo Controle de Vôo receberá comandos de navegação do módulo superior (Navegação) e deverá executar a manobra definida pelo respectivo comando. Para isso, um algoritmo de controle, inserido no módulo controle de vôo, deverá ler os valores das variáveis de vôo oriundas dos módulos acelerômetros e giroscópio e atuar nos motores de vôo, através do envio de comandos para a camada inferior (Motores de Vôo). A camada também deverá manter a estabilidade da aeronave nas situações de ausência de comandos, que poderá corresponder a uma situação de repouso ou de emergência. Além disso, mensagens de feedback também serão enviadas para sua camada superior (Controle de Navegação).
 
-É constituída pelos n motores, hélices e controladores eletrônicos de velocidade (eletronic speed controllers - ESCs), sendo n o número de rotores do multirrotor. Os ESCs, por sua vez, são constituídos por duas placas de circuito, sendo uma responsável pela lógica e a outra pelo fornecimento de potência aos motores.
+\section{Camada Controle de Navegação}
 
-As hélices são presas nos eixos dos motores de forma que girem com ele. Cada motor é ligado à placa do circuito de potência do ESC correspondente, pela qual é alimentado. A placa de potência do ESC é ligada à sua placa de lógica e à bateria, a qual fornece a tensão e a corrente necessárias para o acionamento dos motores.
+A camada Controle de Navegação será composta por um único módulo: módulo de Navegação. Neste módulo estarão presentes as várias rotinas de navegação que dependerão das aplicações pretendidas para a aeronave, como por exemplo: navegação manual, navegação por GPS, etc. Esta camada receberá comandos, valores e parâmetros dos periféricos da camada superior (Periféricos de Navegação), que poderão ser:
 
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
 \begin{itemize}
-      \item da camada de estabilização de vôo:
-      \begin{itemize}
-        \item rotação do motor (para cada ESC + rotor)
-      \end{itemize}
-\end{itemize}    
-        
-
-Saída:
-\begin{itemize}
-  \item para a camada de estabilização de vôo
-  \begin{itemize}
-    \item status dos motores
-  \end{itemize}
+  \item Altura, através do módulo barômetro;
+  \item posição geográfica, através do módulo GPS;
+  \item posição em relação a um alv,; através do módulo multimídia;
+  \item comandos manuais de navegação, através do módulo controle remoto.
 \end{itemize}
 
-\subsection{Comportamento}
+\section{Camada Periféricos de Navegação}
 
-O controlador eletrônico de velocidade (ESC) lê o parâmetro de rotação enviado pelo microcontrolador da camada de estabilização e aguarda um sinal do motor que indica que o enrolamento está alinhado com o campo do rotor. Quando isso ocorre, o ESC calcula o tempo ideal para o chavear a excitação do motor, espera esse tempo e realiza o chaveamento, depois do qual o ciclo recomeça.
+A camada Periféricos de Navegação será composta por módulos que auxiliarão um determinado tipo de navegação. Para este projeto, pretende-se criar os seguintes tipos de navegação:
 
-Para maiores detalhes sobre funcionamento do ESC, ver a seção \ref{sec:esc}.
-
-Abaixo, um diagrama que representa esse comportamento:
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Excit-func.eps}
-  \caption[Funcionamento do ESC]
-  {visão geral do funcionamento do ESC}\label{fig.escfunc}
-\end{figure}
-
-\section{Camada de estabilização do vôo}
-\subsection{Descrição}
-
-Responsável por processar os sinais dos sensores de estabilização (acelerômetros e giroscópios) e os parâmetros de navegação (ângulos de Euler e potência total dos motores) e gerar os parâmetros de rotação de cada motor de forma a manter a estabilidade do vôo e controlar a velocidade de deslocamento e a velocidade angular do multirrotor.
-
-\subsection{Componentes}
-
-Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M) e por uma unidade de medida inercial (IMU - inertial measurement unit), que é um circuito que contém o acelerômetros e o giroscópio tridimensionais. O microcontrolador está ligado ao microcontrolador da camada de navegação por SPI e à  IMU por $I^2C$.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
 \begin{itemize}
-  \item da camada de navegação:
-  \begin{itemize}
-    \item ângulos de Euler e potência total dos motores (parâmetros de navegação)
-  \end{itemize}
-\end{itemize}
-Saídas:
-\begin{itemize}
-  \item para a camada de excitação dos motores
-  \begin{itemize}
-    \item rotação de cada motor
-  \end{itemize}
-  \item para a camada de navegação
-  \begin{itemize}
-    \item status dos motores
-    \item dados dos sensores de estabilização - acelerômetro e giroscópio
-  \end{itemize}
+  \item Navegação manual;
+  \item navegação por GPS;
+  %\item navegação por vídeo.
 \end{itemize}
 
-\subsection{Comportamento}
+A navegação manual consistirá em pilotar a aeronave através de um rádio controle. Para tanto, um módulo de controle remoto será inserido e irá criar um link de comunicação remoto entre a aeronave e o usuário que a está pilotando.
 
-A camada de estabilização age através de um laço que começa com a leitura dos parâmetros de navegação obtidos do microcontrolador daquela camada e segue com a leitura dos sinais dos sensores de estabilização, ou seja, dos acelerômetros e dos giroscópios. O próximo passo é a execução dos algoritmos PID que geram os parâmetros de rotação dos motores, parâmetros os quais são enviados aos ESCs da camada de excitação.
+A navegação por GPS consistirá em fazer a aeronave seguir um trajeto determinado, usando informações oriundas do módulo GPS e processadas pelo módulo de navegação. Além disso, o módulo GPS também servirá como um instrumento de localização para a aeronave.
 
-Os algoritmos que controlam a estabilidade são PIDs não-lineares, ver a seção \ref{sec:controle} para mais detalhes. A figura \ref{fig.estabfunc} representa esse comportamento.
+%A navegação por vídeo consistirá em obter uma imagem de vídeo do ambiente através do módulo multimídia e processá-la neste mesmo módulo. O resultado do processamento desta imagem será transformado em parâmetros que serão enviados para sua respectiva rotina de navegação no módulo de navegação. Pretende-se com isso fazer a nave perseguir um alvo específico ou utilizar a imagem para qualquer outra aplicação, como vigilância por exemplo.
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Estab-func.eps}
-  \caption[Funcionamento da camada de estabilização]
-  {visão geral do funcionamento da camada de estabilização}\label{fig.estabfunc}
-\end{figure}
+A comunicação entre os módulos será realizada através de interfaces $I^2C$ e SPI. A interface $SPI$ será utilizada para ligar os módulos acelerômetros e giroscópio ao módulo controle de vôo. Apesar desta interface ser destinada a topologia ponto a ponto, é possível ligar mais de dois periféricos através desta interface \cite{spiusart}.
 
-\section{Camada de navegação}
-\subsection{Descrição}
+A interface $I^2C$ ligará os módulos ESC ao módulo controle de vôo. Este tipo de interface funcionará ligando vários módulos através de um único barramento \cite{protoi2c}. , ligará os módulos da camada Periféricos de Navegação ao módulo de Navegação da camada Controle de Navegação. De forma semelhante à interface $I^2C$, a interface $CAN$ também ligará os módulos através de um barramento. As especificações desta interface encontram-se em \citeonline{protocan}.
 
-Responsável por processar os sinais dos sensores de navegação (GPS e magnetômetro) e os parâmetros de direção, velocidade e rotação e por gerar os parâmetros de navegação (ângulos de Euler e potência total dos motores) do multirrotor, de forma a fazê-lo mover-se com a direção e a velocidade pretendidas e/ou girar em torno de seu eixo vertical.
+Nos módulos Controle de Vôo e controle de Navegação serão utilizados os microcontroladores ARM, devido a sua boa relação custo-benefício em termos de periféricos presentes, processamento e memória de programa.
 
-\subsection{Componentes}
+Assim como o hardware, o software também será modular. As rotinas do software embarcado do VANT também estarão fisicamente separadas, pois estarão contidas em seus respectivos módulos e seguiram uma hierarquia pré-definida. Dessa forma, o desenvolvimento do software embarcado do VANT seguirá uma metodologia de programação semelhante à programação orientada a objetos.
 
-Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M), pelo GPS, pelo magnetômetro e pelo receptor do rádio-controle. Esses sensores e o receptor são implementados como módulos e estão ligados ao microcontrolador pelo mesmo barramento SPI que o conecta aos módulos inteligentes da camada de aplicação. A ligação ao microcontrolador da camada de estabilização de vôo se dá por SPI.
+Um sistema operacional de tempo real (RTOS) será embarcado nos módulos controle de vôo e no módulo controle de navegação. Optou-se pelo uso de um RTOS, porque pretende-se criar uma camada de software que separe as rotinas de controle e navegação das rotinas de acesso ao hardware, como proposto em \citeonline{controlrtos} . 
 
-\subsection{Parâmetros de entrada e saída}
+%Foi feita uma pesquisa sobre os sistemas operacionais de tempo real (RTOS) disponíveis. Foi encontrado uma grande variedade de RTOS. Optou-se pelo FreeRTOS, devido às suas características mostradas em \cite{freertos}, tais como: software aberto, requisitos de tempo real, possibilidade de ser embarcado para um microcontrolador, etc.
 
-Entradas:
-\begin{itemize}
-  \item da camada de periféricos
-    \begin{itemize}
-      \item sinais dos sensores de navegação (GPS e magnetômetro)
-      \item parâmetros de direção, velocidade e rotação do multirrotor 
-    \end{itemize}
-  \item da camada de estabilização de vôo
-  \begin{itemize}
-    \item status dos motores
-    \item dados dos sensores de estabilização (acelerômetro e giroscópio)
-  \end{itemize}
-\end{itemize}
+\section{Sensores}
 
-Saída:
-\begin{itemize}
-  \item para a camada de estabilização de vôo
-  \begin{itemize}
-    \item ângulos de Euler e potência total dos motores (parâmetros de navegação)
-  \end{itemize}
-  \item para a camada de periféricos
-  \begin{itemize}
-    \item status dos motores (caso solicitado por algum módulo periférico)
-    \item dados dos sensores de estabilização - acelerômetro e giroscópio (caso solicitado por algum módulo periférico)
-  \end{itemize}
-\end{itemize}
+% falta falta falta
 
-\subsubsection{Comportamento}
+\subsection{Sensor de distância}
 
-A camada de navegação possui um laço principal que tem início com a leitura dos parâmetros de direção, velocidade e rotação, os quais são obtidos do módulo de recepção do rádio-controle e/ou podem ser também gerados na camada de periféricos. Isso abre a possibilidade de que aplicações personalizadas determinem a direção, a velocidade de translação e a rotação do multirrotor.
+Sensores de distância podem ser utilizados em diversas aplicações em multirrotores, como evitar colisões ou medir distâncias e velocidades. Para cada tipo de aplicação, deve-se considerar o ângulo de visada (que é a abertura onde o sensor consegue detectar obstáculos), distância máxima detectável, preço e precisão. Abaixo segue uma lista dos sensores estudados:
 
-Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS e magnetômetro). A partir desses parâmetros e sinais é realizado o processamento que gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) que são enviados para o microcontrolador da camada de estabilização. A figura \ref{fig.navfunc} representa esse comportamento.
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Navega-func.eps}
-  \caption[Funcionamento da camada de navegação]
-  {visão geral do funcionamento da camada de navegação}\label{fig.navfunc}
-\end{figure}
+\subsubsection{Sensor supersônico}
 
-\section{Camada de periféricos}
-\subsection{Descrição}
-
-A camada de periféricos abriga originalmente os módulos dos sensores de navegação e o módulo receptor do rádio-controle, que estão ligados entre si e ao microcontrolador da camada de navegação por um barramento $I^2C$. Essa arquitetura foi concebida para que seja possível que qualquer pessoa com o conhecimento técnico necessário crie e adicione periféricos personalizados.
-
-Esses módulos periféricos podem, inclusive, assumir a qualquer momento a tarefa de gerar os parâmetros de direção, velocidade e rotação ao lado do receptor de rádio-controle, o que abre um leque de possibilidades de projetos futuros, dentre os quais citamos: controle de altura através de sensores como barômetro ou sensor de distância ultrassônico ou a laser, evasão de colisão usando sensores de distância, rastreamento e perseguição de objeto através de um módulo multimídia inteligente e transmissão de vídeo e áudio.
-
-\subsection{Componentes}
-
-Camada expansível constituída por módulos capazes de se comunicar por $I^2C$. Os módulos implementados originalmente são os sensores de navegação, que contém o GPS e o magnetômetro, e o módulo receptor de rádio-controle.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-  \item sinal do rádio-controle
-\end{itemize}
-Saída:
-\begin{itemize}
-  \item   para a camada de navegação
-  \begin{itemize}
-    \item sinais dos sensores de navegação (GPS e magnetômetro);
-    \item parâmetros de direção, velocidade e rotação do multirrotor.
-  \end{itemize}
-\end{itemize}
-
-\subsection{Comportamento}
-
-Os sensores da camada de periféricos apenas esperam o pedido de leitura do microcontrolador da camada de navegação e/ou de algum outro módulo da própria camada. Quando isso acontece, eles provêem seus dados mais recentes.
-
-Módulos personalizados desta camada possuem comportamento que varia de acordo com suas funcionalidades. Mais detalhes devem ser obtidos da documentação dos próprios módulos.
+Estes sensores emitem rajadas acústicas supersônicas e calculam o tempo para o eco. Devid
 
 \end{document}

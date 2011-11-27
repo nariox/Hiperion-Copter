@@ -4,60 +4,64 @@
 \contentsline {section}{\numberline {1.1}Contextualiza\c c\~ao e Motiva\c c\~ao}{11}
 \contentsline {section}{\numberline {1.2}Objetivos}{11}
 \contentsline {section}{\numberline {1.3}Organiza\c c\~ao do Trabalho}{12}
-\contentsline {chapter}{\numberline {2}Modelo da Arquitetura}{14}
-\contentsline {section}{\numberline {2.1}Considera\c c\~oes Iniciais}{14}
-\contentsline {section}{\numberline {2.2}Camada Motores}{15}
-\contentsline {section}{\numberline {2.3}Camada Perif\'ericos e Controle de V\^oo}{15}
-\contentsline {section}{\numberline {2.4}Camada Controle de Navega\c c\~ao}{15}
-\contentsline {section}{\numberline {2.5}Camada Perif\'ericos de Navega\c c\~ao}{16}
-\contentsline {chapter}{\numberline {3}Referencial Te\'orico}{18}
-\contentsline {section}{\numberline {3.1}Considera\c c\~oes Iniciais}{18}
-\contentsline {section}{\numberline {3.2}Motores \textit {Brushless}}{18}
-\contentsline {section}{\numberline {3.3}Controlador de Velocidade Eletr\^onico}{19}
-\contentsline {subsection}{\numberline {3.3.1}Sincroniza\c c\~ao \textit {sensorless}}{20}
-\contentsline {subsection}{\numberline {3.3.2}M\'aquina de estados}{20}
-\contentsline {subsection}{\numberline {3.3.3}Partida}{23}
-\contentsline {subsection}{\numberline {3.3.4}Condicionamento dos sinais}{23}
-\contentsline {section}{\numberline {3.4}Bateria de l\IeC {\'\i }tio-pol\IeC {\'\i }mero}{24}
-\contentsline {subsection}{\numberline {3.4.1}Qu\IeC {\'\i }mica}{25}
-\contentsline {subsection}{\numberline {3.4.2}Modelo}{25}
-\contentsline {subsection}{\numberline {3.4.3}Valores de refer\^encia}{26}
-\contentsline {section}{\numberline {3.5}Controle}{27}
-\contentsline {section}{\numberline {3.6}Considera\c c\~oes finais}{27}
-\contentsline {chapter}{\numberline {4}Desenvolvimento do Trabalho}{28}
-\contentsline {section}{\numberline {4.1}Considera\c c\~oes Iniciais}{28}
-\contentsline {section}{\numberline {4.2}Sobre a equipe}{28}
-\contentsline {section}{\numberline {4.3}Problema a ser resolvido}{29}
-\contentsline {section}{\numberline {4.4}Motiva\c c\~oes e Justificativas T\'ecnicas}{29}
-\contentsline {section}{\numberline {4.5}Descri\c c\~ao das Atividades a serem Realizadas}{30}
-\contentsline {section}{\numberline {4.6}Metas}{32}
-\contentsline {section}{\numberline {4.7}Dificuldades e Limita\c c\~oes}{33}
-\contentsline {chapter}{\numberline {5}Cronograma}{34}
-\contentsline {chapter}{\numberline {6}An\'alise de Risco}{35}
-\contentsline {chapter}{\numberline {7}Conclus\~oes e trabalhos futuros}{36}
-\contentsline {section}{\numberline {7.1}Fase do projeto}{36}
-\contentsline {section}{\numberline {7.2}Considera\c c\~oes sobre o Curso de Gradua\c c\~ao}{37}
-\contentsline {chapter}{Refer\^encias}{38}
-\contentsline {chapter}{\numberline {8}Ap\^endice A - Comparativos entre outros multirrotores}{40}
-\contentsline {part}{\numberline {II}Segunda Parte - Manual de Constru\c c\~ao de um Multirrotor}{41}
-\contentsline {chapter}{\numberline {9}Arquitetura}{42}
-\contentsline {section}{\numberline {9.1}Camada de excita\c c\~ao dos motores}{42}
-\contentsline {subsection}{\numberline {9.1.1}Descri\c c\~ao}{42}
-\contentsline {subsection}{\numberline {9.1.2}Componentes}{43}
-\contentsline {subsection}{\numberline {9.1.3}Par\^ametros de entrada e sa\IeC {\'\i }da}{43}
-\contentsline {subsection}{\numberline {9.1.4}Comportamento}{44}
-\contentsline {section}{\numberline {9.2}Camada de estabiliza\c c\~ao do v\^oo}{44}
-\contentsline {subsection}{\numberline {9.2.1}Descri\c c\~ao}{44}
-\contentsline {subsection}{\numberline {9.2.2}Componentes}{45}
-\contentsline {subsection}{\numberline {9.2.3}Par\^ametros de entrada e sa\IeC {\'\i }da}{45}
-\contentsline {subsection}{\numberline {9.2.4}Comportamento}{45}
-\contentsline {section}{\numberline {9.3}Camada de navega\c c\~ao}{46}
-\contentsline {subsection}{\numberline {9.3.1}Descri\c c\~ao}{46}
-\contentsline {subsection}{\numberline {9.3.2}Componentes}{46}
-\contentsline {subsection}{\numberline {9.3.3}Par\^ametros de entrada e sa\IeC {\'\i }da}{46}
-\contentsline {subsubsection}{Comportamento}{47}
-\contentsline {section}{\numberline {9.4}Camada de perif\'ericos}{47}
-\contentsline {subsection}{\numberline {9.4.1}Descri\c c\~ao}{47}
-\contentsline {subsection}{\numberline {9.4.2}Componentes}{48}
-\contentsline {subsection}{\numberline {9.4.3}Par\^ametros de entrada e sa\IeC {\'\i }da}{48}
-\contentsline {subsection}{\numberline {9.4.4}Comportamento}{49}
+\contentsline {chapter}{\numberline {2}Arquitetura}{14}
+\contentsline {section}{\numberline {2.1}Camada de excita\c c\~ao dos motores}{14}
+\contentsline {subsection}{\numberline {2.1.1}Descri\c c\~ao}{14}
+\contentsline {subsection}{\numberline {2.1.2}Componentes}{15}
+\contentsline {subsection}{\numberline {2.1.3}Par\^ametros de entrada e sa\IeC {\'\i }da}{15}
+\contentsline {subsection}{\numberline {2.1.4}Comportamento}{16}
+\contentsline {section}{\numberline {2.2}Camada de estabiliza\c c\~ao do v\^oo}{16}
+\contentsline {subsection}{\numberline {2.2.1}Descri\c c\~ao}{16}
+\contentsline {subsection}{\numberline {2.2.2}Componentes}{17}
+\contentsline {subsection}{\numberline {2.2.3}Par\^ametros de entrada e sa\IeC {\'\i }da}{17}
+\contentsline {subsection}{\numberline {2.2.4}Comportamento}{17}
+\contentsline {section}{\numberline {2.3}Camada de navega\c c\~ao}{18}
+\contentsline {subsection}{\numberline {2.3.1}Descri\c c\~ao}{18}
+\contentsline {subsection}{\numberline {2.3.2}Componentes}{18}
+\contentsline {subsection}{\numberline {2.3.3}Par\^ametros de entrada e sa\IeC {\'\i }da}{18}
+\contentsline {subsubsection}{Comportamento}{19}
+\contentsline {section}{\numberline {2.4}Camada de perif\'ericos}{19}
+\contentsline {subsection}{\numberline {2.4.1}Descri\c c\~ao}{19}
+\contentsline {subsection}{\numberline {2.4.2}Componentes}{20}
+\contentsline {subsection}{\numberline {2.4.3}Par\^ametros de entrada e sa\IeC {\'\i }da}{20}
+\contentsline {subsection}{\numberline {2.4.4}Comportamento}{21}
+\contentsline {chapter}{\numberline {3}Referencial Te\'orico}{22}
+\contentsline {section}{\numberline {3.1}Considera\c c\~oes Iniciais}{22}
+\contentsline {section}{\numberline {3.2}Motores \textit {Brushless}}{22}
+\contentsline {section}{\numberline {3.3}Controlador de Velocidade Eletr\^onico}{23}
+\contentsline {subsection}{\numberline {3.3.1}Sincroniza\c c\~ao \textit {sensorless}}{24}
+\contentsline {subsection}{\numberline {3.3.2}M\'aquina de estados}{24}
+\contentsline {subsection}{\numberline {3.3.3}Partida}{27}
+\contentsline {subsection}{\numberline {3.3.4}Condicionamento dos sinais}{27}
+\contentsline {section}{\numberline {3.4}Bateria de l\IeC {\'\i }tio-pol\IeC {\'\i }mero}{28}
+\contentsline {subsection}{\numberline {3.4.1}Qu\IeC {\'\i }mica}{29}
+\contentsline {subsection}{\numberline {3.4.2}Modelo}{29}
+\contentsline {subsection}{\numberline {3.4.3}Valores de refer\^encia}{30}
+\contentsline {section}{\numberline {3.5}Controle}{31}
+\contentsline {section}{\numberline {3.6}Considera\c c\~oes finais}{32}
+\contentsline {chapter}{\numberline {4}Desenvolvimento do Trabalho}{33}
+\contentsline {section}{\numberline {4.1}Considera\c c\~oes Iniciais}{33}
+\contentsline {section}{\numberline {4.2}Sobre a equipe}{33}
+\contentsline {section}{\numberline {4.3}Problema a ser resolvido}{34}
+\contentsline {section}{\numberline {4.4}Motiva\c c\~oes e Justificativas T\'ecnicas}{34}
+\contentsline {section}{\numberline {4.5}Descri\c c\~ao das Atividades a serem Realizadas}{35}
+\contentsline {section}{\numberline {4.6}Metas}{37}
+\contentsline {section}{\numberline {4.7}Dificuldades e Limita\c c\~oes}{38}
+\contentsline {chapter}{\numberline {5}Cronograma}{39}
+\contentsline {chapter}{\numberline {6}Or\c camento}{40}
+\contentsline {chapter}{\numberline {7}An\'alise de Risco}{42}
+\contentsline {chapter}{\numberline {8}Conclus\~oes e trabalhos futuros}{43}
+\contentsline {section}{\numberline {8.1}Fase do projeto}{43}
+\contentsline {section}{\numberline {8.2}Considera\c c\~oes sobre o Curso de Gradua\c c\~ao}{44}
+\contentsline {chapter}{Refer\^encias}{45}
+\contentsline {chapter}{\numberline {9}Ap\^endice A - Comparativos entre outros multirrotores}{47}
+\contentsline {part}{\numberline {II}Segunda Parte - Manual de Constru\c c\~ao de um Multirrotor}{48}
+\contentsline {chapter}{\numberline {10}Modelo da Arquitetura}{49}
+\contentsline {section}{\numberline {10.1}Considera\c c\~oes Iniciais}{49}
+\contentsline {section}{\numberline {10.2}Camada Motores}{50}
+\contentsline {section}{\numberline {10.3}Camada Perif\'ericos e Controle de V\^oo}{50}
+\contentsline {section}{\numberline {10.4}Camada Controle de Navega\c c\~ao}{50}
+\contentsline {section}{\numberline {10.5}Camada Perif\'ericos de Navega\c c\~ao}{51}
+\contentsline {section}{\numberline {10.6}Sensores}{52}
+\contentsline {subsection}{\numberline {10.6.1}Sensor de dist\^ancia}{52}
+\contentsline {subsubsection}{Sensor supers\^onico}{52}
