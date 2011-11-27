@@ -531,6 +531,36 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
   \item Vida útil (perda de 20\% da capacidade original): 1200 ciclos de carga / descarga
 \end{itemize}
 
+\section{Sensores}
+
+% falta falta falta
+
+\subsection{Sensor de distância}
+
+Sensores de distância podem ser utilizados em diversas aplicações em multirrotores, como evitar colisões ou medir distâncias e velocidades. Para cada tipo de aplicação, deve-se considerar o ângulo de visada (que é a abertura onde o sensor consegue detectar obstáculos), distância máxima detectável, preço e precisão. 
+
+\subsubsection{Sensores de Infravermelhos}
+Sensores infravermelhos sao sensores de baixo custo que detectam a reflexão de raios infravermelhos. 
+
+Esses sensores sao compostos por um emissor LED que emite ondas infravermelhas e um detector (fotorresistor ou fototransistor). O LED e o sensor sao dispostos de forma que a luz emitida pelo LED seja refletida por objetos que se aproximam e seja detectada pelo sensor. 
+
+Esses sensores sao de baixo custo e podem se utilizados tambem para transmissao de dados (como em controles remotos convencionais) e desacoplamento de chaves (reles opticos). 
+
+Apesar de versateis, nao apresentam as caracteristicas desejadas. A reflexao depende bastante das caracteristicas do material, como rugosidade e material. Isto torna o sensor impreciso e incapaz de detectar objetos escuros e opacos. 
+
+\subsubsection{Sensores supersonicos}
+
+Ondas acusticas supersonicas apresentam qualidades interessantes. Seu comprimento de onda e da ordem de milimetros, portanto e possivel produzir transdutores bastante direcionais em dimensoes diminutas (lobo principal de poucos graus em um transdutor de menos de 1 centimetro de raio). Alem disto, tambem e grande o suficiente para apresentar resposta indiferente a rugosidade da maioria dos materiais. 
+
+Como a distancia e medida pelo tempo (ao inves da inves da intensidade como no sensor infravermelho), atenuacao tambem nao apresenta problemas a deteccao e precisao. 
+
+O modulo utilizado contem ainda a logica para a geracao e deteccao dos sinais. Basta que o microcontrolador envie o sinal de acionamento (trigger) e meca o tempo ate o pino eco (echo) ficar ativo. Isto permite que o modulo central execute outras funcoes e confere maior confiabilidade aos dados, ja que ele trabalha em tempo real. 
+
+O modulo comprado apresenta alcance de ate 4,5 metros, o que e o suficiente para controle de altura e prevencao de colisoes. No projeto foi utilizado um modulo para controle de altura, mas o codigo desenvolvido pode ser facilmente adaptado para outras funcoes. 
+
+Sensor a laser 
+
+estes sensores possuem boa precisao e alcance.
 % \section{Zigbee}
 	
 % 	Zigbee é um protocolo de comunicação de redes sem fio baseado na norma 802.15.4 do IEEE \cite{norma80215} cuja ênfase é o baixo consumo de energia.
@@ -952,18 +982,4 @@ Assim como o hardware, o software também será modular. As rotinas do software em
 Um sistema operacional de tempo real (RTOS) será embarcado nos módulos controle de vôo e no módulo controle de navegação. Optou-se pelo uso de um RTOS, porque pretende-se criar uma camada de software que separe as rotinas de controle e navegação das rotinas de acesso ao hardware, como proposto em \citeonline{controlrtos} . 
 
 %Foi feita uma pesquisa sobre os sistemas operacionais de tempo real (RTOS) disponíveis. Foi encontrado uma grande variedade de RTOS. Optou-se pelo FreeRTOS, devido às suas características mostradas em \cite{freertos}, tais como: software aberto, requisitos de tempo real, possibilidade de ser embarcado para um microcontrolador, etc.
-
-\section{Sensores}
-
-% falta falta falta
-
-\subsection{Sensor de distância}
-
-Sensores de distância podem ser utilizados em diversas aplicações em multirrotores, como evitar colisões ou medir distâncias e velocidades. Para cada tipo de aplicação, deve-se considerar o ângulo de visada (que é a abertura onde o sensor consegue detectar obstáculos), distância máxima detectável, preço e precisão. Abaixo segue uma lista dos sensores estudados:
-
-
-\subsubsection{Sensor supersônico}
-
-Estes sensores emitem rajadas acústicas supersônicas e calculam o tempo para o eco. Devid
-
 \end{document}
