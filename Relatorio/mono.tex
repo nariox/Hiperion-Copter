@@ -4,6 +4,8 @@
 \usepackage[alf]{abntcite}
 %\usepackage[alf,iso-690-1987}{abntcite}
 \usepackage{graphicx}
+\usepackage[section]{placeins}
+\usepackage{amsmath}
 
 \renewcommand{\ABNTbibliographyname}{Referências}
 
@@ -25,7 +27,7 @@
 \coorientador{Sérgio Takeo Kofuji}
 
 
-%\comentario{Proposta de Projeto Final apresentado na disciplina PSI-2591 Projeto de Formatura I.}
+%\comentario{Monografia Final apresentada na disciplina PSI-2591 Projeto de Formatura I.}
 
 
 \instituicao{Departamento de Sistemas Eletrônicos \par Escola Politécnica\par Universidade
@@ -144,90 +146,226 @@ Este trabalho possui mais 8 capítulos, além dos anexos, referências e bibliograf
 Nos capítulos 5, 6, 7 e 8 serão apresentados os tópicos relacionados ao orçamento do projeto, cronogramas, riscos e gerência de projeto.
 Para finalizar, o capítulo 9 concluirá o trabalho, apresentado uma síntese de tudo que foi visto e, neste capítulo, também serão mostrados os resultados obtidos. Nas referências, bibliografias e nos anexos serão apresentados complementos e fontes de informações relevantes ao projeto.
 
-\chapter{Modelo da Arquitetura}
+\chapter{Arquitetura}
+A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. O software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
 
-\section{Considerações Iniciais}
+As camadas são:
+\begin{enumerate}
+  \item Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
+  \item Camada de estabilização do vôo, responsável por garantir a estabilidade do vôo;
+  \item Camada de navegação, responsável pela velocidade e pela direção de deslocamento do sistema;
+  \item Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle, e onde é possível acrescentar módulos personalizados.
+\end{enumerate}
 
-Uma parte importante do projeto Hipérion é a sua arquitetura de hardware e software. Foi escolhido uma arquitetura modular para hardware e para software.
-A idéia é separar fisicamente e funcionalmente os dispositivos eletrônicos que irão compor o sistema embarcado da VANT em vários módulos eletrônicos inteligentes independentes. Os módulos serão inteligentes porque eles deverão processar as informações obtidas do meio externo (no caso dos sensores) e também processar as informações internas (passagem de parâmetros e mensagens de \textit{feedback}). Tais módulos eletrônicos se comunicarão através de interfaces pré-definidas, seguindo uma hierarquia também pré-definida.
+A figura \ref{fig.arquitsimp} apresenta uma visão geral da arquitetura, que será detalhada mais adiante:
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=6in]{./Figuras/Arquitsimp.eps}
+  \caption[Arquitetura simplificada]
+  {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
+\end{figure}
 
-A figura \ref{fig.arquitetura} mostra de forma simplificada a arquitetura de hardware do VANT. 
+\section{Camada de excitação dos motores}
+\subsection{Descrição}
+
+Essa é a primeira camada, abaixo da camada de estabilização de vôo. Responsável por garantir que a rotação dos motores esteja de acordo com o determinado, por detectar e proteger os motores de sobrecorrentes e por fornecer a potência que eles necessitam para funcionar. Deve impedir que os motores queimem caso os rotores fiquem presos ou girem em aberto.
+
+\subsection{Componentes}
+
+É constituída pelos $n$ motores, hélices e controladores eletrônicos de velocidade ({\it eletronic speed controllers} - ESCs), sendo $n$ o número de rotores do multirrotor. Os ESCs projetados, por sua vez, são constituídos por duas placas de circuito, uma responsável pela lógica e a outra pelo fornecimento de potência aos motores. ESCs comerciais costumam ter esses dois sub-circuitos na mesma placa.
+
+\subsection{Comportamento}
+
+O controlador eletrônico de velocidade (ESC) lê o parâmetro de rotação enviado pelo microcontrolador da camada de estabilização e aguarda um sinal do motor que indica que o enrolamento está alinhado com o campo do rotor. Quando isso ocorre, o ESC calcula o tempo ideal para o chavear a excitação do motor, espera esse tempo e realiza o chaveamento, depois do qual o ciclo recomeça.
+
+Para maiores detalhes sobre funcionamento do ESC, ver a seção \ref{sec:esc}.
+
+Abaixo, um diagrama que representa esse comportamento:
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=6in]{./Figuras/arquitetura.eps}
-  \caption[Modelo de abstração]
-  {Diagrama relacionando as camadas de abstração com o Hardware}\label{fig.arquitetura}
+  \includegraphics[width=6in]{./Figuras/Excit-func.eps}
+  \caption[Funcionamento do ESC]
+  {visão geral do funcionamento do ESC}\label{fig.escfunc}
 \end{figure}
 
-As camadas principais são:
-\begin{enumerate}
-  \item Motores;
-  \item periféricos e Controle de Vôo;
-  \item controle de Navegação;
-  \item periféricos de Navegação.
-\end{enumerate}
+\subsection{Comunicação entre os componentes}
 
-\section{Camada Motores}
+Cada ESC precisa comunicar-se com o microcontrolador ARM da camada de estabilização de vôo. O ESC projetado o faz através do protocolo I$^2$C, enquanto que a maior parte dos ESCs comerciais recebe um PWM como entrada, com a limitação de não poderem enviar o estado do motor. Devido ao alto custo de fabricação em baixa escala, foram usados ESCs comerciais no protótipo do multirrotor. Apenas um ESC projetado foi construído, como prova de conceito.
+Os motores recebem três PWMs dos ESCs, que o alimentam.
 
-A camada Motores será composta pelos motores \textit{brushless}, que serão responsáveis pelas manobras da aeronave, e pelos ESCs, que serão responsáveis pelo controle dos motores \textit{brushless}. Tal camada receberá comandos da camada superior (Periféricos e Controle de Vôo), tais como: aumentar/diminuir rotação dos motores, desligar motores ou ligar motores. Além disso, esta camada também deverá enviar mensagens de feedback para sua camada superior.
+\subsection{Parâmetros de entrada e saída}
 
-\section{Camada Periféricos e Controle de Vôo}
-A camada Periféricos e Controle de Vôo será composta pelos módulos: acelerômetros, giroscópio e controle de vôo. Os módulos desta camada serão responsáveis pela estabilidade da aeronave durante as manobras de vôo (subir, descer, girar, parar, etc) e durante o repouso também. 
-
-O módulo Controle de Vôo receberá comandos de navegação do módulo superior (Navegação) e deverá executar a manobra definida pelo respectivo comando. Para isso, um algoritmo de controle, inserido no módulo controle de vôo, deverá ler os valores das variáveis de vôo oriundas dos módulos acelerômetros e giroscópio e atuar nos motores de vôo, através do envio de comandos para a camada inferior (Motores de Vôo). A camada também deverá manter a estabilidade da aeronave nas situações de ausência de comandos, que poderá corresponder a uma situação de repouso ou de emergência. Além disso, mensagens de feedback também serão enviadas para sua camada superior (Controle de Navegação).
-
-\section{Camada Controle de Navegação}
-
-A camada Controle de Navegação será composta por um único módulo: módulo de Navegação. Neste módulo estarão presentes as várias rotinas de navegação que dependerão das aplicações pretendidas para a aeronave, como por exemplo: navegação manual, navegação por GPS, etc. Esta camada receberá comandos, valores e parâmetros dos periféricos da camada superior (Periféricos de Navegação), que poderão ser:
-
+\subsubsection{Entrada}
 \begin{itemize}
-  \item Altura, através do módulo barômetro;
-  \item posição geográfica, através do módulo GPS;
-  \item posição em relação a um alv,; através do módulo multimídia;
-  \item comandos manuais de navegação, através do módulo controle remoto.
+      \item da camada de estabilização de vôo:
+      \begin{itemize}
+        \item rotação do motor (para cada ESC + rotor).
+      \end{itemize}
 \end{itemize}
 
-\section{Camada Periféricos de Navegação}
 
-A camada Periféricos de Navegação será composta por módulos que auxiliarão um determinado tipo de navegação. Para este projeto, pretende-se criar os seguintes tipos de navegação:
-
+\subsubsection{Saída}
 \begin{itemize}
-  \item Navegação manual;
-  \item navegação por GPS;
-  %\item navegação por vídeo.
+  \item para a camada de estabilização de vôo:
+  \begin{itemize}
+    \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado).
+  \end{itemize}
 \end{itemize}
 
-A navegação manual consistirá em pilotar a aeronave através de um rádio controle. Para tanto, um módulo de controle remoto será inserido e irá criar um link de comunicação remoto entre a aeronave e o usuário que a está pilotando.
+\section{Camada de estabilização do vôo}
+\subsection{Descrição}
 
-A navegação por GPS consistirá em fazer a aeronave seguir um trajeto determinado, usando informações oriundas do módulo GPS e processadas pelo módulo de navegação. Além disso, o módulo GPS também servirá como um instrumento de localização para a aeronave.
+Processa os sinais dos sensores de estabilização (acelerômetros e giroscópios) e os parâmetros de navegação (ângulos de Euler e potência total dos motores) e gera os parâmetros de rotação de cada motor. Responsável por manter a estabilidade do vôo e controlar as velocidades de deslocamento e angular do multirrotor.
 
-%A navegação por vídeo consistirá em obter uma imagem de vídeo do ambiente através do módulo multimídia e processá-la neste mesmo módulo. O resultado do processamento desta imagem será transformado em parâmetros que serão enviados para sua respectiva rotina de navegação no módulo de navegação. Pretende-se com isso fazer a nave perseguir um alvo específico ou utilizar a imagem para qualquer outra aplicação, como vigilância por exemplo.
+\subsection{Componentes}
 
-A comunicação entre os módulos será realizada através de interfaces $I^2C$ e SPI. A interface $SPI$ será utilizada para ligar os módulos acelerômetros e giroscópio ao módulo controle de vôo. Apesar desta interface ser destinada a topologia ponto a ponto, é possível ligar mais de dois periféricos através desta interface \cite{spiusart}.
+Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M) e por uma unidade de medida inercial (IMU - \textit{inertial measurement unit}), que é uma placa de circuito que contém o acelerômetro e o giroscópio tridimensionais.
 
-A interface $I^2C$ ligará os módulos ESC ao módulo controle de vôo. Este tipo de interface funcionará ligando vários módulos através de um único barramento \cite{protoi2c}. , ligará os módulos da camada Periféricos de Navegação ao módulo de Navegação da camada Controle de Navegação. De forma semelhante à interface $I^2C$, a interface $CAN$ também ligará os módulos através de um barramento. As especificações desta interface encontram-se em \citeonline{protocan}.
+\subsection{Comportamento}
 
-Nos módulos Controle de Vôo e controle de Navegação serão utilizados os microcontroladores ARM, devido a sua boa relação custo-benefício em termos de periféricos presentes, processamento e memória de programa.
+A camada de estabilização age através de um laço que inicia com a leitura dos parâmetros de navegação, oriundos daquela camada, e segue com a leitura dos sinais dos sensores de estabilização. O próximo passo é a execução dos algoritmos PID que geram os parâmetros de rotação dos motores, os quais são enviados aos ESCs da camada de excitação.
 
-Assim como o hardware, o software também será modular. As rotinas do software embarcado do VANT também estarão fisicamente separadas, pois estarão contidas em seus respectivos módulos e seguiram uma hierarquia pré-definida. Dessa forma, o desenvolvimento do software embarcado do VANT seguirá uma metodologia de programação semelhante à programação orientada a objetos.
+Os algoritmos que controlam a estabilidade são PIDs não-lineares, ver a seção \ref{sec:controle} para mais detalhes. A figura \ref{fig.estabfunc} representa esse comportamento.
 
-Um sistema operacional de tempo real (RTOS) será embarcado nos módulos controle de vôo e no módulo controle de navegação. Optou-se pelo uso de um RTOS, porque pretende-se criar uma camada de software que separe as rotinas de controle e navegação das rotinas de acesso ao hardware, como proposto em \citeonline{controlrtos} . 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=6in]{./Figuras/Estab-func.eps}
+  \caption[Funcionamento da camada de estabilização]
+  {visão geral do funcionamento da camada de estabilização}\label{fig.estabfunc}
+\end{figure}
 
-%Foi feita uma pesquisa sobre os sistemas operacionais de tempo real (RTOS) disponíveis. Foi encontrado uma grande variedade de RTOS. Optou-se pelo FreeRTOS, devido às suas características mostradas em \cite{freertos}, tais como: software aberto, requisitos de tempo real, possibilidade de ser embarcado para um microcontrolador, etc.
+\subsection{Comunicação entre os componentes}
 
-\section{Sensores}
+O microcontrolador dessa camada comunica-se com os ESCs da camada de excitação por I$^2$C, caso seja o ESC projetado, ou por PWM, caso seja um ESC comercial. A comunicação com a IMU dá-se por I$^2$C e com a camada de navegação por UART.
 
-% falta falta falta
+\subsection{Parâmetros de entrada e saída}
 
-\subsection{Sensor de distância}
+\subsubsection{Entrada}
+\begin{itemize}
+  \item da camada de navegação:
+  \begin{itemize}
+    \item ângulos de Euler e potência total dos motores (parâmetros de navegação).
+  \end{itemize}
+\end{itemize}
 
-Sensores de distância podem ser utilizados em diversas aplicações em multirrotores, como evitar colisões ou medir distâncias e velocidades. Para cada tipo de aplicação, deve-se considerar o ângulo de visada (que é a abertura onde o sensor consegue detectar obstáculos), distância máxima detectável, preço e precisão. Abaixo segue uma lista dos sensores estudados:
+
+\subsubsection{Saídas}
+\begin{itemize}
+  \item para a camada de excitação dos motores:
+  \begin{itemize}
+    \item rotação de cada motor.
+  \end{itemize}
+  \item para a camada de navegação:
+  \begin{itemize}
+    \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado);
+    \item dados dos sensores de estabilização (acelerômetro e giroscópio).
+  \end{itemize}
+\end{itemize}
+
+\section{Camada de navegação}
+\subsection{Descrição}
+
+Responsável por processar os sinais dos sensores de navegação (GPS, magnetômetro e sensor de distância ultrassônico) e os parâmetros do rádio-controle. Gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) do multirrotor, de forma a fazê-lo mover-se com a direção e a velocidade pretendidas e/ou girar em torno de seu eixo vertical.
+
+\subsection{Componentes}
+
+Camada constituída por uma placa Arduino Mega dotada de um microcontrolador da Atmel ATMega1280, família AVR8.
+
+\subsection{Comportamento}
+
+A camada de navegação possui um laço principal que tem início com a leitura dos parâmetros de direção e velocidades de translação e angular, os quais são obtidos do módulo de recepção do rádio-controle e/ou podem ser gerados por outros módulos na camada de periféricos. Isso abre a possibilidade de aplicações arbitrárias determinarem a direção e as velocidades do multirrotor.
+
+Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS, magnetômetro e sensor de distância ultrassônico). O GPS fornece a informação de onde o multirrotor está e a sua altitude, o magnetômetro indica para que direção ele está voltado e o sensor ultrassônico, colocado apontando para baixo, também indica a altitude. A utilidade do sensor ultrassônico é que ele é mais preciso que o GPS e funciona em ambientes internos, diferentemente deste. Sua limitação é o alcance, limitado a três metros. A partir disso os dados do GPS são usados, se disponíveis.
+
+A partir desses parâmetros e sinais é realizado o processamento que gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) que são enviados para o microcontrolador da camada de estabilização. A figura \ref{fig.navfunc} representa esse comportamento.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=6in]{./Figuras/Navega-func.eps}
+  \caption[Funcionamento da camada de navegação]
+  {visão geral do funcionamento da camada de navegação}\label{fig.navfunc}
+\end{figure}
 
 
-\subsubsection{Sensor supersônico}
+\subsection{Comunicação entre os componentes}
 
-Estes sensores emitem rajadas acústicas supersônicas e calculam o tempo para o eco. Devid
+O Arduino comunica-se por UART com o microcontrolador ARM da camada de estabilização. A comunicação com os sensores da camada de periférios também ocorre por UART, no caso dos módulos GPS e magnetômetro, e por GPIO, no caso do sensor ultrassônico.
+
+\subsection{Parâmetros de entrada e saída}
+
+\subsubsection{Entradas}
+\begin{itemize}
+  \item da camada de periféricos:
+    \begin{itemize}
+      \item sinais dos sensores de navegação (GPS, magnetômetro e sensor ultrassônico);
+      \item parâmetros de direção e velocidades de translação e angular do multirrotor.
+    \end{itemize}
+  \item da camada de estabilização de vôo:
+  \begin{itemize}
+    \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado);
+    \item dados dos sensores de estabilização (acelerômetro e giroscópio).
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{Saídas}
+\begin{itemize}
+  \item para a camada de estabilização de vôo:
+  \begin{itemize}
+    \item ângulos de Euler e potência total dos motores (parâmetros de navegação)
+  \end{itemize}
+  \item para a camada de periféricos:
+  \begin{itemize}
+    \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado);
+    \item dados dos sensores de estabilização (acelerômetro e giroscópio), caso solicitado por algum módulo periférico.
+  \end{itemize}
+\end{itemize}
+
+\section{Camada de periféricos}
+\subsection{Descrição}
+
+A camada de periféricos abriga originalmente os módulos dos sensores de navegação e o módulo receptor do rádio-controle. É possível adicionar a ela módulos com funcionalidades arbitrárias, que podem, inclusive, assumir a tarefa de gerar os parâmetros de direção e velocidades ao lado do receptor de rádio-controle, o que abre um leque de possibilidades de projetos futuros, dentre os quais citamos: controle de altura através de sensores como barômetro ou sensor de distância a laser, evasão de colisão, rastreamento e perseguição de objeto através de um módulo multimídia inteligente, além de transmissão de vídeo e áudio.
+
+
+\subsection{Componentes}
+
+Originalmente, os sensores de navegação (módulos GPS, magnetômetro e sensor ultrassônico) e o módulo receptor de rádio-controle. Módulos de expansão arbitrários podem ser adicionados nessa camada.
+
+\subsection{Comportamento}
+
+Os sensores da camada de periféricos apenas esperam o pedido de leitura do microcontrolador da camada de navegação e/ou de algum outro módulo da própria camada. Quando isso acontece, eles provêem seus dados mais recentes.
+
+Módulos personalizados desta camada possuem comportamento que varia de acordo com suas funcionalidades. Mais detalhes devem ser obtidos da documentação dos próprios módulos.
+
+\subsection{Comunicação entre os componentes}
+
+Os módulos GPS e magnetômetro e o receptor de rádio-controle comunicam-se com o Arduino da camada de navegação por UART. O sensor ultrassônico usa comunicação GPIO.
+
+\subsection{Parâmetros de entrada e saída}
+
+\subsubsection{Entrada}
+\begin{itemize}
+  \item   do rádio-controle remoto:
+  \begin{itemize}
+    \item sinal do rádio-controle.
+  \end{itemize}
+\end{itemize}
+\subsubsection{Saídas}
+\begin{itemize}
+  \item   para a camada de navegação:
+  \begin{itemize}
+    \item sinais dos sensores de navegação (GPS, magnetômetro e sensor ultrassônico);
+    \item parâmetros de direção e velocidades do multirrotor.
+  \end{itemize}
+  \item   para o rádio-controle remoto:
+  \begin{itemize}
+    \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado);
+    \item dados dos sensores de estabilização (acelerômetro e giroscópio);
+    \item dados dos sensores de navegação (GPS, magnetômetro e sensor ultrassônico);
+    \item parâmetros de direção e velocidades do multirrotor, caso gerados por algum módulo embarcado.
+  \end{itemize}
+\end{itemize}
+
 \chapter{Referencial Teórico\label{cap:referencialteorico}}
 
 \begin{flushright}{}``\emph{Navegar é preciso, viver não é preciso.}''\\
@@ -420,6 +558,34 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
   \item Vida útil (perda de 20\% da capacidade original): 1200 ciclos de carga / descarga
 \end{itemize}
 
+\section{Sensores}
+
+% falta falta falta
+
+\subsection{Sensor de distância}
+
+Sensores de distância podem ser utilizados para diversas funções em veículos voadores, como evitar colisões, medir distâncias ou velocidades. Para cada tipo de aplicação, deve-se considerar o ângulo de visada (que é a abertura onde o sensor consegue detectar obstáculos), distância máxima detectável, preço e precisão. 
+
+\subsubsection{Sensores de Infravermelhos}
+
+Sensores infravermelhos são sensores de baixo custo que detectam a reflexão de raios infravermelhos. 
+
+Esses sensores são compostos por um emissor LED que emite ondas infravermelhas e um detector (fotorresistor ou fototransistor). O LED e o sensor são dispostos de forma que a luz emitida pelo LED seja refletida por objetos que se aproximam e seja detectada pelo sensor. 
+
+Esses sensores são de baixo custo e podem se utilizados também para transmissão de dados (como em controles remotos convencionais) e desacoplamento de chaves (relés ópticos). 
+
+Nos conjuntos LED/Sensor pesquisados, a distância máxima está na ordem de milímetros a centímetros. A reflexão depende bastante das caracteristicas do material, como rugosidade e material. Isto torna o sensor impreciso e incapaz de detectar objetos escuros e opacos. Apesar de versáteis e baratos, estes não apresentam as características desejadas para este projeto.
+
+\subsubsection{Sensores superssônicos}
+
+Ondas acústicas superssônicas apresentam qualidades interessantes. Seu comprimento de onda é da ordem de milímetros, portanto é possível produzir transdutores bastante direcionais em dimensões diminutas (lobo principal de poucos graus em um transdutor de menos de 1 centímetro de raio). Ao mesmo tempo, também é grande o suficiente para apresentar resposta indiferente à rugosidade da maioria dos materiais. 
+
+Como a distancia e medida pelo tempo (ao invés da intensidade como no sensor infravermelho), atenuação tambem não apresenta problemas a detecção e precisão. 
+
+O módulo utilizado, modelo $HC-SR04$ produzido por diversos fabricantes, contém ainda a lógica para a geração e detecção dos sinais. Basta que o microcontrolador envie o sinal de acionamento (trigger) e meça o tempo até o pino eco (echo) ficar ativo. Isto permite que o modulo central execute outras funções e confere maior confiabilidade aos dados, já que ele trabalha em tempo real.
+
+O $HC-SR04$ apresenta alcance de ate $4,5$ metros e abertura de $15^o$, o que é suficiente para controle de altura e prevenção de colisões. Neste projeto foi utilizado para controle de altura, mas o código desenvolvido pode ser facilmente adaptado para outras funcoes. 
+
 % \section{Zigbee}
 	
 % 	Zigbee é um protocolo de comunicação de redes sem fio baseado na norma 802.15.4 do IEEE \cite{norma80215} cuja ênfase é o baixo consumo de energia.
@@ -432,9 +598,30 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
 
 O tema sobre controle de multirrotores voltou a ser estudado, graças a tecnologias novas e o grande interesse em \textit{VANTs}. Há diversas pesquisas já publicadas e os métodos desenvolvidos obtém resultados satisfatório, apesar de não haver o estabelecimento de uma teoria clássica especificamente para multirrotores. 
 
-O controle de um veiculo multirrotor apresenta diversas diferenças em relação a sistemas lineares invariantes no tempo, que são estudados mais a fundo no curso. Primeiramente, se trata de um sistema de múltiplas entradas e múltiplas saídas, sendo que todas as entradas influenciam todas as saídas. Além disto, é um sistema não-linear e dinâmico.
+\subsection{Características}
 
-Observa-se que os motores apresentam relação não-linear entre a potência consumida e o empuxo gerado. No entanto, é uma curva monotônica, cuja derivada apresenta pequenas variações nas proximidades de qualquer ponto. Isto permite que se utilize de aproximações lineares. Foi estudada a possibilidade do uso de aproximações afins ou tabelar os valores, todavia essas opções se mostraram muito mais computacionalmente custosas e não ofereciam desempenho muito superior. Como conhecemos a região de uso do motor, foi utilizada uma solução linear de mínimos quadrados, considerando uma distribuição uniforme ao longo dos ciclos de trabalho enviáveis ao motor. 
+O controle de um veículo multirrotor apresenta diversas diferenças em relação a sistemas lineares invariantes no tempo, que são estudados mais a fundo no curso. Primeiramente, se trata de um sistema de múltiplas entradas e múltiplas saídas, sendo que todas as entradas influenciam todas as saídas. Além disto, é um sistema não-linear e dinâmico.
+
+Observa-se que os motores apresentam relação não-linear entre a potência consumida e o empuxo gerado. \citeonline{nlflight} expressam o torque e empuxo gerados por:
+
+\begin{subequations}
+\begin{align}
+  T & = C_T \rho A r^2 \Omega^2, \\
+  Q & = C_Q \rho A r^3 \Omega^2
+\end{align}
+\end{subequations}
+onde $A$ é a área da hélice, $r$ o raio da hélice, $\rho$ a densidade do ar, $\Omega$ a rotação do motor e $C_T$ e $C_Q$ são constantes aerodinâmicas. Como algumas dessas variáveis são constantes, pode-se simplificar a fórmula para:
+
+\begin{subequations}
+\begin{align}
+  T & = C'_T \Omega^2, \\
+  Q & = C'_Q  \Omega^2
+\end{align}
+\end{subequations}
+
+Apesar de não explicitado no artigo, essas relações são válidas apartir de rotações elevadas, onde a impedância da hélice se torna semelhante à impedância do ar. Semelhante ao comportamento de alto-falantes e em baixas frequências, em baixas rotações não há acoplamento entre a hélice e o ar.
+
+Considerando a faixa nominal de uso das hélices, tratam-se de curvas monotônicas, cuja derivada apresenta pequenas variações nas proximidades de qualquer ponto. Isto permite que se utilize de aproximações lineares. Foi estudada a possibilidade do uso de aproximações afins ou tabelar os valores, todavia essas opções se mostraram muito mais computacionalmente custosas e não oferecem desempenho muito superior. Como conhecemos a região de uso do motor, foi utilizada uma solução linear de mínimos quadrados, considerando uma distribuição uniforme ao longo dos ciclos de trabalho enviáveis ao motor. 
 
 O sistema também apresenta características dinâmicas e não-lineares (semelhante a um pêndulo). Dependendo dos ângulos de Euler, as forças e torques geradas pelos motores serão diferentes. Apesar das magnitudes iguais, terão direções diferentes e, portanto, suas componentes serão diferentes. Ao mesmo tempo, a componente da gravidade se mantém na mesma direção 
 
@@ -446,12 +633,11 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \citeonline{fuzzycontrol} formula um sistema de controle inteligente de quadrrotores baseado na lógica fuzzy. As entradas para o sistemas são o valores desejados para altura e os ângulos em relação aos três eixos de referência que passam pelo centro de massa, e as saídas são as potências de cada um dos quatro rotores para se atender à especificação. Por fim, são feitas simulações para validar a eficiência da estratégia de controle.
 
+\subsection{Implementação}
+
+Para controlar os ângulos e aceleração vertical independentemente foram utiliz
 As variáveis criadas serão denominadas A, B, C e D. Blablablá explicar o funcionamento do controle 
 
-
-\section{Considerações finais}
-
-Neste capítulo foram apresentados aspectos técnicos do projeto, como motores e controladores. No capítulo a seguir, serão tratados assuntos relativos à motivação e execução do projeto.
 
 \chapter{Desenvolvimento do Trabalho}
 
@@ -463,16 +649,14 @@ Este capítulo trata de assuntos não relacionados às técnicas apresentadas no cap
 
 O grupo é composto por três alunos: Bruno Pinho, Danilo Luvizotto e Pedro Nariyoshi. 
 
-Bruno já teve contato com aquisição de dados de GPS e tem experiência com transceptores, irá trabalhar no hardware do módulo de controle e módulo de comunicação e nos algoritmos de navegação autônoma.
-Até o momento trabalhou estudando como será implementado a utilização do GPS e demais sensores para permitir a navegabilidade autônoma e também na aquisição dos parâmetros para estabilização e navegabilidade do sistema. Assim como também foi observado uma maneira da utilização do controle a distância.
+Bruno foi o responsável pela camada de navegação e de seus periféricos, como o gps, magnetometro e sensor de distancia. Responsável também da geração das curvas relacionadas ao trabalho. Também auxiliou nas demais partes do projeto.
 
-Danilo tem conhecimentos sobre sistemas operacionais e programação. Irá trabalhar na implementação do sistema operacional no módulo multimídia, além de trabalhar na transmissão de dados.
-Até o momento, pesquisou sobre o funcionamento de motores \textit{brushless}, contribuiu para a elaboração da arquitetura e para a divisão das funcionalidades entre os módulos, pesquisou as famílias de microcontroladores e processadores ARM disponíveis e adequadas para o projeto, dos sistemas GNU/Linux existentes para esses processadores e os ambientes de desenvolvimentos disponibilizados pelos seus fabricantes.
+Danilo foi o responsável por implementar a camada de controle. Responsável também pela estrutura do multirrotor, e auxiliando no desenvolvimento da arquitetura e nas demais partes do projeto.
 
-Pedro já trabalhou com cancelamento de ruído com áudio e tem interesse em algoritmos adaptativos, controle e acústica. Neste projeto irá trabalhar no controle e redução de vibrações durante o vôo. Tem se dedicado no desenvolvimento e estudo dos controladores de velocidade dos motores, tem trabalhado coordenando e checando cada seção do projeto. Contribuiu para a definição final da arquitetura e para a escolha dos processadores e sensores a serem utilizados.
+Pedro foi o responsável por coordenar o projeto. Sendo responsável também pelo desenvolvimento da parte teórica do projeto. Trabalhou também na estrutura do multirrotor e participou ativamente de todas as atividades do projeto.
 
 Na etapa de planejamento, a equipe contava com mais um integrante, Marcos Tortólio, que não está mais participando devido a um programa de intercâmbio na Espanha, como previsto.
-Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de hardware e software do veículo.
+Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de hardware e software do veículo. 
 
 \section{Problema a ser resolvido}
 
@@ -484,28 +668,28 @@ Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de 
 	
 \section{Motivações e Justificativas Técnicas}
 
-  Um multirrotor com um número par de rotores tem vantagens substanciais sobre helicópteros convencionais. Se cada par adjacente de hélices girar em sentido oposto, é possível controlar o momento angular controlando a razão entre a rotação das hélices. Assim, um multirrotor é capaz de reduzir o problema eletromecânico de voar a um problema de controle eletrônico.
+	Um multirrotor com um número par de rotores tem vantagens substanciais sobre helicópteros convencionais. Se cada par adjacente de hélices girar em sentido oposto, é possível controlar o momento angular controlando a razão entre a rotação das hélices. Assim, um multirrotor é capaz de reduzir o problema eletromecânico de voar a um problema de controle eletrônico.
 
 	O projeto implementa conhecimentos diversos da Engenharia Elétrica, como controle, programação, processamento de sinais, redes de computadores, circuitos elétricos, e é, portanto, é adequado e representativo à meta generalista do curso.
 
 	Além de colocar em prática conceitos aprendidos durante o curso, também nos aprofundaremos nas áreas de controle multivariável, processamento de imagens e sistemas eletrônicos embarcados.
 
-Por fim, a plataforma desenvolvida poderá ser utilizada por projetos posteriores, já que a área de veículos aéreos não-tripulados (VANTs) possui diversas vertentes de pesquisa em andamento.
+	Por fim, a plataforma desenvolvida poderá ser utilizada por projetos posteriores, já que a área de veículos aéreos não-tripulados (VANTs) possui diversas vertentes de pesquisa em andamento.
 
-\section{Descrição das Atividades a serem Realizadas}
-As etapas do projeto serão: Estudo Preliminar, Definições, Construção da Plataforma de Desenvolvimento, Estudo de Algoritmos de Controle, Construção do Protótipo, Controle Avançado, Desenvolvimento das Aplicações e Montagem Final. A seguir estão descritas as atividades e suas respectivas subatividades.
+\section{Descrição das Atividades Realizadas}
+As etapas do projeto foram: Estudo Preliminar, Definições, Construção da Plataforma de Desenvolvimento, Estudo de Algoritmos de Controle, Construção do Protótipo, Controle Avançado, Desenvolvimento das Aplicações e Montagem Final. A seguir estão descritas as atividades e suas respectivas subatividades.
 
 \begin{enumerate}
 
   \item Estudo Preliminar \\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item pesquisar sobre a construção de MVAs;
   \item pesquisar sobre as possíveis plataformas de desenvolvimento.
 \end{itemize}
 
   \item Definições\\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item definir os módulos básicos do veículo;
   \item definir uma arquitetura de hardware e software para implementar os controles e aplicações do veículo;
@@ -523,48 +707,44 @@ As etapas do projeto serão: Estudo Preliminar, Definições, Construção da Platafo
   \end{itemize}
   
   \item Construção da Plataforma de Desenvolvimento\\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item comprar componentes;
-  \item construção do hardware básico: microcontroladores e barramentos de dados;
+  \item construção do hardware básico;
   \item desenvolver bibliotecas básicas de interface do microcontrolador;
   \item estudar o comportamento dos motores.
 \end{itemize}
 
   \item Estudo de Algoritmos de Controle\\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item estudar a construção de um multirrotor comercial;
   \item pesquisar possíveis algoritmos de controle.
 \end{itemize}
 
+  \item Controle Avançado\\
+	Nesta etapa, os objetivos foram:
+\begin{itemize}
+  \item implementar sistema básico anticolisão(apenas relacionado a altura);
+  \item implementar o módulo e sistema de navegação manual;
+  \item implementar o módulo e sistema de navegação autônoma ;
+\end{itemize}
+
+  \item Desenvolvimento das Aplicações\\
+Nesta etapa, os objetivos foram:
+\begin{itemize}
+  \item construção do módulo GPS;
+  \item implementar sistema de navegação por GPS;
+\end{itemize}
+
   \item Construção do Protótipo\\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item construir os módulos sensores básicos;
   \item construir o módulo central;
   \item conectar os módulos ao barramento da plataforma de desenvolvimento;
   \item ligar motores, módulo central e módulos sensores;
   \item testar sensores, comandos de voo e estabilidade.
-\end{itemize}
-
-  \item Controle Avançado\\
-	Nesta etapa, os objetivos serão:
-\begin{itemize}
-  %\item implementar sistema anticolisão;
-  \item implementar o módulo e sistema de navegação manual;
-  \item implementar o módulo e sistema de navegação autônoma ;
-  \item testar os sistemas anteriores.
-\end{itemize}
-
-  \item Desenvolvimento das Aplicações\\
-Nesta etapa, os objetivos serão:
-\begin{itemize}
-  \item construção do módulo GPS;
-  %\item construção do módulo multimídia;
-  \item implementar sistema de navegação por GPS;
-  %\item implementar sistema de navegação por vídeo.
-  %\item testar os sistemas anteriores.
 \end{itemize}
 
   \item Montagem Final\\
@@ -578,19 +758,17 @@ Nesta etapa, os objetivos serão:
 
 \section{Metas}
 
-O projeto resultará em quatro produtos, descritos abaixo:
+O projeto resultou em quatro produtos, descritos abaixo:
 
 \begin{enumerate}
 
   \item Curvas que relacionem as seguintes variáveis de interesse do multirrotor:
   \begin{itemize}
-    \item massa total das baterias;
+    \item força dos motores;
     \item autonomia;
-    \item alcance;
-    \item velocidade;
-    \item carga útil.
+    \item tipo de hélice.
   \end{itemize}
-  As curvas trarão as demais variáveis em função da massa total das baterias para, pelo menos, 3 diferentes massas de baterias.
+  
   \item Softwares dos micro-controladores que realizem, controlem ou possibilitem as seguintes tarefas:
   \begin{itemize}
     \item excitação dos motores;
@@ -605,8 +783,8 @@ O projeto resultará em quatro produtos, descritos abaixo:
     \item receber dados de um controlador manual;
     \item voar pelo menos 10 minutos;
     \item levantar uma carga útil de pelo menos 1kg;
-    \item realizar um percurso arbitrário em um raio de até 50m ao ar livre;
-    \item percorrer uma rota através do módulo GPS entre dois pontos distantes de até 50m;
+    \item realizar um percurso arbitrário em um raio de até 20m ao ar livre;
+    \item percorrer uma rota através do módulo GPS entre dois pontos distantes de até 20m;
     \item possuir expansibilidade para módulos extras.
   \end{itemize}
   
@@ -630,6 +808,8 @@ Um problema encontrado foi a falta de documentação. Esta dificuldade se dá por d
 
 A capacidade de escrita e comunicação também é um fator limitante. O estudante politécnico geralmente não utiliza essas habilidades e elas atrofiam com o tempo. Muitas vezes é difícil e demorado para transmitir uma ideia ou organizar os pensamentos da equipe.
 
+A falta de um maior contato com micro-controladores também foi observada durante a execução da disciplina. Porém esta falta de contato foi concertada através de um estudo e uma pesquisa sobre o assunto.
+
 No entanto, a disciplina foi capaz de expor estas deficências da equipe e exercitar as habilidades de comunicação dos membros.
 
 \chapter{Cronograma}
@@ -649,17 +829,26 @@ No entanto, a disciplina foi capaz de expor estas deficências da equipe e exerci
 \end{figure}
 
 \chapter{Orçamento}
-%(AINDA FALTA)
+
+\section{Considerações Iniciais}
+Neste capítulo, foi feito um orçamento para fazer um estudo da viabilidade financeira do projeto e também para auxiliar na reprodução deste multirrotor dando idéia do preço dos componentes utilizados. Não foi considerado o frete nem o custo de impostos para importação.
+
+\section{Valores}
 \begin{tabular}{lr}
-Sensores e GPS: &\$174,85 \\
+Sensores e GPS: &\$199,85 \\
 ~~ 1x IMU Digital Combo Board - ITG3200/ADXL345: & \$64.95 \\
 ~~ 1x LS20031 GPS Receiver: & \$59.95 \\
 ~~ 1x MicroMag 3-Axis Magnetometer: & \$49.95 \\
+~~ 1x Ultrasonic Sensor - HCRS04: & \$25.00 \\
 \\
-ESC: & \$30 \\
+ESC: & \$52.00 \\
+~~ 4x ESCs &\$52.00\\
 \\
 Módulo de controle: &\$29.95 \\
 ~~ 1x LPC1114 LPCXpresso board &\$29.95\\
+\\
+Módulo de navegação: &\$28.99 \\
+~~ 1x Arduino Mega board &\$28.99\\
 \\
 Baterias: & \$26,51 \\
 ~~ 2x ZIPPY Flightmax 5700mAh 2S3P 25C & \$26.51\\
@@ -678,18 +867,15 @@ Estrutura: & \$45.00\\
 Protótipo para estudo: & \$1785.00 \\
 ~~ 1x MK Hexa2 Base Kit & \$1785.00\\
 
-Total: & \$2156.83 \\
+Total: & \$2232.82 \\
 \\
-Total - Protótipo: & \$371.83
+Total - Protótipo: & \$447.82
 \end{tabular}
 
-\chapter{Análise de Risco}
+\section{Conclusão}
+Os valores apresentados neste capítulo servem para mostrar que o multirrotor proposto no projeto é viável financeiramente visto que os modelos comerciais possuem valores maiores que os cotados para construir este protótipo. 
+Também é necessário relembrar que os valores mostrados não estão inclusos frete e importação e podem variar. Alguns componentes também podem ser trocados de modo que o protótipo pode ficar com um valor menor que o atual.
 
-O projeto envolve aspectos que nunca foram discutidos em sala de aula e que equipe não possui familiaridade, como controle de vôo. Estas etapas criam incerteza e é impossível afirmar o tempo que será gasto para o desenvolvimento desses módulos. Para minimizar esse problema, o projeto foi separado em blocos independentes e cada bloco será um \textit{milestone}.
-
-Um problema encontrado foi a falta de documentação. Esta dificuldade se dá por dois motivos majoritários. O uso de motores \textit{brushless} e controladores é algo razoavelmente recente
-
-Existe também os riscos associados a realização do projeto. Para montagem do hardware é necessário a importação de grande parte de componentes, como sensores e motores. A importação acarreta em outros riscos, como o atraso ou eventual extravio de encomendas. Para evitar imprevistos, uma lista preliminar de componentes foi elaborada e os componentes já foram encomendados.
 
 \chapter{Conclusões e trabalhos futuros\label{cap:conclusao}}
 
@@ -700,30 +886,14 @@ transforma.}''\\
 \vfill{}
 
 Plataformas de desenvolvimento de veículos voadores autônomos são interessantes por permitirem a implementação de algoritmos e aplicativos de forma simples e rápida. Consegue-se isto isolando a aplicação dos outros módulos envolvidos no desenvolvimento de um multirrotor.
-
-
-\section{Fase do projeto}
-
-    O projeto encontra-se na fase de desenvolvimento do protótipo. Todo o material teórico foi coletado e os componentes foram comprados.
-    Os ESCs estão em fase final de prototipagem. Toda a teoria necessária foi abordada e o ESC está em fase de teste. Após validar a teorida o circuito impresso será feito de modo que possa ser utilizado no multirrotor.
-    A parte do controle está em fase inicial de desenvolvimento. O algoritmo está sendo construido. A placa que será utilizada no módulo de controle já foi devidamente estudada esperando apenas a efetivação do algoritmo teórico para transporta-lo para a placa.
-    A comunicação I2c que será utilizada entre os ESCs e o módulo de controle já foi devidamente testada e em parte está implementada. Faltando apenas a construção dos dois módulos para efetuar o último teste.
-    A estrutura ainda não está pronta devido ao fato de que alguns componentes ainda não foram entregues. Porém uma estrutura de suporte já esta montada para caso necessário de algum teste.
-    As demais partes do projeto ainda estão em desenvolvimento inicial e a maior parte dos componentes ainda não chegaram, o que acarretará em um pequeno atraso no planejamento.
     
-    % \section{Resultados}
+\section{Dificuldades encontradas}
 
-% Ao longo deste semestre, resultados importantes foram obtidos:
-% \begin{itemize}
-%   \item definição da estrutura básica do multirrotor;
-%   \item definição da arquitetura de hardware e software da platafoma;
-%   \item definição de componentes básicos;
-%   \item formação de uma base teórica sobre a construção de multirrotores e sobre arquitetura de hardware e software de sistemas embarcados.
-% \end{itemize}
+O projeto envolve aspectos que nunca foram discutidos em sala de aula e que equipe não possui familiaridade, como controle de vôo. Estas etapas criam incerteza e é impossível afirmar o tempo que será gasto para o desenvolvimento desses módulos. Para minimizar esse problema, o projeto foi separado em blocos independentes e cada bloco será um \textit{milestone}.
 
-% Espera-se ainda, ao final deste semestre, terminar a escolha definitiva dos componentes básicos e concluir a sua compra. Dessa forma, será possível seguir o cronograma apresentado e construir o sistema todo a tempo de poder testá-lo e corrigir eventuais erros de projeto.
+Um problema encontrado foi a falta de documentação. Esta dificuldade se dá por dois motivos majoritários. O uso de motores \textit{brushless} e controladores é algo razoavelmente recente
 
-% Um projeto completo de engenharia apresenta grandes dificuldades. Estudantes apresentam maior facilidade para resolver problemas fechados, como provas e exercícios pela sua maior prática com estes desafios. A disciplina de projeto de formatura proporciona uma oportunidade para que os alunos aprendam por experiência como lidar com um projeto de engenharia. Apesar de ser insuficiente para um preparo completo, esta disciplina é como uma incubadora,  permitindo os alunos a sobreviver no mercado de trabalho.
+Existe também os riscos associados a realização do projeto. Para montagem do hardware é necessário a importação de grande parte de componentes, como sensores e motores. A importação acarreta em outros riscos, como o atraso ou eventual extravio de encomendas. Este problema ocorreu na execução do trabalho. Os motores foram pedidos com um bom tempo de antecedência porém não chegaram. Para resolver este problema, outros motores tiveram que ser utilizados.
 
 \section{Considerações sobre o Curso de Graduação}
 
@@ -731,11 +901,14 @@ A ênfase de Sistemas Eletrônicos tem por objetivo ser uma ênfase generalista, of
 
 Para a levitação e movimentação do multirrotor, utiliza-se conhecimentos aprendidos nas matérias do núcleo de controle, PTC2412 (Controle I) e PTC2512 (Laboratório de Controle). Além destas, a disciplina PSI2662 (Sensores e Atuadores) complementa este conjunto com metodologia de implementação de projetos embarcados e sensores para evitar colisões, e a disciplina PSI2661 (Transceptores) viabiliza a transmissão dos dados por radiofrequência.
 
-%A captura de áudio e vídeo envolve matérias do núcleo de processamento de sinais, como PSI2533 (Modelagem em processamento de sinais) e PSI2432 (Projeto e Implementação de Filtros Digitais), onde aprende-se técnicas de filtragem e codificação de sinais.
-
 A implementação do módulo de controle envolve as matérias de circuitos integrados PSI2451, PSI2452 e PSI2553 e de programação MAC2166 (Introdução à programação), MAC0122 (Algoritmos) e PCS2478 (Tópicos em Programação). Além disto, a construção dos circuitos de interface entre o controle e os motores e entre o controle e os sensores, utiliza-se conceitos aprendidos nos módulos de eletrônica, como PSI2223 (Introdução à eletrônica), PSI2324 (Eletrônica I) e PSI2326 (Eletrônica II).
 
 	 Esta seção procura sumarizar e evidenciar as mais importantes, no entanto reconhece-se que há disciplinas que apesar de não mencionadas compõem os conhecimentos que serão utilizados neste projeto.
+
+\section{Legado e aprendizado}
+Para a realização deste projeto, muito conhecimento teve de ser empregado. Foi necessário uma grande interdiciplinaridade. Com isto, foi possível exercitar uma grande parte do conhecimento adquirido no curso.
+Juntamente com o conhecimento teórico que foi ensinado nas aulas, também foi adquirido uma boa prática de engenharia. Como trabalhar em equipe, a formulação de relatórios, a formulação e execução de um cronograma. As dificuldades de projeto também foram um grande desafio que fizeram com que o grupo crescesse e descobrisse o que é a engenharia de verdade.
+O resultado final do projeto é um legado a ser deixado para o departamento de sistemas eletrônicos. Como não existia nenhum projeto do gênero, a documentação gerada e o projeto em si pode e deve ser utilizado futuramente por outros grupos. Visando esta utilização foi criado uma vasta documentação teórica e também prática para a reprodução do projeto. Assim como também todas as dificuldades encontradas são listadas para que no futuro estas mesmas possam ser evitadas.
 
 \bibliography{rt1}
 
@@ -767,199 +940,76 @@ Microdrones é uma empresa alemã cujo foco é o desenvolvimento de pequenas aerona
 %Se houverem mais anexos, identifique-os como Anexo B, Anexo C e assim por diante.
 % \end{appendix}
 
+\chapter{Anexo A - Curvas de relação}
+
+\section{Considerações Iniciais}
+
+Este capítulo mostrará as curvas geradas para a obtenção de parâmetros do motor e também a interpretação das curvas de interesse.
+
+\section{Curvas a serem geradas}
+
+Para gerar os parâmetros e auxiliar na construção do protótipo foram obtidas as seguintes curvas:
+  \begin{itemize}
+    \item força dos motores x potência(em porcentagem);
+    \item autonomia x potência(em porcentagem);
+   \end{itemize}
+   Foram feito estas curvas para 2 tipos diferentes de hélices.
+
+\section{Metodologia}
+ 
+	Para tentar padronizar as medidas de modo que os resultados possam ser melhores comparados, foi-se atribuida a seguinte metodologia.
+Foi utilizada uma balança que foi acoplada a um suporte para os motores de modo que seja possível medir a força de cada motor. Para evitar certas interferências, o aparato tenta distanciar o máximo possível o motor da balança.
+	
+	Para gerar as curvas, foram feitas sete medidas, cada uma com uma potência do motor, com as seguintes medidas: 10, 20, 40, 50, 60, 80 e 100 porcento. Com isto a força que cada motor pode executar foi medida. Juntamente com a medida da força, a corrente e a tensão também foram obtidas para calcular a potência que o motor absorve.
+	
+	Sabendo a carga da bateria, a autonomia pode ser calculada.
+
+	Foram utilizadas 2 tipos de hélices para tentar fazer uma melhor comparação de como estas podem alterar os demais parâmetros do projeto.
+
+
+\section{Resultados}
+
+Falta a geração das curvas.
+
+\section{Conclusão}
+
+Falta a geração das curvas.
+
+
+
 \part{Segunda Parte - Manual de Construção de um Multirrotor}
 %\setcounter{chapter}{0}
-\chapter{Arquitetura}
-A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. Por isso, o software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
 
-Dessa maneira, é possível modificar o software ou o hardware pertencente a uma ou mais camadas de abstração sem se preocupar com as outras, desde que se observe a especificação das mensagens trocadas entre elas.
+\chapter{Considerações Iniciais}
+TODO
 
-Essas camadas ou domínios de tarefas são:
-\begin{enumerate}
-  \item Camada de excitação dos motores, responsável por controlar a rotação dos rotores;
-  \item Camada de estabilização do vôo, responsável por garantir a estabilidade do vôo;
-  \item Camada de navegação, responsável pela velocidade e pela direção do sistema;
-  \item Camada de periféricos, que comporta os sensores de navegação e o receptor de rádio-controle e onde é possível acrescentar módulos personalizados.
-\end{enumerate}
-
-A figura \ref{fig.arquitsimp} dá uma visão geral da arquitetura, que será detalhada mais adiante.
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=4in]{./Figuras/Arquitsimp.eps}
-  \caption[Arquitetura simplificada]
-  {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
-\end{figure}
-
-\section{Camada de excitação dos motores}
-\subsection{Descrição}
-
-Essa é a primeira camada, abaixo da camada de estabilização de vôo. Responsável por garantir que a rotação dos motores esteja de acordo com o determinado, por detectar e proteger os motores de sobrecorrentes e por fornecer a potência que eles necessitam para funcionar. Deve impedir que os motores queimem caso os rotores fiquem presos ou girem em aberto (sem hélices).
-
-\subsection{Componentes}
-
-É constituída pelos n motores, hélices e controladores eletrônicos de velocidade (eletronic speed controllers - ESCs), sendo n o número de rotores do multirrotor. Os ESCs, por sua vez, são constituídos por duas placas de circuito, sendo uma responsável pela lógica e a outra pelo fornecimento de potência aos motores.
-
-As hélices são presas nos eixos dos motores de forma que girem com ele. Cada motor é ligado à placa do circuito de potência do ESC correspondente, pela qual é alimentado. A placa de potência do ESC é ligada à sua placa de lógica e à bateria, a qual fornece a tensão e a corrente necessárias para o acionamento dos motores.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-      \item da camada de estabilização de vôo:
-      \begin{itemize}
-        \item rotação do motor (para cada ESC + rotor)
-      \end{itemize}
-\end{itemize}    
-        
-
-Saída:
-\begin{itemize}
-  \item para a camada de estabilização de vôo
-  \begin{itemize}
-    \item status dos motores
-  \end{itemize}
-\end{itemize}
-
-\subsection{Comportamento}
-
-O controlador eletrônico de velocidade (ESC) lê o parâmetro de rotação enviado pelo microcontrolador da camada de estabilização e aguarda um sinal do motor que indica que o enrolamento está alinhado com o campo do rotor. Quando isso ocorre, o ESC calcula o tempo ideal para o chavear a excitação do motor, espera esse tempo e realiza o chaveamento, depois do qual o ciclo recomeça.
-
-Para maiores detalhes sobre funcionamento do ESC, ver a seção \ref{sec:esc}.
-
-Abaixo, um diagrama que representa esse comportamento:
+\chapter{Peças}
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=4in]{./Figuras/Excit-func.eps}
-  \caption[Funcionamento do ESC]
-  {visão geral do funcionamento do ESC}\label{fig.escfunc}
+  \includegraphics{./Figuras/cad_suporte_motor.eps}
+  \caption[Placa de suporte do motor]
+  {Placa de suporte do motor}\label{fig.protsupmotor}
 \end{figure}
-
-\section{Camada de estabilização do vôo}
-\subsection{Descrição}
-
-Responsável por processar os sinais dos sensores de estabilização (acelerômetros e giroscópios) e os parâmetros de navegação (ângulos de Euler e potência total dos motores) e gerar os parâmetros de rotação de cada motor de forma a manter a estabilidade do vôo e controlar a velocidade de deslocamento e a velocidade angular do multirrotor.
-
-\subsection{Componentes}
-
-Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M) e por uma unidade de medida inercial (IMU - inertial measurement unit), que é um circuito que contém o acelerômetros e o giroscópio tridimensionais. O microcontrolador está ligado ao microcontrolador da camada de navegação por SPI e à  IMU por $I^2C$.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-  \item da camada de navegação:
-  \begin{itemize}
-    \item ângulos de Euler e potência total dos motores (parâmetros de navegação)
-  \end{itemize}
-\end{itemize}
-Saídas:
-\begin{itemize}
-  \item para a camada de excitação dos motores
-  \begin{itemize}
-    \item rotação de cada motor
-  \end{itemize}
-  \item para a camada de navegação
-  \begin{itemize}
-    \item status dos motores
-    \item dados dos sensores de estabilização - acelerômetro e giroscópio
-  \end{itemize}
-\end{itemize}
-
-\subsection{Comportamento}
-
-A camada de estabilização age através de um laço que começa com a leitura dos parâmetros de navegação obtidos do microcontrolador daquela camada e segue com a leitura dos sinais dos sensores de estabilização, ou seja, dos acelerômetros e dos giroscópios. O próximo passo é a execução dos algoritmos PID que geram os parâmetros de rotação dos motores, parâmetros os quais são enviados aos ESCs da camada de excitação.
-
-Os algoritmos que controlam a estabilidade são PIDs não-lineares, ver a seção \ref{sec:controle} para mais detalhes. A figura \ref{fig.estabfunc} representa esse comportamento.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=4in]{./Figuras/Estab-func.eps}
-  \caption[Funcionamento da camada de estabilização]
-  {visão geral do funcionamento da camada de estabilização}\label{fig.estabfunc}
+  \includegraphics{./Figuras/cad_central_superior}
+  \caption[Placa central superior do protótipo]
+  {Placa central superior do protótipo}\label{fig.protcentsup}
 \end{figure}
-
-\section{Camada de navegação}
-\subsection{Descrição}
-
-Responsável por processar os sinais dos sensores de navegação (GPS e magnetômetro) e os parâmetros de direção, velocidade e rotação e por gerar os parâmetros de navegação (ângulos de Euler e potência total dos motores) do multirrotor, de forma a fazê-lo mover-se com a direção e a velocidade pretendidas e/ou girar em torno de seu eixo vertical.
-
-\subsection{Componentes}
-
-Camada constituída por um microcontrolador ARM (Cortex-M0 modelo LPC1114 da NXP, família ARMv6-M, arquitetura Cortex-M), pelo GPS, pelo magnetômetro e pelo receptor do rádio-controle. Esses sensores e o receptor são implementados como módulos e estão ligados ao microcontrolador pelo mesmo barramento SPI que o conecta aos módulos inteligentes da camada de aplicação. A ligação ao microcontrolador da camada de estabilização de vôo se dá por SPI.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entradas:
-\begin{itemize}
-  \item da camada de periféricos
-    \begin{itemize}
-      \item sinais dos sensores de navegação (GPS e magnetômetro)
-      \item parâmetros de direção, velocidade e rotação do multirrotor 
-    \end{itemize}
-  \item da camada de estabilização de vôo
-  \begin{itemize}
-    \item status dos motores
-    \item dados dos sensores de estabilização (acelerômetro e giroscópio)
-  \end{itemize}
-\end{itemize}
-
-Saída:
-\begin{itemize}
-  \item para a camada de estabilização de vôo
-  \begin{itemize}
-    \item ângulos de Euler e potência total dos motores (parâmetros de navegação)
-  \end{itemize}
-  \item para a camada de periféricos
-  \begin{itemize}
-    \item status dos motores (caso solicitado por algum módulo periférico)
-    \item dados dos sensores de estabilização - acelerômetro e giroscópio (caso solicitado por algum módulo periférico)
-  \end{itemize}
-\end{itemize}
-
-\subsubsection{Comportamento}
-
-A camada de navegação possui um laço principal que tem início com a leitura dos parâmetros de direção, velocidade e rotação, os quais são obtidos do módulo de recepção do rádio-controle e/ou podem ser também gerados na camada de periféricos. Isso abre a possibilidade de que aplicações personalizadas determinem a direção, a velocidade de translação e a rotação do multirrotor.
-
-Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS e magnetômetro). A partir desses parâmetros e sinais é realizado o processamento que gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) que são enviados para o microcontrolador da camada de estabilização. A figura \ref{fig.navfunc} representa esse comportamento.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=4in]{./Figuras/Navega-func.eps}
-  \caption[Funcionamento da camada de navegação]
-  {visão geral do funcionamento da camada de navegação}\label{fig.navfunc}
+  \includegraphics[angle=90]{./Figuras/cad_central_inferior}
+  \caption[Placa central inferior do protótipo]
+  {Placa central inferior do protótipo}\label{fig.protcentinf}
 \end{figure}
 
-\section{Camada de periféricos}
-\subsection{Descrição}
+\chapter{Instruções de montagem}
+TODO
 
-A camada de periféricos abriga originalmente os módulos dos sensores de navegação e o módulo receptor do rádio-controle, que estão ligados entre si e ao microcontrolador da camada de navegação por um barramento $I^2C$. Essa arquitetura foi concebida para que seja possível que qualquer pessoa com o conhecimento técnico necessário crie e adicione periféricos personalizados.
-
-Esses módulos periféricos podem, inclusive, assumir a qualquer momento a tarefa de gerar os parâmetros de direção, velocidade e rotação ao lado do receptor de rádio-controle, o que abre um leque de possibilidades de projetos futuros, dentre os quais citamos: controle de altura através de sensores como barômetro ou sensor de distância ultrassônico ou a laser, evasão de colisão usando sensores de distância, rastreamento e perseguição de objeto através de um módulo multimídia inteligente e transmissão de vídeo e áudio.
-
-\subsection{Componentes}
-
-Camada expansível constituída por módulos capazes de se comunicar por $I^2C$. Os módulos implementados originalmente são os sensores de navegação, que contém o GPS e o magnetômetro, e o módulo receptor de rádio-controle.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-  \item sinal do rádio-controle
-\end{itemize}
-Saída:
-\begin{itemize}
-  \item   para a camada de navegação
-  \begin{itemize}
-    \item sinais dos sensores de navegação (GPS e magnetômetro);
-    \item parâmetros de direção, velocidade e rotação do multirrotor.
-  \end{itemize}
-\end{itemize}
-
-\subsection{Comportamento}
-
-Os sensores da camada de periféricos apenas esperam o pedido de leitura do microcontrolador da camada de navegação e/ou de algum outro módulo da própria camada. Quando isso acontece, eles provêem seus dados mais recentes.
-
-Módulos personalizados desta camada possuem comportamento que varia de acordo com suas funcionalidades. Mais detalhes devem ser obtidos da documentação dos próprios módulos.
+\chapter{Considerações Finais}
+TODO
 
 \end{document}
