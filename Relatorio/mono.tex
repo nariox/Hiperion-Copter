@@ -190,9 +190,10 @@ Abaixo, um diagrama que representa esse comportamento:
   {visão geral do funcionamento do ESC}\label{fig.escfunc}
 \end{figure}
 
-\subsection{Comunicação com outras camadas}
+\subsection{Comunicação entre os componentes}
 
 Cada ESC precisa comunicar-se com o microcontrolador ARM da camada de estabilização de vôo. O ESC projetado o faz através do protocolo I$^2$C, enquanto que a maior parte dos ESCs comerciais recebe um PWM como entrada. Devido ao alto custo de fabricação em baixa escala, foram usados ESCs comerciais no protótipo do multirrotor. Apenas um ESC projetado foi construído, como prova de conceito.
+Os motores recebem três PWMs dos ESCs, que o alimentam.
 
 \subsection{Parâmetros de entrada e saída}
 
