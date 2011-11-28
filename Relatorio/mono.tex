@@ -609,10 +609,6 @@ Para controlar os ângulos e aceleração vertical independentemente
 As variáveis criadas serão denominadas A, B, C e D. Blablablá explicar o funcionamento do controle 
 
 
-\section{Considerações finais}
-
-Neste capítulo foram apresentados aspectos técnicos do projeto, como motores e controladores. No capítulo a seguir, serão tratados assuntos relativos à motivação e execução do projeto.
-
 \chapter{Desenvolvimento do Trabalho}
 
 \section{Considerações Iniciais}
@@ -623,16 +619,14 @@ Este capítulo trata de assuntos não relacionados às técnicas apresentadas no cap
 
 O grupo é composto por três alunos: Bruno Pinho, Danilo Luvizotto e Pedro Nariyoshi. 
 
-Bruno já teve contato com aquisição de dados de GPS e tem experiência com transceptores, irá trabalhar no hardware do módulo de controle e módulo de comunicação e nos algoritmos de navegação autônoma.
-Até o momento trabalhou estudando como será implementado a utilização do GPS e demais sensores para permitir a navegabilidade autônoma e também na aquisição dos parâmetros para estabilização e navegabilidade do sistema. Assim como também foi observado uma maneira da utilização do controle a distância.
+Bruno foi o responsável pela camada de navegação e de seus periféricos, como o gps, magnetometro e sensor de distancia. Responsável também da geração das curvas relacionadas ao trabalho. Também auxiliou nas demais partes do projeto.
 
-Danilo tem conhecimentos sobre sistemas operacionais e programação. Irá trabalhar na implementação do sistema operacional no módulo multimídia, além de trabalhar na transmissão de dados.
-Até o momento, pesquisou sobre o funcionamento de motores \textit{brushless}, contribuiu para a elaboração da arquitetura e para a divisão das funcionalidades entre os módulos, pesquisou as famílias de microcontroladores e processadores ARM disponíveis e adequadas para o projeto, dos sistemas GNU/Linux existentes para esses processadores e os ambientes de desenvolvimentos disponibilizados pelos seus fabricantes.
+Danilo foi o responsável por implementar a camada de controle. Responsável também pela estrutura do multirrotor, e auxiliando no desenvolvimento da arquitetura e nas demais partes do projeto.
 
-Pedro já trabalhou com cancelamento de ruído com áudio e tem interesse em algoritmos adaptativos, controle e acústica. Neste projeto irá trabalhar no controle e redução de vibrações durante o vôo. Tem se dedicado no desenvolvimento e estudo dos controladores de velocidade dos motores, tem trabalhado coordenando e checando cada seção do projeto. Contribuiu para a definição final da arquitetura e para a escolha dos processadores e sensores a serem utilizados.
+Pedro foi o responsável por coordenar o projeto. Sendo responsável também pelo desenvolvimento da parte teórica do projeto. Trabalhou também na estrutura do multirrotor e participou ativamente de todas as atividades do projeto.
 
 Na etapa de planejamento, a equipe contava com mais um integrante, Marcos Tortólio, que não está mais participando devido a um programa de intercâmbio na Espanha, como previsto.
-Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de hardware e software do veículo.
+Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de hardware e software do veículo. 
 
 \section{Problema a ser resolvido}
 
@@ -644,28 +638,28 @@ Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de 
 	
 \section{Motivações e Justificativas Técnicas}
 
-  Um multirrotor com um número par de rotores tem vantagens substanciais sobre helicópteros convencionais. Se cada par adjacente de hélices girar em sentido oposto, é possível controlar o momento angular controlando a razão entre a rotação das hélices. Assim, um multirrotor é capaz de reduzir o problema eletromecânico de voar a um problema de controle eletrônico.
+	Um multirrotor com um número par de rotores tem vantagens substanciais sobre helicópteros convencionais. Se cada par adjacente de hélices girar em sentido oposto, é possível controlar o momento angular controlando a razão entre a rotação das hélices. Assim, um multirrotor é capaz de reduzir o problema eletromecânico de voar a um problema de controle eletrônico.
 
 	O projeto implementa conhecimentos diversos da Engenharia Elétrica, como controle, programação, processamento de sinais, redes de computadores, circuitos elétricos, e é, portanto, é adequado e representativo à meta generalista do curso.
 
 	Além de colocar em prática conceitos aprendidos durante o curso, também nos aprofundaremos nas áreas de controle multivariável, processamento de imagens e sistemas eletrônicos embarcados.
 
-Por fim, a plataforma desenvolvida poderá ser utilizada por projetos posteriores, já que a área de veículos aéreos não-tripulados (VANTs) possui diversas vertentes de pesquisa em andamento.
+	Por fim, a plataforma desenvolvida poderá ser utilizada por projetos posteriores, já que a área de veículos aéreos não-tripulados (VANTs) possui diversas vertentes de pesquisa em andamento.
 
-\section{Descrição das Atividades a serem Realizadas}
-As etapas do projeto serão: Estudo Preliminar, Definições, Construção da Plataforma de Desenvolvimento, Estudo de Algoritmos de Controle, Construção do Protótipo, Controle Avançado, Desenvolvimento das Aplicações e Montagem Final. A seguir estão descritas as atividades e suas respectivas subatividades.
+\section{Descrição das Atividades Realizadas}
+As etapas do projeto foram: Estudo Preliminar, Definições, Construção da Plataforma de Desenvolvimento, Estudo de Algoritmos de Controle, Construção do Protótipo, Controle Avançado, Desenvolvimento das Aplicações e Montagem Final. A seguir estão descritas as atividades e suas respectivas subatividades.
 
 \begin{enumerate}
 
   \item Estudo Preliminar \\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item pesquisar sobre a construção de MVAs;
   \item pesquisar sobre as possíveis plataformas de desenvolvimento.
 \end{itemize}
 
   \item Definições\\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item definir os módulos básicos do veículo;
   \item definir uma arquitetura de hardware e software para implementar os controles e aplicações do veículo;
@@ -683,48 +677,44 @@ As etapas do projeto serão: Estudo Preliminar, Definições, Construção da Platafo
   \end{itemize}
   
   \item Construção da Plataforma de Desenvolvimento\\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item comprar componentes;
-  \item construção do hardware básico: microcontroladores e barramentos de dados;
+  \item construção do hardware básico;
   \item desenvolver bibliotecas básicas de interface do microcontrolador;
   \item estudar o comportamento dos motores.
 \end{itemize}
 
   \item Estudo de Algoritmos de Controle\\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item estudar a construção de um multirrotor comercial;
   \item pesquisar possíveis algoritmos de controle.
 \end{itemize}
 
+  \item Controle Avançado\\
+	Nesta etapa, os objetivos foram:
+\begin{itemize}
+  \item implementar sistema básico anticolisão(apenas relacionado a altura);
+  \item implementar o módulo e sistema de navegação manual;
+  \item implementar o módulo e sistema de navegação autônoma ;
+\end{itemize}
+
+  \item Desenvolvimento das Aplicações\\
+Nesta etapa, os objetivos foram:
+\begin{itemize}
+  \item construção do módulo GPS;
+  \item implementar sistema de navegação por GPS;
+\end{itemize}
+
   \item Construção do Protótipo\\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item construir os módulos sensores básicos;
   \item construir o módulo central;
   \item conectar os módulos ao barramento da plataforma de desenvolvimento;
   \item ligar motores, módulo central e módulos sensores;
   \item testar sensores, comandos de voo e estabilidade.
-\end{itemize}
-
-  \item Controle Avançado\\
-	Nesta etapa, os objetivos serão:
-\begin{itemize}
-  %\item implementar sistema anticolisão;
-  \item implementar o módulo e sistema de navegação manual;
-  \item implementar o módulo e sistema de navegação autônoma ;
-  \item testar os sistemas anteriores.
-\end{itemize}
-
-  \item Desenvolvimento das Aplicações\\
-Nesta etapa, os objetivos serão:
-\begin{itemize}
-  \item construção do módulo GPS;
-  %\item construção do módulo multimídia;
-  \item implementar sistema de navegação por GPS;
-  %\item implementar sistema de navegação por vídeo.
-  %\item testar os sistemas anteriores.
 \end{itemize}
 
   \item Montagem Final\\
@@ -738,19 +728,17 @@ Nesta etapa, os objetivos serão:
 
 \section{Metas}
 
-O projeto resultará em quatro produtos, descritos abaixo:
+O projeto resultou em quatro produtos, descritos abaixo:
 
 \begin{enumerate}
 
   \item Curvas que relacionem as seguintes variáveis de interesse do multirrotor:
   \begin{itemize}
-    \item massa total das baterias;
+    \item força dos motores;
     \item autonomia;
-    \item alcance;
-    \item velocidade;
-    \item carga útil.
+    \item tipo de hélice.
   \end{itemize}
-  As curvas trarão as demais variáveis em função da massa total das baterias para, pelo menos, 3 diferentes massas de baterias.
+  
   \item Softwares dos micro-controladores que realizem, controlem ou possibilitem as seguintes tarefas:
   \begin{itemize}
     \item excitação dos motores;
@@ -765,8 +753,8 @@ O projeto resultará em quatro produtos, descritos abaixo:
     \item receber dados de um controlador manual;
     \item voar pelo menos 10 minutos;
     \item levantar uma carga útil de pelo menos 1kg;
-    \item realizar um percurso arbitrário em um raio de até 50m ao ar livre;
-    \item percorrer uma rota através do módulo GPS entre dois pontos distantes de até 50m;
+    \item realizar um percurso arbitrário em um raio de até 20m ao ar livre;
+    \item percorrer uma rota através do módulo GPS entre dois pontos distantes de até 20m;
     \item possuir expansibilidade para módulos extras.
   \end{itemize}
   
@@ -790,6 +778,8 @@ Um problema encontrado foi a falta de documentação. Esta dificuldade se dá por d
 
 A capacidade de escrita e comunicação também é um fator limitante. O estudante politécnico geralmente não utiliza essas habilidades e elas atrofiam com o tempo. Muitas vezes é difícil e demorado para transmitir uma ideia ou organizar os pensamentos da equipe.
 
+A falta de um maior contato com micro-controladores também foi observada durante a execução da disciplina. Porém esta falta de contato foi concertada através de um estudo e uma pesquisa sobre o assunto.
+
 No entanto, a disciplina foi capaz de expor estas deficências da equipe e exercitar as habilidades de comunicação dos membros.
 
 \chapter{Cronograma}
@@ -809,17 +799,26 @@ No entanto, a disciplina foi capaz de expor estas deficências da equipe e exerci
 \end{figure}
 
 \chapter{Orçamento}
-%(AINDA FALTA)
+
+\section{Considerações Iniciais}
+Neste capítulo, foi feito um orçamento para fazer um estudo da viabilidade financeira do projeto e também para auxiliar na reprodução deste multirrotor dando idéia do preço dos componentes utilizados. Não foi considerado o frete nem o custo de impostos para importação.
+
+\section{Valores}
 \begin{tabular}{lr}
-Sensores e GPS: &\$174,85 \\
+Sensores e GPS: &\$199,85 \\
 ~~ 1x IMU Digital Combo Board - ITG3200/ADXL345: & \$64.95 \\
 ~~ 1x LS20031 GPS Receiver: & \$59.95 \\
 ~~ 1x MicroMag 3-Axis Magnetometer: & \$49.95 \\
+~~ 1x Ultrasonic Sensor - HCRS04: & \$25.00 \\
 \\
-ESC: & \$30 \\
+ESC: & \$52.00 \\
+~~ 4x ESCs &\$52.00\\
 \\
 Módulo de controle: &\$29.95 \\
 ~~ 1x LPC1114 LPCXpresso board &\$29.95\\
+\\
+Módulo de navegação: &\$28.99 \\
+~~ 1x Arduino Mega board &\$28.99\\
 \\
 Baterias: & \$26,51 \\
 ~~ 2x ZIPPY Flightmax 5700mAh 2S3P 25C & \$26.51\\
@@ -838,18 +837,15 @@ Estrutura: & \$45.00\\
 Protótipo para estudo: & \$1785.00 \\
 ~~ 1x MK Hexa2 Base Kit & \$1785.00\\
 
-Total: & \$2156.83 \\
+Total: & \$2232.82 \\
 \\
-Total - Protótipo: & \$371.83
+Total - Protótipo: & \$447.82
 \end{tabular}
 
-\chapter{Análise de Risco}
+\section{Conclusão}
+Os valores apresentados neste capítulo servem para mostrar que o multirrotor proposto no projeto é viável financeiramente visto que os modelos comerciais possuem valores maiores que os cotados para construir este protótipo. 
+Também é necessário relembrar que os valores mostrados não estão inclusos frete e importação e podem variar. Alguns componentes também podem ser trocados de modo que o protótipo pode ficar com um valor menor que o atual.
 
-O projeto envolve aspectos que nunca foram discutidos em sala de aula e que equipe não possui familiaridade, como controle de vôo. Estas etapas criam incerteza e é impossível afirmar o tempo que será gasto para o desenvolvimento desses módulos. Para minimizar esse problema, o projeto foi separado em blocos independentes e cada bloco será um \textit{milestone}.
-
-Um problema encontrado foi a falta de documentação. Esta dificuldade se dá por dois motivos majoritários. O uso de motores \textit{brushless} e controladores é algo razoavelmente recente
-
-Existe também os riscos associados a realização do projeto. Para montagem do hardware é necessário a importação de grande parte de componentes, como sensores e motores. A importação acarreta em outros riscos, como o atraso ou eventual extravio de encomendas. Para evitar imprevistos, uma lista preliminar de componentes foi elaborada e os componentes já foram encomendados.
 
 \chapter{Conclusões e trabalhos futuros\label{cap:conclusao}}
 
@@ -860,30 +856,14 @@ transforma.}''\\
 \vfill{}
 
 Plataformas de desenvolvimento de veículos voadores autônomos são interessantes por permitirem a implementação de algoritmos e aplicativos de forma simples e rápida. Consegue-se isto isolando a aplicação dos outros módulos envolvidos no desenvolvimento de um multirrotor.
-
-
-\section{Fase do projeto}
-
-    O projeto encontra-se na fase de desenvolvimento do protótipo. Todo o material teórico foi coletado e os componentes foram comprados.
-    Os ESCs estão em fase final de prototipagem. Toda a teoria necessária foi abordada e o ESC está em fase de teste. Após validar a teorida o circuito impresso será feito de modo que possa ser utilizado no multirrotor.
-    A parte do controle está em fase inicial de desenvolvimento. O algoritmo está sendo construido. A placa que será utilizada no módulo de controle já foi devidamente estudada esperando apenas a efetivação do algoritmo teórico para transporta-lo para a placa.
-    A comunicação I2c que será utilizada entre os ESCs e o módulo de controle já foi devidamente testada e em parte está implementada. Faltando apenas a construção dos dois módulos para efetuar o último teste.
-    A estrutura ainda não está pronta devido ao fato de que alguns componentes ainda não foram entregues. Porém uma estrutura de suporte já esta montada para caso necessário de algum teste.
-    As demais partes do projeto ainda estão em desenvolvimento inicial e a maior parte dos componentes ainda não chegaram, o que acarretará em um pequeno atraso no planejamento.
     
-    % \section{Resultados}
+\section{Dificuldades encontradas}
 
-% Ao longo deste semestre, resultados importantes foram obtidos:
-% \begin{itemize}
-%   \item definição da estrutura básica do multirrotor;
-%   \item definição da arquitetura de hardware e software da platafoma;
-%   \item definição de componentes básicos;
-%   \item formação de uma base teórica sobre a construção de multirrotores e sobre arquitetura de hardware e software de sistemas embarcados.
-% \end{itemize}
+O projeto envolve aspectos que nunca foram discutidos em sala de aula e que equipe não possui familiaridade, como controle de vôo. Estas etapas criam incerteza e é impossível afirmar o tempo que será gasto para o desenvolvimento desses módulos. Para minimizar esse problema, o projeto foi separado em blocos independentes e cada bloco será um \textit{milestone}.
 
-% Espera-se ainda, ao final deste semestre, terminar a escolha definitiva dos componentes básicos e concluir a sua compra. Dessa forma, será possível seguir o cronograma apresentado e construir o sistema todo a tempo de poder testá-lo e corrigir eventuais erros de projeto.
+Um problema encontrado foi a falta de documentação. Esta dificuldade se dá por dois motivos majoritários. O uso de motores \textit{brushless} e controladores é algo razoavelmente recente
 
-% Um projeto completo de engenharia apresenta grandes dificuldades. Estudantes apresentam maior facilidade para resolver problemas fechados, como provas e exercícios pela sua maior prática com estes desafios. A disciplina de projeto de formatura proporciona uma oportunidade para que os alunos aprendam por experiência como lidar com um projeto de engenharia. Apesar de ser insuficiente para um preparo completo, esta disciplina é como uma incubadora,  permitindo os alunos a sobreviver no mercado de trabalho.
+Existe também os riscos associados a realização do projeto. Para montagem do hardware é necessário a importação de grande parte de componentes, como sensores e motores. A importação acarreta em outros riscos, como o atraso ou eventual extravio de encomendas. Este problema ocorreu na execução do trabalho. Os motores foram pedidos com um bom tempo de antecedência porém não chegaram. Para resolver este problema, outros motores tiveram que ser utilizados.
 
 \section{Considerações sobre o Curso de Graduação}
 
@@ -891,11 +871,14 @@ A ênfase de Sistemas Eletrônicos tem por objetivo ser uma ênfase generalista, of
 
 Para a levitação e movimentação do multirrotor, utiliza-se conhecimentos aprendidos nas matérias do núcleo de controle, PTC2412 (Controle I) e PTC2512 (Laboratório de Controle). Além destas, a disciplina PSI2662 (Sensores e Atuadores) complementa este conjunto com metodologia de implementação de projetos embarcados e sensores para evitar colisões, e a disciplina PSI2661 (Transceptores) viabiliza a transmissão dos dados por radiofrequência.
 
-%A captura de áudio e vídeo envolve matérias do núcleo de processamento de sinais, como PSI2533 (Modelagem em processamento de sinais) e PSI2432 (Projeto e Implementação de Filtros Digitais), onde aprende-se técnicas de filtragem e codificação de sinais.
-
 A implementação do módulo de controle envolve as matérias de circuitos integrados PSI2451, PSI2452 e PSI2553 e de programação MAC2166 (Introdução à programação), MAC0122 (Algoritmos) e PCS2478 (Tópicos em Programação). Além disto, a construção dos circuitos de interface entre o controle e os motores e entre o controle e os sensores, utiliza-se conceitos aprendidos nos módulos de eletrônica, como PSI2223 (Introdução à eletrônica), PSI2324 (Eletrônica I) e PSI2326 (Eletrônica II).
 
 	 Esta seção procura sumarizar e evidenciar as mais importantes, no entanto reconhece-se que há disciplinas que apesar de não mencionadas compõem os conhecimentos que serão utilizados neste projeto.
+
+\section{Legado e aprendizado}
+Para a realização deste projeto, muito conhecimento teve de ser empregado. Foi necessário uma grande interdiciplinaridade. Com isto, foi possível exercitar uma grande parte do conhecimento adquirido no curso.
+Juntamente com o conhecimento teórico que foi ensinado nas aulas, também foi adquirido uma boa prática de engenharia. Como trabalhar em equipe, a formulação de relatórios, a formulação e execução de um cronograma. As dificuldades de projeto também foram um grande desafio que fizeram com que o grupo crescesse e descobrisse o que é a engenharia de verdade.
+O resultado final do projeto é um legado a ser deixado para o departamento de sistemas eletrônicos. Como não existia nenhum projeto do gênero, a documentação gerada e o projeto em si pode e deve ser utilizado futuramente por outros grupos. Visando esta utilização foi criado uma vasta documentação teórica e também prática para a reprodução do projeto. Assim como também todas as dificuldades encontradas são listadas para que no futuro estas mesmas possam ser evitadas.
 
 \bibliography{rt1}
 
@@ -926,6 +909,43 @@ Microdrones é uma empresa alemã cujo foco é o desenvolvimento de pequenas aerona
 
 %Se houverem mais anexos, identifique-os como Anexo B, Anexo C e assim por diante.
 % \end{appendix}
+
+\chapter{Anexo A - Curvas de relação}
+
+\section{Considerações Iniciais}
+
+Este capítulo mostrará as curvas geradas para a obtenção de parâmetros do motor e também a interpretação das curvas de interesse.
+
+\section{Curvas a serem geradas}
+
+Para gerar os parâmetros e auxiliar na construção do protótipo foram obtidas as seguintes curvas:
+  \begin{itemize}
+    \item força dos motores x potência(em porcentagem);
+    \item autonomia x potência(em porcentagem);
+   \end{itemize}
+   Foram feito estas curvas para 2 tipos diferentes de hélices.
+
+\section{Metodologia}
+ 
+	Para tentar padronizar as medidas de modo que os resultados possam ser melhores comparados, foi-se atribuida a seguinte metodologia.
+Foi utilizada uma balança que foi acoplada a um suporte para os motores de modo que seja possível medir a força de cada motor. Para evitar certas interferências, o aparato tenta distanciar o máximo possível o motor da balança.
+	
+	Para gerar as curvas, foram feitas sete medidas, cada uma com uma potência do motor, com as seguintes medidas: 10, 20, 40, 50, 60, 80 e 100 porcento. Com isto a força que cada motor pode executar foi medida. Juntamente com a medida da força, a corrente e a tensão também foram obtidas para calcular a potência que o motor absorve.
+	
+	Sabendo a carga da bateria, a autonomia pode ser calculada.
+
+	Foram utilizadas 2 tipos de hélices para tentar fazer uma melhor comparação de como estas podem alterar os demais parâmetros do projeto.
+
+
+\section{Resultados}
+
+Falta a geração das curvas.
+
+\section{Conclusão}
+
+Falta a geração das curvas.
+
+
 
 \part{Segunda Parte - Manual de Construção de um Multirrotor}
 %\setcounter{chapter}{0}
