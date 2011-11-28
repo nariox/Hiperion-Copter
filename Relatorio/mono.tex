@@ -210,7 +210,7 @@ Os motores recebem três PWMs dos ESCs, que o alimentam.
 \begin{itemize}
   \item para a camada de estabilização de vôo:
   \begin{itemize}
-    \item estado de cada motor: funcinamento correto ou erro (apenas o ESC projetado).
+    \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado).
   \end{itemize}
 \end{itemize}
 
@@ -259,8 +259,8 @@ O microcontrolador dessa camada comunica-se com os ESCs da camada de excitação p
   \end{itemize}
   \item para a camada de navegação:
   \begin{itemize}
-    \item estado dos motores, caso seja o ESC projetado;
-    \item dados dos sensores de estabilização - acelerômetro e giroscópio.
+    \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado);
+    \item dados dos sensores de estabilização (acelerômetro e giroscópio).
   \end{itemize}
 \end{itemize}
 
@@ -295,58 +295,42 @@ O Arduino comunica-se por UART com o microcontrolador ARM da camada de estabiliz
 
 \subsection{Parâmetros de entrada e saída}
 
-Entradas:
+\subsubsection{Entradas}
 \begin{itemize}
-  \item da camada de periféricos
+  \item da camada de periféricos:
     \begin{itemize}
-      \item sinais dos sensores de navegação (GPS e magnetômetro)
-      \item parâmetros de direção, velocidade e rotação do multirrotor 
+      \item sinais dos sensores de navegação (GPS, magnetômetro e sensor ultrassônico);
+      \item parâmetros de direção e velocidades de translação e angular do multirrotor.
     \end{itemize}
-  \item da camada de estabilização de vôo
+  \item da camada de estabilização de vôo:
   \begin{itemize}
-    \item status dos motores
-    \item dados dos sensores de estabilização (acelerômetro e giroscópio)
+    \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado);
+    \item dados dos sensores de estabilização (acelerômetro e giroscópio).
   \end{itemize}
 \end{itemize}
 
-Saída:
+\subsubsection{Saídas}
 \begin{itemize}
-  \item para a camada de estabilização de vôo
+  \item para a camada de estabilização de vôo:
   \begin{itemize}
     \item ângulos de Euler e potência total dos motores (parâmetros de navegação)
   \end{itemize}
-  \item para a camada de periféricos
+  \item para a camada de periféricos:
   \begin{itemize}
-    \item status dos motores (caso solicitado por algum módulo periférico)
-    \item dados dos sensores de estabilização - acelerômetro e giroscópio (caso solicitado por algum módulo periférico)
+    \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado);
+    \item dados dos sensores de estabilização (acelerômetro e giroscópio), caso solicitado por algum módulo periférico.
   \end{itemize}
 \end{itemize}
 
 \section{Camada de periféricos}
 \subsection{Descrição}
 
-A camada de periféricos abriga originalmente os módulos dos sensores de navegação e o módulo receptor do rádio-controle, que estão ligados entre si e ao microcontrolador da camada de navegação por um barramento $I^2C$. Essa arquitetura foi concebida para que seja possível que qualquer pessoa com o conhecimento técnico necessário crie e adicione periféricos personalizados.
+A camada de periféricos abriga originalmente os módulos dos sensores de navegação e o módulo receptor do rádio-controle. É possível adicionar a ela módulos com funcionalidades arbitrárias, que podem, inclusive, assumir a tarefa de gerar os parâmetros de direção e velocidades ao lado do receptor de rádio-controle, o que abre um leque de possibilidades de projetos futuros, dentre os quais citamos: controle de altura através de sensores como barômetro ou sensor de distância a laser, evasão de colisão, rastreamento e perseguição de objeto através de um módulo multimídia inteligente, além de transmissão de vídeo e áudio.
 
-Esses módulos periféricos podem, inclusive, assumir a qualquer momento a tarefa de gerar os parâmetros de direção, velocidade e rotação ao lado do receptor de rádio-controle, o que abre um leque de possibilidades de projetos futuros, dentre os quais citamos: controle de altura através de sensores como barômetro ou sensor de distância ultrassônico ou a laser, evasão de colisão usando sensores de distância, rastreamento e perseguição de objeto através de um módulo multimídia inteligente e transmissão de vídeo e áudio.
 
 \subsection{Componentes}
 
-Camada expansível constituída por módulos capazes de se comunicar por $I^2C$. Os módulos implementados originalmente são os sensores de navegação, que contém o GPS e o magnetômetro, e o módulo receptor de rádio-controle.
-
-\subsection{Parâmetros de entrada e saída}
-
-Entrada:
-\begin{itemize}
-  \item sinal do rádio-controle
-\end{itemize}
-Saída:
-\begin{itemize}
-  \item   para a camada de navegação
-  \begin{itemize}
-    \item sinais dos sensores de navegação (GPS e magnetômetro);
-    \item parâmetros de direção, velocidade e rotação do multirrotor.
-  \end{itemize}
-\end{itemize}
+Originalmente, os sensores de navegação (módulos GPS, magnetômetro e sensor ultrassônico) e o módulo receptor de rádio-controle. Módulos de expansão arbitrários podem ser adicionados nessa camada.
 
 \subsection{Comportamento}
 
@@ -354,6 +338,34 @@ Os sensores da camada de periféricos apenas esperam o pedido de leitura do micro
 
 Módulos personalizados desta camada possuem comportamento que varia de acordo com suas funcionalidades. Mais detalhes devem ser obtidos da documentação dos próprios módulos.
 
+\subsection{Comunicação entre os componentes}
+
+Os módulos GPS e magnetômetro e o receptor de rádio-controle comunicam-se com o Arduino da camada de navegação por UART. O sensor ultrassônico usa comunicação GPIO.
+
+\subsection{Parâmetros de entrada e saída}
+
+\subsubsection{Entrada}
+\begin{itemize}
+  \item   do rádio-controle remoto:
+  \begin{itemize}
+    \item sinal do rádio-controle.
+  \end{itemize}
+\end{itemize}
+\subsubsection{Saídas}
+\begin{itemize}
+  \item   para a camada de navegação:
+  \begin{itemize}
+    \item sinais dos sensores de navegação (GPS, magnetômetro e sensor ultrassônico);
+    \item parâmetros de direção e velocidades do multirrotor.
+  \end{itemize}
+  \item   para o rádio-controle remoto:
+  \begin{itemize}
+    \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado);
+    \item dados dos sensores de estabilização (acelerômetro e giroscópio);
+    \item dados dos sensores de navegação (GPS, magnetômetro e sensor ultrassônico);
+    \item parâmetros de direção e velocidades do multirrotor, caso gerados por algum módulo embarcado.
+  \end{itemize}
+\end{itemize}
 
 \chapter{Referencial Teórico\label{cap:referencialteorico}}
 
