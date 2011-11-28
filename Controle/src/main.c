@@ -101,15 +101,20 @@ void inicializa() {
 	pid_roll  = pid_angles[1];
 	pid_yaw   = pid_angles[2];
 
-	//Setup timer
-	/* Initialize 16-bit timer 0. TIME_INTERVAL is defined as 10mS */
-	init_timer16(0, 100*Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
+	//O timer 1 será usado apenas para gerar atrasos
+	init_timer16(1, 1*Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
+	enable_timer16(1);
+
+	delayMs(1, 2000); //Atraso para que os periféricos e componentes externos inicializem
+
+	//O timer 0 será usado para gerar o intervalo de 100ms, que é o tempo de amostragem.
+	/* Initialize 16-bit timer 0. TIME_INTERVAL is defined as 1mS */
+	init_timer16(0, 1*Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
 	/* Enable the TIMER0 Interrupt */
 	NVIC_EnableIRQ(TIMER_16_0_IRQn);
 	/* Enable timer 0. */
 	enable_timer16(0);
 	/* Initialize GPIO (sets up clock) */
-	//delayMs(0, 2000);
 }
 
 void le_nav(nav_params_t params)
@@ -157,9 +162,9 @@ int main(void)
 void TIMER16_0_IRQHandler(void)
 {
     if(still_running) { // O laço principal ainda está rodando e não deveria. Isso é um erro.
-        NVIC_DisableIRQ(TIMER_16_0_IRQn); // Desabilita a interrupção do timer,
-        delayMs(0, 2000);                 // espera...
-        ClrGPIOBit( LED_PORT, LED_BIT );  // Mantém o LED aceso para indicar o erro.
+        //NVIC_DisableIRQ(TIMER_16_0_IRQn); // Desabilita a interrupção do timer,
+        //delayMs(0, 2000);                 // espera...
+        //ClrGPIOBit( LED_PORT, LED_BIT );  // Mantém o LED aceso para indicar o erro.
         //disable_timer16(0);               // Desliga o timer 0.
     }
     if ( LPC_TMR16B0->IR & 0x01 )
