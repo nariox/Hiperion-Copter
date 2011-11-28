@@ -962,75 +962,36 @@ Falta a geração das curvas.
 \part{Segunda Parte - Manual de Construção de um Multirrotor}
 %\setcounter{chapter}{0}
 
-\chapter{Modelo da Arquitetura}
+\chapter{Considerações Iniciais}
+TODO
 
-\section{Considerações Iniciais}
-
-Uma parte importante do projeto Hipérion é a sua arquitetura de hardware e software. Foi escolhido uma arquitetura modular para hardware e para software.
-A idéia será separar fisicamente e funcionalmente os dispositivos eletrônicos que irão compor o sistema embarcado da VANT em vários módulos eletrônicos inteligentes independentes. Os módulos serão inteligentes porque eles deverão processar as informações obtidas do meio externo (no caso dos sensores) e também processar as informações internas (passagem de parâmetros e mensagens de \textit{feedback}). Tais módulos eletrônicos se comunicarão através de interfaces pré-definidas, seguindo uma hierarquia também pré-definida.
-
-A figura \ref{fig.arquitetura} mostra de forma simplificada a arquitetura de hardware do VANT. 
+\chapter{Peças}
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=6in]{./Figuras/arquitetura.eps}
-  \caption[Modelo de abstração]
-  {Diagrama relacionando as camadas de abstração com o Hardware}\label{fig.arquitetura}
+  \includegraphics{./Figuras/cad_suporte_motor.eps}
+  \caption[Placa de suporte do motor]
+  {Placa de suporte do motor}\label{fig.protsupmotor}
 \end{figure}
 
-As camadas principais são:
-\begin{enumerate}
-  \item Motores;
-  \item periféricos e Controle de Vôo;
-  \item controle de Navegação;
-  \item periféricos de Navegação.
-\end{enumerate}
+\begin{figure}[h!]
+  \centering
+  \includegraphics{./Figuras/cad_central_superior}
+  \caption[Placa central superior do protótipo]
+  {Placa central superior do protótipo}\label{fig.protcentsup}
+\end{figure}
 
-\section{Camada Motores}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=90]{./Figuras/cad_central_inferior}
+  \caption[Placa central inferior do protótipo]
+  {Placa central inferior do protótipo}\label{fig.protcentinf}
+\end{figure}
 
-A camada Motores será composta pelos motores \textit{brushless}, que serão responsáveis pelas manobras da aeronave, e pelos ESCs, que serão responsáveis pelo controle dos motores \textit{brushless}. Tal camada receberá comandos da camada superior (Periféricos e Controle de Vôo), tais como: aumentar/diminuir rotação dos motores, desligar motores ou ligar motores. Além disso, esta camada também deverá enviar mensagens de feedback para sua camada superior.
+\chapter{Instruções de montagem}
+TODO
 
-\section{Camada Periféricos e Controle de Vôo}
-A camada Periféricos e Controle de Vôo será composta pelos módulos: acelerômetros, giroscópio e controle de vôo. Os módulos desta camada serão responsáveis pela estabilidade da aeronave durante as manobras de vôo (subir, descer, girar, parar, etc) e durante o repouso também. 
+\chapter{Considerações Finais}
+TODO
 
-O módulo Controle de Vôo receberá comandos de navegação do módulo superior (Navegação) e deverá executar a manobra definida pelo respectivo comando. Para isso, um algoritmo de controle, inserido no módulo controle de vôo, deverá ler os valores das variáveis de vôo oriundas dos módulos acelerômetros e giroscópio e atuar nos motores de vôo, através do envio de comandos para a camada inferior (Motores de Vôo). A camada também deverá manter a estabilidade da aeronave nas situações de ausência de comandos, que poderá corresponder a uma situação de repouso ou de emergência. Além disso, mensagens de feedback também serão enviadas para sua camada superior (Controle de Navegação).
-
-\section{Camada Controle de Navegação}
-
-A camada Controle de Navegação será composta por um único módulo: módulo de Navegação. Neste módulo estarão presentes as várias rotinas de navegação que dependerão das aplicações pretendidas para a aeronave, como por exemplo: navegação manual, navegação por GPS, etc. Esta camada receberá comandos, valores e parâmetros dos periféricos da camada superior (Periféricos de Navegação), que poderão ser:
-
-\begin{itemize}
-  \item Altura, através do módulo barômetro;
-  \item posição geográfica, através do módulo GPS;
-  \item posição em relação a um alv,; através do módulo multimídia;
-  \item comandos manuais de navegação, através do módulo controle remoto.
-\end{itemize}
-
-\section{Camada Periféricos de Navegação}
-
-A camada Periféricos de Navegação será composta por módulos que auxiliarão um determinado tipo de navegação. Para este projeto, pretende-se criar os seguintes tipos de navegação:
-
-\begin{itemize}
-  \item Navegação manual;
-  \item navegação por GPS;
-  %\item navegação por vídeo.
-\end{itemize}
-
-A navegação manual consistirá em pilotar a aeronave através de um rádio controle. Para tanto, um módulo de controle remoto será inserido e irá criar um link de comunicação remoto entre a aeronave e o usuário que a está pilotando.
-
-A navegação por GPS consistirá em fazer a aeronave seguir um trajeto determinado, usando informações oriundas do módulo GPS e processadas pelo módulo de navegação. Além disso, o módulo GPS também servirá como um instrumento de localização para a aeronave.
-
-%A navegação por vídeo consistirá em obter uma imagem de vídeo do ambiente através do módulo multimídia e processá-la neste mesmo módulo. O resultado do processamento desta imagem será transformado em parâmetros que serão enviados para sua respectiva rotina de navegação no módulo de navegação. Pretende-se com isso fazer a nave perseguir um alvo específico ou utilizar a imagem para qualquer outra aplicação, como vigilância por exemplo.
-
-A comunicação entre os módulos será realizada através de interfaces $I^2C$ e SPI. A interface $SPI$ será utilizada para ligar os módulos acelerômetros e giroscópio ao módulo controle de vôo. Apesar desta interface ser destinada a topologia ponto a ponto, é possível ligar mais de dois periféricos através desta interface \cite{spiusart}.
-
-A interface $I^2C$ ligará os módulos ESC ao módulo controle de vôo. Este tipo de interface funcionará ligando vários módulos através de um único barramento \cite{protoi2c}. , ligará os módulos da camada Periféricos de Navegação ao módulo de Navegação da camada Controle de Navegação. De forma semelhante à interface $I^2C$, a interface $CAN$ também ligará os módulos através de um barramento. As especificações desta interface encontram-se em \citeonline{protocan}.
-
-Nos módulos Controle de Vôo e controle de Navegação serão utilizados os microcontroladores ARM, devido a sua boa relação custo-benefício em termos de periféricos presentes, processamento e memória de programa.
-
-Assim como o hardware, o software também será modular. As rotinas do software embarcado do VANT também estarão fisicamente separadas, pois estarão contidas em seus respectivos módulos e seguiram uma hierarquia pré-definida. Dessa forma, o desenvolvimento do software embarcado do VANT seguirá uma metodologia de programação semelhante à programação orientada a objetos.
-
-Um sistema operacional de tempo real (RTOS) será embarcado nos módulos controle de vôo e no módulo controle de navegação. Optou-se pelo uso de um RTOS, porque pretende-se criar uma camada de software que separe as rotinas de controle e navegação das rotinas de acesso ao hardware, como proposto em \citeonline{controlrtos} . 
-
-%Foi feita uma pesquisa sobre os sistemas operacionais de tempo real (RTOS) disponíveis. Foi encontrado uma grande variedade de RTOS. Optou-se pelo FreeRTOS, devido às suas características mostradas em \cite{freertos}, tais como: software aberto, requisitos de tempo real, possibilidade de ser embarcado para um microcontrolador, etc.
 \end{document}
