@@ -5,6 +5,7 @@
 %\usepackage[alf,iso-690-1987}{abntcite}
 \usepackage{graphicx}
 \usepackage[section]{placeins}
+\usepackage{amsmath}
 
 \renewcommand{\ABNTbibliographyname}{Referências}
 
@@ -584,7 +585,26 @@ O tema sobre controle de multirrotores voltou a ser estudado, graças a tecnologi
 
 O controle de um veículo multirrotor apresenta diversas diferenças em relação a sistemas lineares invariantes no tempo, que são estudados mais a fundo no curso. Primeiramente, se trata de um sistema de múltiplas entradas e múltiplas saídas, sendo que todas as entradas influenciam todas as saídas. Além disto, é um sistema não-linear e dinâmico.
 
-Observa-se que os motores apresentam relação não-linear entre a potência consumida e o empuxo gerado. No entanto, é uma curva monotônica, cuja derivada apresenta pequenas variações nas proximidades de qualquer ponto. Isto permite que se utilize de aproximações lineares. Foi estudada a possibilidade do uso de aproximações afins ou tabelar os valores, todavia essas opções se mostraram muito mais computacionalmente custosas e não ofereciam desempenho muito superior. Como conhecemos a região de uso do motor, foi utilizada uma solução linear de mínimos quadrados, considerando uma distribuição uniforme ao longo dos ciclos de trabalho enviáveis ao motor. 
+Observa-se que os motores apresentam relação não-linear entre a potência consumida e o empuxo gerado. \citeonline{nlflight} expressam o torque e empuxo gerados por:
+
+\begin{subequations}
+\begin{align}
+  T & = C_T \rho A r^2 \Omega^2, \\
+  Q & = C_Q \rho A r^3 \Omega^2
+\end{align}
+\end{subequations}
+onde $A$ é a área da hélice, $r$ o raio da hélice, $\rho$ a densidade do ar, $\Omega$ a rotação do motor e $C_T$ e $C_Q$ são constantes aerodinâmicas. Como algumas dessas variáveis são constantes, pode-se simplificar a fórmula para:
+
+\begin{subequations}
+\begin{align}
+  T & = C'_T \Omega^2, \\
+  Q & = C'_Q  \Omega^2
+\end{align}
+\end{subequations}
+
+Apesar de não explicitado no artigo, essas relações são válidas apartir de rotações elevadas, onde a impedância da hélice se torna semelhante à impedância do ar. Semelhante ao comportamento de alto-falantes e em baixas frequências, em baixas rotações não há acoplamento entre a hélice e o ar.
+
+Considerando a faixa nominal de uso das hélices, tratam-se de curvas monotônicas, cuja derivada apresenta pequenas variações nas proximidades de qualquer ponto. Isto permite que se utilize de aproximações lineares. Foi estudada a possibilidade do uso de aproximações afins ou tabelar os valores, todavia essas opções se mostraram muito mais computacionalmente custosas e não oferecem desempenho muito superior. Como conhecemos a região de uso do motor, foi utilizada uma solução linear de mínimos quadrados, considerando uma distribuição uniforme ao longo dos ciclos de trabalho enviáveis ao motor. 
 
 O sistema também apresenta características dinâmicas e não-lineares (semelhante a um pêndulo). Dependendo dos ângulos de Euler, as forças e torques geradas pelos motores serão diferentes. Apesar das magnitudes iguais, terão direções diferentes e, portanto, suas componentes serão diferentes. Ao mesmo tempo, a componente da gravidade se mantém na mesma direção 
 
@@ -598,7 +618,7 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \subsection{Implementação}
 
-Para controlar os ângulos e aceleração vertical independentemente 
+Para controlar os ângulos e aceleração vertical independentemente foram utiliz
 As variáveis criadas serão denominadas A, B, C e D. Blablablá explicar o funcionamento do controle 
 
 
