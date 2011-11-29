@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage[section]{placeins}
 \usepackage{amsmath}
+\usepackage{enumitem}
 
 \renewcommand{\ABNTbibliographyname}{Referências}
 
@@ -15,29 +16,30 @@
 \makeatother
 \begin{document}
 
-\autor{Bruno Pinho, Danilo Luvizotto \& Pedro Nariyoshi}
+\autor{Bruno Pereira Pinho\\
+       Danilo Luvizotto\\
+       Pedro da Cunha Nariyoshi}
 
 
-\titulo{Hipérion - Plataforma Versátil de Desenvolvimento Multirrotor}
+\titulo{HIPERION - Plataforma Versátil de Desenvolvimento Multi Rotor}
+
+\comentario{Monografia  de conclusão de curso apresentado à Escola Politécnica da Universidade de São Paulo para obtenção do título de Engenheiro Eletricista \\
+Área de concentração: Sistemas Eletrônicos\\
+Orientador: Marcelo Knörich Zuffo\\
+Co-orientador: Sérgio Takeo Kofuji}
+
+%\orientador{Marcelo Knörich Zuffo}
 
 
-\orientador{Marcelo Knörich Zuffo}
-
-
-\coorientador{Sérgio Takeo Kofuji}
-
-
-%\comentario{Monografia Final apresentada na disciplina PSI-2591 Projeto de Formatura I.}
-
+%\coorientador{Sérgio Takeo Kofuji}
 
 \instituicao{Departamento de Sistemas Eletrônicos \par Escola Politécnica\par Universidade
 de São Paulo}
 
+\local{São Paulo}
 
-\local{São Paulo - SP, Brasil}
 
-
-\data{\today}
+\data{2011}
 
 \capa
 
@@ -54,8 +56,15 @@ de São Paulo}
 \begin{resumo}
   Este projeto tem como objetivo propor e implementar uma plataforma de desenvolvimento voadora. O intuito é criar uma base de conhecimento para que projetos posteriores possam se beneficiar do conhecimento adquirido. O projeto será implementado em camadas hierárquicas, tal como o modelo OSI. Esta abstração torna o projeto mais versátil e expansível.
   
-  Palavras chave: \textit{modular, abstração, vôo, brushless, multirrotores, plataformas embarcadas, sistemas sem fio, telemetria, controle não linear, autônomo, li-po, sistemas eletrônicos}
+  Palavras chave: \textit{modular, vôo, brushless, multi-rotores, plataformas embarcadas, sistemas sem fio, telemetria, baterias Li-Poli sistemas eletrônicos}
 \end{resumo}
+
+\begin{abstract}
+  This project's objetive is to propose and implementa a flying development platform. Its goal is to generate a knowledge base in order that following projects may benefit from the acquired know-how. This project will be implemented using hierarchic layers, similar to the OSI model. This abstraction allows a more versatile and expandable project.
+  
+  Keywords: \textit{modular, flight, brushless, multirotors, embedded platforms, wireless systems, telemetry, li-poly batteries, electronic systems}
+\end{abstract}
+
 
 %\chapter*{Dedicatória}
 
@@ -72,26 +81,27 @@ de São Paulo}
 % 
 % E não podemos esquecer os professores Takeo e Weslley que mesmo não participando formalmente do projeto, dedicaram seu tempo e esforço para nos auxiliar.
 
-\chapter*{Lista de Termos}
+\chapter*{Lista de Siglas e Abreviaturas}
 
-A lista a seguir contém as abreviaturas e termos utilizados nesta monografia. As abreviaturas podem, no entanto, apresentar outros significados em outros contextos.\\
-\textbf{API} \textit{(Application Programming Interface)}: Interface de Programação de Aplicativo, um conjunto de normas que permite uma interface entre dois aplicativos ou um aplicativo e um plugin.\\
-\textbf{ARM} \textit{(Advanced Risc Machine)}: é uma arquitetura de processadores de 32-bits RISC.\\
-\textbf{Brushless, Motor} : um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.\\
-\textbf{ESC} \textit{(Electronic Speed Controller)}: Controlador de Velocidade Eletrônico, é um dispositivo que faz a comutação das fases num motor sem escova.\\
-\textbf{GNU/Linux}: é um sistema operacional que utiliza as ferramentas do projeto GNU e o núcleo Linux.\\
-\textbf{GPS} \textit{(Global Positioning System)} : sistema utilizado para obter informações sobre tempo e posição de um objeto, utilizando 4 ou mais satélites.\\
-\textit{Inrunner}: um motor cujo estator se encontra no exterior, e o rotor do lado interior.\\
-\textbf{LSI}: Laboratório de Sistemas Integráveis, parte da Escola Politécnica da Universidade de São Paulo.\\
-\textbf{MVA}: Mícro-Veículo Aéreo, é uma classe de VANTs de tamanho reduzido.\\
-\textbf{Multirrotor}: um objeto voador dotado de duas ou mais hélices e que se utiliza do empuxo causado por essas para o vôo.\\
-\textbf{OSI, Modelo}: uma arquitetura que divide redes de computadores em diversas camadas, utilizada para modelar e abstrair as redes.\\
-\textit{Outrunner}: um motor cujo estator se encontra no exterior, e o rotor no interior.\\
-\textbf{PID, Controlador}: um controlador que emprega um algoritmo proporcional, integrativo e diferencial ao erro para controle de processos.\\
-\textbf{RISC} \textit{(Reduced Instruction Set Computer)} : é uma estratégia para desenvolvimento de processadores que se restringe as instruções a um grupo reduzido de instruções simples.\\
-\textbf{RTOS} \textit{(Real-Time Operating System)} : Sistema operacional de Tempo-Real.\\
-\textbf{SDK} \textit{(Software Development Kit)}: Kit de Desenvolvimenteo de Software é um conjunto de aplicativos, documentação e exemplos para auxíliar e/ou permitir o desenvolvimento de softwares para determinada plataforma.\\
-\textbf{VANT}: Veículo Aéreo Não-Tripulado, controlado remotamente ou autônomamente.
+\begin{description}[style=multiline,leftmargin=3cm]
+  \item[API] \textit{(Application Programming Interface)}   Interface de Programação de Aplicativo, um conjunto de normas que permite uma interface entre dois aplicativos ou um aplicativo e um plugin.
+  \item[ARM] \textit{(Advanced Risc Machine)}   é uma arquitetura de processadores de 32-bits RISC.
+  \item[Brushless, Motor]    um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.
+  \item[ESC] \textit{(Electronic Speed Controller)}   Controlador de Velocidade Eletrônico, é um dispositivo que faz a comutação das fases num motor sem escova.
+  \item[GNU/Linux]   é um sistema operacional que utiliza as ferramentas do projeto GNU e o núcleo Linux.
+  \item[GPS] \textit{(Global Positioning System)}    sistema utilizado para obter informações sobre tempo e posição de um objeto, utilizando 4 ou mais satélites.
+  \textit{Inrunner}   um motor cujo estator se encontra no exterior, e o rotor do lado interior.
+  \item[LSI]   Laboratório de Sistemas Integráveis, parte da Escola Politécnica da Universidade de São Paulo.
+  \item[MVA]   Mícro-Veículo Aéreo, é uma classe de VANTs de tamanho reduzido.
+  \item[Multirrotor]   um objeto voador dotado de duas ou mais hélices e que se utiliza do empuxo causado por essas para o vôo.
+  \item[OSI, Modelo]   uma arquitetura que divide redes de computadores em diversas camadas, utilizada para modelar e abstrair as redes.
+  \item[Outrunner]   um motor cujo estator se encontra no exterior, e o rotor no interior.
+  \item[PID, Controlador]   um controlador que emprega um algoritmo proporcional, integrativo e diferencial ao erro para controle de processos.
+  \item[RISC] \textit{(Reduced Instruction Set Computer)}    é uma estratégia para desenvolvimento de processadores que se restringe as instruções a um grupo reduzido de instruções simples.
+  \item[RTOS] \textit{(Real-Time Operating System)}    Sistema operacional de Tempo-Real.
+  \item[SDK] \textit{(Software Development Kit)}   Kit de Desenvolvimenteo de Software é um conjunto de aplicativos, documentação e exemplos para auxíliar e/ou permitir o desenvolvimento de softwares para determinada plataforma.
+  \item[VANT]   Veículo Aéreo Não-Tripulado, controlado remotamente ou autônomamente.
+\end{description}
 
 \listoffigures
 
@@ -960,7 +970,7 @@ Para gerar os parâmetros e auxiliar na construção do protótipo foram obtidas as 
 	Para tentar padronizar as medidas de modo que os resultados possam ser melhores comparados, foi-se atribuida a seguinte metodologia.
 Foi utilizada uma balança que foi acoplada a um suporte para os motores de modo que seja possível medir a força de cada motor. Para evitar certas interferências, o aparato tenta distanciar o máximo possível o motor da balança.
 	
-	Para gerar as curvas, foram feitas sete medidas, cada uma com uma potência do motor, com as seguintes medidas: 10, 20, 40, 50, 60, 80 e 100 porcento. Com isto a força que cada motor pode executar foi medida. Juntamente com a medida da força, a corrente e a tensão também foram obtidas para calcular a potência que o motor absorve.
+	Para gerar as curvas, foram feitas sete medidas, cada uma com uma potência do motor, com as seguintes medidas: 10, 20, 40, 50, 60, 80 e 100\%. Com isto a força que cada motor pode executar foi medida. Juntamente com a medida da força, a corrente e a tensão também foram obtidas para calcular a potência que o motor absorve.
 	
 	Sabendo a carga da bateria, a autonomia pode ser calculada.
 
