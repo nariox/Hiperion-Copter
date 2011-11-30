@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage[section]{placeins}
 \usepackage{amsmath}
+\usepackage{enumitem}
 
 \renewcommand{\ABNTbibliographyname}{Referências}
 
@@ -15,29 +16,30 @@
 \makeatother
 \begin{document}
 
-\autor{Bruno Pinho, Danilo Luvizotto \& Pedro Nariyoshi}
+\autor{Bruno Pereira Pinho\\
+       Danilo Luvizotto\\
+       Pedro da Cunha Nariyoshi}
 
 
-\titulo{Hipérion - Plataforma Versátil de Desenvolvimento Multirrotor}
+\titulo{HIPERION - Plataforma Versátil de Desenvolvimento Multi Rotor}
+
+\comentario{Monografia  de conclusão de curso apresentado à Escola Politécnica da Universidade de São Paulo para obtenção do título de Engenheiro Eletricista \\
+Área de concentração: Sistemas Eletrônicos\\
+Orientador: Marcelo Knörich Zuffo\\
+Co-orientador: Sérgio Takeo Kofuji}
+
+%\orientador{Marcelo Knörich Zuffo}
 
 
-\orientador{Marcelo Knörich Zuffo}
-
-
-\coorientador{Sérgio Takeo Kofuji}
-
-
-%\comentario{Monografia Final apresentada na disciplina PSI-2591 Projeto de Formatura I.}
-
+%\coorientador{Sérgio Takeo Kofuji}
 
 \instituicao{Departamento de Sistemas Eletrônicos \par Escola Politécnica\par Universidade
 de São Paulo}
 
+\local{São Paulo}
 
-\local{São Paulo - SP, Brasil}
 
-
-\data{\today}
+\data{2011}
 
 \capa
 
@@ -54,8 +56,15 @@ de São Paulo}
 \begin{resumo}
   Este projeto tem como objetivo propor e implementar uma plataforma de desenvolvimento voadora. O intuito é criar uma base de conhecimento para que projetos posteriores possam se beneficiar do conhecimento adquirido. O projeto será implementado em camadas hierárquicas, tal como o modelo OSI. Esta abstração torna o projeto mais versátil e expansível.
   
-  Palavras chave: \textit{modular, abstração, vôo, brushless, multirrotores, plataformas embarcadas, sistemas sem fio, telemetria, controle não linear, autônomo, li-po, sistemas eletrônicos}
+  Palavras chave: \textit{modular, vôo, brushless, multi-rotores, plataformas embarcadas, sistemas sem fio, telemetria, baterias Li-Poli sistemas eletrônicos}
 \end{resumo}
+
+\begin{abstract}
+  This project's objetive is to propose and implementa a flying development platform. Its goal is to generate a knowledge base in order that following projects may benefit from the acquired know-how. This project will be implemented using hierarchic layers, similar to the OSI model. This abstraction allows a more versatile and expandable project.
+  
+  Keywords: \textit{modular, flight, brushless, multirotors, embedded platforms, wireless systems, telemetry, li-poly batteries, electronic systems}
+\end{abstract}
+
 
 %\chapter*{Dedicatória}
 
@@ -72,26 +81,27 @@ de São Paulo}
 % 
 % E não podemos esquecer os professores Takeo e Weslley que mesmo não participando formalmente do projeto, dedicaram seu tempo e esforço para nos auxiliar.
 
-\chapter*{Lista de Termos}
+\chapter*{Lista de Siglas e Abreviaturas}
 
-A lista a seguir contém as abreviaturas e termos utilizados nesta monografia. As abreviaturas podem, no entanto, apresentar outros significados em outros contextos.\\
-\textbf{API} \textit{(Application Programming Interface)}: Interface de Programação de Aplicativo, um conjunto de normas que permite uma interface entre dois aplicativos ou um aplicativo e um plugin.\\
-\textbf{ARM} \textit{(Advanced Risc Machine)}: é uma arquitetura de processadores de 32-bits RISC.\\
-\textbf{Brushless, Motor} : um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.\\
-\textbf{ESC} \textit{(Electronic Speed Controller)}: Controlador de Velocidade Eletrônico, é um dispositivo que faz a comutação das fases num motor sem escova.\\
-\textbf{GNU/Linux}: é um sistema operacional que utiliza as ferramentas do projeto GNU e o núcleo Linux.\\
-\textbf{GPS} \textit{(Global Positioning System)} : sistema utilizado para obter informações sobre tempo e posição de um objeto, utilizando 4 ou mais satélites.\\
-\textit{Inrunner}: um motor cujo estator se encontra no exterior, e o rotor do lado interior.\\
-\textbf{LSI}: Laboratório de Sistemas Integráveis, parte da Escola Politécnica da Universidade de São Paulo.\\
-\textbf{MVA}: Mícro-Veículo Aéreo, é uma classe de VANTs de tamanho reduzido.\\
-\textbf{Multirrotor}: um objeto voador dotado de duas ou mais hélices e que se utiliza do empuxo causado por essas para o vôo.\\
-\textbf{OSI, Modelo}: uma arquitetura que divide redes de computadores em diversas camadas, utilizada para modelar e abstrair as redes.\\
-\textit{Outrunner}: um motor cujo estator se encontra no exterior, e o rotor no interior.\\
-\textbf{PID, Controlador}: um controlador que emprega um algoritmo proporcional, integrativo e diferencial ao erro para controle de processos.\\
-\textbf{RISC} \textit{(Reduced Instruction Set Computer)} : é uma estratégia para desenvolvimento de processadores que se restringe as instruções a um grupo reduzido de instruções simples.\\
-\textbf{RTOS} \textit{(Real-Time Operating System)} : Sistema operacional de Tempo-Real.\\
-\textbf{SDK} \textit{(Software Development Kit)}: Kit de Desenvolvimenteo de Software é um conjunto de aplicativos, documentação e exemplos para auxíliar e/ou permitir o desenvolvimento de softwares para determinada plataforma.\\
-\textbf{VANT}: Veículo Aéreo Não-Tripulado, controlado remotamente ou autônomamente.
+\begin{description}[style=multiline,leftmargin=3cm]
+  \item[API] \textit{(Application Programming Interface)}   Interface de Programação de Aplicativo, um conjunto de normas que permite uma interface entre dois aplicativos ou um aplicativo e um plugin.
+  \item[ARM] \textit{(Advanced Risc Machine)}   é uma arquitetura de processadores de 32-bits RISC.
+  \item[Brushless, Motor]    um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.
+  \item[ESC] \textit{(Electronic Speed Controller)}   Controlador de Velocidade Eletrônico, é um dispositivo que faz a comutação das fases num motor sem escova.
+  \item[GNU/Linux]   é um sistema operacional que utiliza as ferramentas do projeto GNU e o núcleo Linux.
+  \item[GPS] \textit{(Global Positioning System)}    sistema utilizado para obter informações sobre tempo e posição de um objeto, utilizando 4 ou mais satélites.
+  \textit{Inrunner}   um motor cujo estator se encontra no exterior, e o rotor do lado interior.
+  \item[LSI]   Laboratório de Sistemas Integráveis, parte da Escola Politécnica da Universidade de São Paulo.
+  \item[MVA]   Mícro-Veículo Aéreo, é uma classe de VANTs de tamanho reduzido.
+  \item[Multirrotor]   um objeto voador dotado de duas ou mais hélices e que se utiliza do empuxo causado por essas para o vôo.
+  \item[OSI, Modelo]   uma arquitetura que divide redes de computadores em diversas camadas, utilizada para modelar e abstrair as redes.
+  \item[Outrunner]   um motor cujo estator se encontra no exterior, e o rotor no interior.
+  \item[PID, Controlador]   um controlador que emprega um algoritmo proporcional, integrativo e diferencial ao erro para controle de processos.
+  \item[RISC] \textit{(Reduced Instruction Set Computer)}    é uma estratégia para desenvolvimento de processadores que se restringe as instruções a um grupo reduzido de instruções simples.
+  \item[RTOS] \textit{(Real-Time Operating System)}    Sistema operacional de Tempo-Real.
+  \item[SDK] \textit{(Software Development Kit)}   Kit de Desenvolvimenteo de Software é um conjunto de aplicativos, documentação e exemplos para auxíliar e/ou permitir o desenvolvimento de softwares para determinada plataforma.
+  \item[VANT]   Veículo Aéreo Não-Tripulado, controlado remotamente ou autônomamente.
+\end{description}
 
 \listoffigures
 
@@ -635,9 +645,86 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \subsection{Implementação}
 
-Para controlar os ângulos e aceleração vertical independentemente foram utiliz
-As variáveis criadas serão denominadas A, B, C e D. Blablablá explicar o funcionamento do controle 
+A figura \ref{fig.topo} mostra a visão superior do multi-rotor. Os motores são denominados $1$, $2$, $3$ e $4$, sendo que o Motor $1$ é o motor no 1$^o$ quadrante.
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=3in]{./FigsControle/Topo.eps}
+  \caption[Vista superior do veículo]%
+  {Vista superior do veículo}\label{fig.topo}
+\end{figure}
+
+Observando-se o veículo apartir da vista lateral (figura \ref{fig.lateral}) é fácil de observar como as forças atuam sobre o ângulo do multi-rotor.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=3in]{./FigsControle/Hover.eps}
+  \caption[Vista lateral do veículo]%
+  {Vista lateral do veículo}\label{fig.lateral}
+\end{figure}
+
+Considerando o ângulo entre o vetor normal à base e a aceleração da gravidade como $\theta$ e o rotor simétrico e com o centro de massa no centro geométrico. Pode-se escrever a equação que descreve o comportamento desse sistema como:
+
+\begin{equation}
+  \ddot{\theta} = - \frac{1}{J_\theta} (F_{M_1} + F_{M_2} - F_{M_3} - F_{M_4})d,
+\end{equation}
+onde:
+\begin{description}[style=multiline,leftmargin=3cm]
+  \item[J$_\theta$] é o momento angular do veículo em relação ao eixo;
+  \item[F$_{M_n}$] é a força gerada pelo motor $n$;
+  \item[d] é a projeção da distância entre o motor e o eixo $\theta$
+\end{description}
+
+Semelhantemente, pode-se escrever a equação para o outro ângulo ($\phi$) em relação à aceleração da gravidade:
+
+\begin{equation}
+  \ddot{\phi} = - \frac{1}{J_\phi} (F_{M_1} - F_{M_2} - F_{M_3} + F_{M_4}) d.
+\end{equation}
+
+Em relação à rotação em torno do eixo normal à base, pode-se gerar um torque resultante desbalanceando-se a rotação entre os motores que giram no sentido horário e os que giram no sentido anti-horário:
+
+\begin{equation}
+  \ddot{\psi} = - \frac{1}{J_\psi} (|T_{M_1}| - |T_{M_2}| + |T_{M_3}| - |T_{M_4}|),
+\end{equation}
+onde $T_{M_n}$ é o torque gerado pelo motor $n$.
+
+Por último, a resultante do empuxo gerado pelos motores na direção normal à base é :
+
+\begin{equation}
+  F = F_{M_1} + F_{M_2} + F_{M_3} + F_{M_4}.
+\end{equation}
+
+Para controlar os ângulos e aceleração vertical independentemente foram criados quatro variáveis intermediárias, que atuam apenas em uma das equações (ortogonalização). As variáveis criadas são denominadas A, B, C e D.
+
+\begin{equation}
+  	\begin{bmatrix}
+  	  A\\B\\C\\D
+  	\end{bmatrix}
+  	= 
+  	\begin{bmatrix}
+  	  -1 & -1 & +1 & +1\\
+  	  -1 & +1 & +1 & -1\\
+  	  -1 & +1 & -1 & +1\\
+      +1 & +1 & +1 & +1
+  	\end{bmatrix}
+  	\begin{bmatrix}
+  	  F_{M_1}\\F_{M_2}\\F_{M_3}\\F_{M_4}
+  	\end{bmatrix}
+  	.
+\end{equation}
+
+Utilizando essa nova base, pode-se controlar os parâmetros de forma independente:
+
+\begin{subequations}
+  \begin{align}
+    \ddot{\theta} & = \frac{d}{J_\theta} A\\
+      \ddot{\phi} & = \frac{d}{J_\phi} B\\
+      \ddot{\psi} & = \frac{C_Q'}{C_T' J_\psi} C \\
+      F & = D.
+  \end{align}
+\end{subequations}
+
+O problema das múltiplas variáveis se extingue dessa maneira. O controle PID pode então ser aplicado às variáveis A, B, C e D e então estas são transformadas nas forças dos motores individualmente.
 
 \chapter{Desenvolvimento do Trabalho}
 
@@ -879,11 +966,9 @@ Também é necessário relembrar que os valores mostrados não estão inclusos frete 
 
 \chapter{Conclusões e trabalhos futuros\label{cap:conclusao}}
 
-\vfill{}
 \begin{flushright}{}``\emph{Nada se cria, nada se perde, tudo se
 transforma.}''\\
 {\small Lavousier}\end{flushright}{\small \par}
-\vfill{}
 
 Plataformas de desenvolvimento de veículos voadores autônomos são interessantes por permitirem a implementação de algoritmos e aplicativos de forma simples e rápida. Consegue-se isto isolando a aplicação dos outros módulos envolvidos no desenvolvimento de um multirrotor.
     
@@ -948,34 +1033,159 @@ Este capítulo mostrará as curvas geradas para a obtenção de parâmetros do motor 
 
 \section{Curvas a serem geradas}
 
-Para gerar os parâmetros e auxiliar na construção do protótipo foram obtidas as seguintes curvas:
+Para gerar os parâmetros e auxiliar na construção do protótipo foram obtidas tabelas e curvas com os seguintes parâmetros:
   \begin{itemize}
-    \item força dos motores x potência(em porcentagem);
-    \item autonomia x potência(em porcentagem);
+    \item dois modelos de hélices diferentes;
+    \item força resultante;
+    \item corrente de alimentação do motor;
+    \item rotação da hélice;
+    \item tensão de alimentação do motor;
+    \item sinal do controle;
    \end{itemize}
-   Foram feito estas curvas para 2 tipos diferentes de hélices.
 
 \section{Metodologia}
  
-	Para tentar padronizar as medidas de modo que os resultados possam ser melhores comparados, foi-se atribuida a seguinte metodologia.
-Foi utilizada uma balança que foi acoplada a um suporte para os motores de modo que seja possível medir a força de cada motor. Para evitar certas interferências, o aparato tenta distanciar o máximo possível o motor da balança.
-	
-	Para gerar as curvas, foram feitas sete medidas, cada uma com uma potência do motor, com as seguintes medidas: 10, 20, 40, 50, 60, 80 e 100 porcento. Com isto a força que cada motor pode executar foi medida. Juntamente com a medida da força, a corrente e a tensão também foram obtidas para calcular a potência que o motor absorve.
-	
-	Sabendo a carga da bateria, a autonomia pode ser calculada.
+  Para tentar padronizar as medidas de modo que os resultados possam ser melhores comparados, foi-se atribuida a seguinte metodologia.
 
-	Foram utilizadas 2 tipos de hélices para tentar fazer uma melhor comparação de como estas podem alterar os demais parâmetros do projeto.
+  Foi utilizada uma balança que foi acoplada a um suporte para os motores de modo que seja possível medir a força de cada motor. Para evitar certas interferências, o aparato tenta distanciar o máximo possível o motor da balança.
 
+  Para gerar as curvas, foram feitas sete medidas, cada uma com um sinal do controle diferente, com as seguintes medidas: 16, 33, 50, 66, 84 e 100\%. Com isto a força que cada motor pode executar foi medida. Juntamente com a medida da força, a corrente e a tensão também foram obtidas para calcular a potência que o motor absorve e também a rotação para comparar com a força gerada.
+
+  Foram utilizadas 2 tipos de hélices para tentar fazer uma melhor comparação de como estas podem alterar os demais parâmetros do projeto. Também foi alterado a tensão utilizando a hélice padrão para obter um melhor entendimento do funcionamento dos motores.
 
 \section{Resultados}
 
-Falta a geração das curvas.
+ A primeira tabela gerada foi a dos parâmetros relacionados aos motores de acordo com o modelo de hélices. Para isto foi utilizado uma tensão fixa de 15V e apenas o sinal do controle foi variado.
+
+\begin{table}[h!]
+
+  \centering
+
+  \begin{tabular}{|c|ccc|ccc|}
+
+  \hline
+
+  & Hélice & 10 / 4.5 & (Padrão) & Hélice & 9 / 3.8 & \\
+
+  \hline
+
+  Sinal & Força(mN) & i(A) & Rotação(rpm) & Força(mN) & i(A) & Rotação(rpm) \\
+
+  \hline
+  \hline
+
+  16 \% & 68 & 0.5 & 2100 & 56 & 0.4 & 2880 \\
+  33 \% & 163 & 1.2 & 3300 & 140 & 1.0 & 4260 \\
+  50 \% & 295 & 2.5 & 4350 & 222 & 1.9 & 5310 \\
+  66 \% & 454 & 4.5 & 5360 & 320 & 2.9 & 6240 \\
+  84 \% & 650 & 7.6 & 6330 & 460 & 4.8 & 7410 \\
+  100 \% & 810 & 10.9 & 7020 & 624 & 7.2 & 8340 \\
+  \hline
+  \end{tabular}
+  \caption{Parâmetros relacionados aos motores de acordo com o modelo de hélices - Tensão 15V}
+  \label{tabmotor}
+\end{table}
+
+A seguir a tensão foi diminuida pela metade para observar o comportamento dos demais parâmetros. 
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|cc|}
+\hline
+
+Sinal & Força(mN) & i(A) \\
+
+\hline
+\hline
+
+16 \% & 20 & 0.2 \\
+33 \% & 51 & 0.5 \\
+50 \% & 94 & 1.1 \\
+66 \% & 153 & 1.8 \\
+84 \% & 220 & 2.9 \\
+100 \% & 292 & 4.3 \\
+\hline
+\end{tabular}
+\caption{Parâmetros do motor com hélice padrão e tensão de variável}
+\label{tabmotor2}
+\end{table}
+
+Para observar melhor a influência da tensão sobre os parâmetros, foi gerada a tabela abaixo, mantendo o sinal do controle constante e variando apenas a tensão.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|ccc|}
+\hline
+
+Tensão(V) & Força(mN) & i(A) \\
+
+\hline
+\hline
+
+7.5  & 94 & 1.1 \\
+10.0  & 144 & 1.4 \\
+12.5  & 204 & 1.8 \\
+15.0  & 295 & 2.5 \\
+\hline
+\end{tabular}
+\caption{Parâmetros do motor com hélice padrão e tensão de 7.5V}
+\label{tabmotortensao}
+\end{table}
+
+A partir das três tabelas criadas foram obtidas todas as seguintes curvas:
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=0]{./Figuras/forcaxhelice}
+  \caption[Curva: Força x Sinal]
+  {Curva: Força x Sinal}\label{curvas.forcaxhelice}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=0]{./Figuras/rotacaoxhelice}
+  \caption[Curva: Rotação x Sinal]
+  {Curva: Rotação x Sinal}\label{curvas.rotacaoxhelice}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=0]{./Figuras/correntexhelice}
+  \caption[Curva: Corrente x Sinal]
+  {Curva: Corrente x Sinal}\label{curvas.correntexhelice}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=0]{./Figuras/tensaoxcorrente}
+  \caption[Curva: Corrente x Tensão]
+  {Curva: Corrente x Tensão}\label{curvas.tensaoxcorrente}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=0]{./Figuras/tensaoxforca}
+  \caption[Força x Tensão]
+  {Força x Tensão}\label{curvas.tensaoxforca}
+\end{figure}
+
 
 \section{Conclusão}
 
-Falta a geração das curvas.
+ As curvas que foram geradas mostraram o comportamento básico do motor facilitando melhor seu entendimento. Com isto foi possível escolher motores e hélices que melhor atendessem os objetivos propostos. Outra vantagem das curvas geradas foi poder escolher melhor o ponto de operação do multirrotor.
 
+A tabela \ref{tabmotor} foi a responsável por gerar as curvas \ref{curvas.forcaxhelice}, \ref{curvas.rotacaoxhelice} e \ref{curvas.correntexhelice}, de modo que as conclusões possam ser mais fáceis percebidas. Com base nesta foi possível comparar dois modelos de hélices diferentes e também seus principais parâmetros como a rotação, a tensão, a força e a corrente. 
 
+O primeiro tipo de hélice, a padrão, é maior que a segunda usado para a comparação. Observando a curva \ref{curvas.rotacaoxhelice}, observamos que a rotação aumenta conforme a hélice diminui. A rotação também parece ser linear com o sinal enviado para a ativação do motor.
+
+Segundo as curvas \ref{curvas.forcaxhelice} e \ref{curvas.correntexhelice} percebe-se que a força e a corrente gerada pelo motor com uma hélice menor é também menor, diferentemente da rotação. Também é possível observar que a variação da força e da corrente não é linear com o sinal enviado. Conforme o sinal enviado se aproxima do máximo do motor a corrente e a força tendem a aumentar mais.
+
+Com base na tabela \ref{tabmotor2}, pode-se fazer uma comparação do motor funcionando com uma tensão 50\% menor que a tensão da tabela \ref{tabmotor}. Podemos perceber que assim como a tensão diminuiu pela metade a corrente também caiu por praticamente a metade, reduzindo assim a potência pelo mesmo valor.
+O valor da força que o motor gera cai também para um valor próximo da metade, mostrando que a força varia proporcionalmente com a potência do motor.
+ 
+A partir dos gráficos \ref{curvas.rotacaoxhelice} e \ref{curvas.tensaoxcorrente} e também da tabela \ref{curvas.tensaoxforca} pode ser observado a influência da variação da tensão na força e na corrente do motor. Tanto a força quanto a corrente são praticamente lineares com a variação da tensão.
+
+Outro fator importante que pode ser observado é que a corrente aumenta mais com a variação do sinal que a força gerada. Com base nesta informação, podemos admitir que o ponto ótimo para o funcionamento do motor é na faixa de 30\% a 60\%. Levando em conta que a corrente vai aumentar mais e a duração da bateria vai cair proporcionalmente, enquanto que a força gerada será um pouco menor se considerarmos a proporção.
 
 \part{Segunda Parte - Manual de Construção de um Multirrotor}
 %\setcounter{chapter}{0}
@@ -1001,7 +1211,7 @@ TODO
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[angle=90]{./Figuras/cad_central_inferior}
+  \includegraphics{./Figuras/cad_central_inferior}
   \caption[Placa central inferior do protótipo]
   {Placa central inferior do protótipo}\label{fig.protcentinf}
 \end{figure}
