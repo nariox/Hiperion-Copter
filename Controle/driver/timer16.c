@@ -244,7 +244,7 @@ void init_timer16(uint8_t timer_num, uint16_t TimerInterval)
 	/* Capture 0 on rising edge, interrupt enable. */
 	LPC_TMR16B0->CCR = (0x1<<0)|(0x1<<2);
 #endif
-    LPC_TMR16B0->MCR = 3;				/* Interrupt and Reset on MR0 and MR1 */
+    LPC_TMR16B0->MCR = 0x03;				/* Interrupt and Reset on MR0 and MR1 */
 
 #if CONFIG_TIMER16_DEFAULT_TIMER16_0_IRQHANDLER==1
     /* Enable the TIMER0 Interrupt */
@@ -256,18 +256,21 @@ void init_timer16(uint8_t timer_num, uint16_t TimerInterval)
     /* Some of the I/O pins need to be clearfully planned if
     you use below module because JTAG and TIMER CAP/MAT pins are muxed. */
     LPC_SYSCON->SYSAHBCLKCTRL |= (1<<8);
-    LPC_IOCON->PIO1_8           &= ~0x07;	/*  Timer1_16 I/O config */
-    LPC_IOCON->PIO1_8           |= 0x01;		/* Timer1_16 CAP0 */
-    LPC_IOCON->PIO1_9           &= ~0x07;	
+//    LPC_IOCON->PIO1_8           &= ~0x07;	/*  Timer1_16 I/O config */
+//    LPC_IOCON->PIO1_8           |= 0x01;		/* Timer1_16 CAP0 */
+//    LPC_IOCON->PIO1_9           &= ~0x07;
+    LPC_IOCON->PIO1_9           &= ~0x1F;
     LPC_IOCON->PIO1_9           |= 0x01;		/* Timer1_16 MAT0 */
-    LPC_IOCON->PIO1_10          &= ~0x07;
+//    LPC_IOCON->PIO1_10          &= ~0x07;
+    LPC_IOCON->PIO1_10          &= ~0x1F;
     LPC_IOCON->PIO1_10          |= 0x02;		/* Timer1_16 MAT1 */	
 #if CONFIG_TIMER16_DEFAULT_TIMER16_1_IRQHANDLER==1
     timer16_1_counter = 0;
 	timer16_1_capture = 0;
 #endif
-    LPC_TMR16B0->PR  = KHZ_PRESCALE; /* set prescaler to get 1 K counts/sec */
-    LPC_TMR16B0->MR0 = TimerInterval; /* Set up 100 mS interval */
+    LPC_TMR16B1->TCR = 0x02;          /* reset timer */
+    LPC_TMR16B1->PR  = KHZ_PRESCALE;  /* set prescaler to get 1 K counts/sec */
+    LPC_TMR16B1->MR0 = TimerInterval; /* Set up 100 mS interval */
 #if TIMER_MATCH
 	LPC_TMR16B1->EMR &= ~(0xFF<<4);
 	LPC_TMR16B1->EMR |= ((0x3<<4)|(0x3<<6));
@@ -275,8 +278,7 @@ void init_timer16(uint8_t timer_num, uint16_t TimerInterval)
 	/* Capture 0 on rising edge, interrupt enable. */
 	LPC_TMR16B1->CCR = (0x1<<0)|(0x1<<2);
 #endif
-    LPC_TMR16B1->MCR = 3;				/* Interrupt and Reset on MR0 and MR1 */
-
+    LPC_TMR16B1->MCR = 0x03;          /* Interrupt and Reset on MR0 and MR1 */
 #if CONFIG_TIMER16_DEFAULT_TIMER16_1_IRQHANDLER==1
     /* Enable the TIMER1 Interrupt */
     NVIC_EnableIRQ(TIMER_16_1_IRQn);
@@ -306,7 +308,6 @@ void init_timer16PWM(uint8_t timer_num, uint32_t period, uint8_t match_enable, u
 
 	if (timer_num == 1)
 	{
-
 		/* Some of the I/O pins need to be clearfully planned if
 		you use below module because JTAG and TIMER CAP/MAT pins are muxed. */
 		LPC_SYSCON->SYSAHBCLKCTRL |= (1<<8);
@@ -390,6 +391,7 @@ void init_timer16PWM(uint8_t timer_num, uint32_t period, uint8_t match_enable, u
 		
 		/* Enable the selected PWMs and enable Match3 */
 		LPC_TMR16B0->PWMC = (1<<3)|(match_enable);
+		LPC_TMR16B0->PR = KHZ_PRESCALE/100;  /* set prescaler to get 100 counts/sec */
 		
 		/* Setup the match registers */
 		/* set the period value to a global variable */

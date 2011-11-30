@@ -187,10 +187,7 @@
 		<projectStorage>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;TargetConfig&gt;
 &lt;Properties property_0="" property_1="" property_2="" property_3="NXP" property_4="LPC1114/302" property_count="5" version="1"/&gt;
-&lt;infoList vendor="NXP"&gt;
-&lt;info chip="LPC1114/302" match_id="0x2540102b" name="LPC1114/302" stub="crt_emu_lpc11_13_nxp"&gt;
-&lt;chip&gt;
-&lt;name&gt;LPC1114/302&lt;/name&gt;
+&lt;infoList vendor="NXP"&gt;&lt;info chip="LPC1114/302" match_id="0x2540102b" name="LPC1114/302" stub="crt_emu_lpc11_13_nxp"&gt;&lt;chip&gt;&lt;name&gt;LPC1114/302&lt;/name&gt;
 &lt;family&gt;LPC11xx&lt;/family&gt;
 &lt;vendor&gt;NXP (formerly Philips)&lt;/vendor&gt;
 &lt;reset board="None" core="Real" sys="Real"/&gt;
@@ -221,8 +218,7 @@
 &lt;peripheralInstance derived_from="LPC11_13_WDT" determined="infoFile" id="WDT" location="0x40004000"/&gt;
 &lt;peripheralInstance derived_from="LPC11_13_ADC" determined="infoFile" id="ADC" location="0x4001c000"/&gt;
 &lt;/chip&gt;
-&lt;processor&gt;
-&lt;name gcc_name="cortex-m0"&gt;Cortex-M0&lt;/name&gt;
+&lt;processor&gt;&lt;name gcc_name="cortex-m0"&gt;Cortex-M0&lt;/name&gt;
 &lt;family&gt;Cortex-M&lt;/family&gt;
 &lt;/processor&gt;
 &lt;link href="nxp_lpc11_13_peripheral.xme" show="embed" type="simple"/&gt;
