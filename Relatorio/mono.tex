@@ -645,8 +645,60 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \subsection{Implementação}
 
-Para controlar os ângulos e aceleração vertical independentemente foram utiliz
-As variáveis criadas serão denominadas A, B, C e D. Blablablá explicar o funcionamento do controle 
+A figura \ref{fig.topo} mostra a visão superior do multi-rotor. Os motores são denominados $1$, $2$, $3$ e $4$, sendo que o Motor $1$ é o motor no 1$^o$ quadrante.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=3in]{./FigsControle/Topo.eps}
+  \caption[Vista superior do veículo]%
+  {Vista superior do veículo}\label{fig.topo}
+\end{figure}
+
+Observando-se o veículo apartir da vista lateral (figura \ref{fig.lateral}) é fácil de observar como as forças atuam sobre o ângulo do multi-rotor.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=3in]{./FigsControle/Hover.eps}
+  \caption[Vista lateral do veículo]%
+  {Vista lateral do veículo}\label{fig.lateral}
+\end{figure}
+
+Considerando o ângulo entre o vetor normal à base e a aceleração da gravidade como $\theta$ e o rotor simétrico e com o centro de massa no centro geométrico. Pode-se escrever a equação que descreve o comportamento desse sistema como:
+
+\begin{equation}
+  \ddot{\theta} = - \frac{1}{J_\theta} (F_{M_1} + F_{M_2} - F_{M_3} - F_{M_4})d,
+\end{equation}
+onde:
+\begin{description}[style=multiline,leftmargin=3cm]
+  \item[J$_\theta$] é o momento angular do veículo em relação ao eixo;
+  \item[F$_{M_n}$] é a força gerada pelo motor $n$;
+  \item[d] é a projeção da distância entre o motor e o eixo $\theta$
+\end{description}
+
+Semelhantemente, pode-se escrever a equação para o outro ângulo ($\phi$) em relação à aceleração da gravidade:
+
+\begin{equation}
+  \ddot{\phi} = - \frac{1}{J_\phi} (F_{M_1} + F_{M_2} - F_{M_3} - F_{M_4}) d.
+\end{equation}
+
+Em relação à rotação em torno do eixo normal à base, pode-se gerar um torque resultante desbalanceando-se a rotação entre os motores que giram no sentido horário e os que giram no sentido anti-horário:
+
+\begin{equation}
+  \ddot{\psi} = - \frac{1}{J_\psi} (|T_{M_1}| - |T_{M_2}| + |T_{M_3}| - |T_{M_4}|),
+\end{equation}
+onde $T_{M_n}$ é o torque gerado pelo motor $n$.
+
+Por último, a resultante do empuxo gerado pelos motores na direção normal à base é :
+
+\begin{equation}
+  \ddot{\a} = - \frac{1}{J_\phi} (F_{M_1} + F_{M_2} - F_{M_3} - F_{M_4}) d.
+\end{equation}
+
+
+
+Para controlar os ângulos e aceleração vertical independentemente foram criados quatro variáveis intermediárias, que atuam apenas em um dos ângulos. As variáveis criadas são denominadas A, B, C e D.
+
+
 
 
 \chapter{Desenvolvimento do Trabalho}
