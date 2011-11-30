@@ -678,7 +678,7 @@ onde:
 Semelhantemente, pode-se escrever a equação para o outro ângulo ($\phi$) em relação à aceleração da gravidade:
 
 \begin{equation}
-  \ddot{\phi} = - \frac{1}{J_\phi} (F_{M_1} + F_{M_2} - F_{M_3} - F_{M_4}) d.
+  \ddot{\phi} = - \frac{1}{J_\phi} (F_{M_1} - F_{M_2} - F_{M_3} + F_{M_4}) d.
 \end{equation}
 
 Em relação à rotação em torno do eixo normal à base, pode-se gerar um torque resultante desbalanceando-se a rotação entre os motores que giram no sentido horário e os que giram no sentido anti-horário:
@@ -691,15 +691,40 @@ onde $T_{M_n}$ é o torque gerado pelo motor $n$.
 Por último, a resultante do empuxo gerado pelos motores na direção normal à base é :
 
 \begin{equation}
-  \ddot{\a} = - \frac{1}{J_\phi} (F_{M_1} + F_{M_2} - F_{M_3} - F_{M_4}) d.
+  F = F_{M_1} + F_{M_2} + F_{M_3} + F_{M_4}.
 \end{equation}
 
+Para controlar os ângulos e aceleração vertical independentemente foram criados quatro variáveis intermediárias, que atuam apenas em uma das equações (ortogonalização). As variáveis criadas são denominadas A, B, C e D.
 
+\begin{equation}
+  	\begin{bmatrix}
+  	  A\\B\\C\\D
+  	\end{bmatrix}
+  	= 
+  	\begin{bmatrix}
+  	  -1 & -1 & +1 & +1\\
+  	  -1 & +1 & +1 & -1\\
+  	  -1 & +1 & -1 & +1\\
+      +1 & +1 & +1 & +1
+  	\end{bmatrix}
+  	\begin{bmatrix}
+  	  F_{M_1}\\F_{M_2}\\F_{M_3}\\F_{M_4}
+  	\end{bmatrix}
+  	.
+\end{equation}
 
-Para controlar os ângulos e aceleração vertical independentemente foram criados quatro variáveis intermediárias, que atuam apenas em um dos ângulos. As variáveis criadas são denominadas A, B, C e D.
+Utilizando essa nova base, pode-se controlar os parâmetros de forma independente:
 
+\begin{subequations}
+  \begin{align}
+    \ddot{\theta} & = \frac{d}{J_\theta} A\\
+      \ddot{\phi} & = \frac{d}{J_\phi} B\\
+      \ddot{\psi} & = \frac{C_Q'}{C_T' J_\psi} C \\
+      F & = D.
+  \end{align}
+\end{subequations}
 
-
+O problema das múltiplas variáveis se extingue dessa maneira. O controle PID pode então ser aplicado às variáveis A, B, C e D e então estas são transformadas nas forças dos motores individualmente.
 
 \chapter{Desenvolvimento do Trabalho}
 
