@@ -93,7 +93,7 @@ de São Paulo}
   \textit{Inrunner}   um motor cujo estator se encontra no exterior, e o rotor do lado interior.
   \item[LSI]   Laboratório de Sistemas Integráveis, parte da Escola Politécnica da Universidade de São Paulo.
   \item[MVA]   Mícro-Veículo Aéreo, é uma classe de VANTs de tamanho reduzido.
-  \item[Multirrotor]   um objeto voador dotado de duas ou mais hélices e que se utiliza do empuxo causado por essas para o vôo.
+  \item[multi-rotor]   um objeto voador dotado de duas ou mais hélices e que se utiliza do empuxo causado por essas para o vôo.
   \item[OSI, Modelo]   uma arquitetura que divide redes de computadores em diversas camadas, utilizada para modelar e abstrair as redes.
   \item[Outrunner]   um motor cujo estator se encontra no exterior, e o rotor no interior.
   \item[PID, Controlador]   um controlador que emprega um algoritmo proporcional, integrativo e diferencial ao erro para controle de processos.
@@ -127,17 +127,17 @@ Dentre as possíveis soluções para a movimentação de ferramentas de pequeno porte
 
 Essa última característica torna o MVA ótimo para uma grande variedade de usos nos quais são desejadas agilidade e mobilidade. É o caso de câmeras de vídeo controladas à distância, que podem ser usadas, por exemplo, para a filmagem de eventos esportivos ou para a imersão em realidade aumentada. 
 
-O desenvolvimento científico tem possibilitado sistemas embarcados cada vez mais potentes, e isto tem aumentado o interesse em MVAs, tanto para pesquisas, quanto para aplicações profissionais. No entanto, não há uma plataforma de desenvolvimento, apenas produtos comerciais com objetivos específicos. Dessa forma que é necessário primeiro o desenvolvimento de um sistema multirrotor para que então seja iniciada a pesquisa.
+O desenvolvimento científico tem possibilitado sistemas embarcados cada vez mais potentes, e isto tem aumentado o interesse em MVAs, tanto para pesquisas, quanto para aplicações profissionais. No entanto, não há uma plataforma de desenvolvimento, apenas produtos comerciais com objetivos específicos. Dessa forma que é necessário primeiro o desenvolvimento de um sistema multi-rotor para que então seja iniciada a pesquisa.
 
 \section{Objetivos}
 
-O projeto visa a implementação de um multirrotor modular expansível para uso  como uma plataforma de desenvolvimento para aplicações futuras e implementação de uma aplicação que demonstre o potencial do protótipo gerado. A ênfase do projeto é a arquitetura modular e discreta do multirrotor, que permitirá que aplicações e sensores sejam adicionados ou removidos com o mínimo de alterações tanto no software quanto no hardware desenvolvidos. Para que isso seja possível, serão definidos os requisitos dos módulos de aplicação, seus protocolos de comunicação e o barramento onde eles serão ligados, dentre outros, além das APIs a serem geradas. Será necessária, também, uma documentação apropriada que permita que o usuário compreenda e utilize todos os recursos sem dificuldades.
+O projeto visa a implementação de um multi-rotor modular expansível para uso  como uma plataforma de desenvolvimento para aplicações futuras e implementação de uma aplicação que demonstre o potencial do protótipo gerado. A ênfase do projeto é a arquitetura modular e discreta do multi-rotor, que permitirá que aplicações e sensores sejam adicionados ou removidos com o mínimo de alterações tanto no software quanto no hardware desenvolvidos. Para que isso seja possível, serão definidos os requisitos dos módulos de aplicação, seus protocolos de comunicação e o barramento onde eles serão ligados, dentre outros, além das APIs a serem geradas. Será necessária, também, uma documentação apropriada que permita que o usuário compreenda e utilize todos os recursos sem dificuldades.
 
 	O sistema será construído em camadas, semelhante ao modelo OSI de camadas. Um diagrama do sistema pode ser encontrado no anexo 1. O módulo de controle cuidará dos algoritmos de vôo como estabilidade, PID, ele recebe o sinal dos sensores mais essenciais ao vôo e recebe também comandos vindos do módulo de navegação.
 
 	O módulo de navegação se encarrega de utilizar os sensores disponíveis para decidir qual rota tomar, ele recebe sinais do controle remoto, além de estar ligado aos sensores não essenciais através do barramento, esses sensores são utilizados para fazer correções na rota.
 	
-	É possível ainda expandir o projeto através de um módulo de aplicações. Este seria ligado ao barramento como um periférico comum, mas possuiria um processador mais poderoso e lidaria com sinais de som e vídeo. Ele também poderia ser responsável pelos cálculos mais custosos e por carregar o programa que o multirrotor executará no modo autônomo. Por estar ligado no barramento, ele também é capaz de se comunicar com os outros periféricos para processar estes dados também.
+	É possível ainda expandir o projeto através de um módulo de aplicações. Este seria ligado ao barramento como um periférico comum, mas possuiria um processador mais poderoso e lidaria com sinais de som e vídeo. Ele também poderia ser responsável pelos cálculos mais custosos e por carregar o programa que o multi-rotor executará no modo autônomo. Por estar ligado no barramento, ele também é capaz de se comunicar com os outros periféricos para processar estes dados também.
 
 O protótipo final deverá possuir capacidades suficientes para o seu uso como uma plataforma de desenvolvimento. Essas capacidades incluem, mas não se limitam a:
 \begin{itemize}
@@ -147,7 +147,7 @@ O protótipo final deverá possuir capacidades suficientes para o seu uso como uma
   \item aferição e envio de dados dos sensores.
 \end{itemize}
 
-A navegação poderá ser de duas formas. O modo manual, onde o multirrotor é controlado remotamente pelo usuário. E o modo semi-autônomo, que utiliza rotas pré-definidas, guiando-se pelo GPS, incluindo a funcionalidade de voltar ao ponto de origem caso seja perdida a conexão com o controle manual.
+A navegação poderá ser de duas formas. O modo manual, onde o multi-rotor é controlado remotamente pelo usuário. E o modo semi-autônomo, que utiliza rotas pré-definidas, guiando-se pelo GPS, incluindo a funcionalidade de voltar ao ponto de origem caso seja perdida a conexão com o controle manual.
 %Além disso, o vídeo capturado poderá ser transmitido para acompanhamento do operador em terra.
 
 \section{Organização do Trabalho}
@@ -157,7 +157,7 @@ Nos capítulos 5, 6, 7 e 8 serão apresentados os tópicos relacionados ao orçament
 Para finalizar, o capítulo 9 concluirá o trabalho, apresentado uma síntese de tudo que foi visto e, neste capítulo, também serão mostrados os resultados obtidos. Nas referências, bibliografias e nos anexos serão apresentados complementos e fontes de informações relevantes ao projeto.
 
 \chapter{Arquitetura}
-A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. O software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
+A arquitetura proposta foi pensada de forma a permitir ao multi-rotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. O software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
 
 As camadas são:
 \begin{enumerate}
@@ -172,7 +172,7 @@ A figura \ref{fig.arquitsimp} apresenta uma visão geral da arquitetura, que será
   \centering
   \includegraphics[width=6in]{./Figuras/Arquitsimp.eps}
   \caption[Arquitetura simplificada]
-  {visão geral da arquitetura do multirrotor}\label{fig.arquitsimp}
+  {visão geral da arquitetura do multi-rotor}\label{fig.arquitsimp}
 \end{figure}
 
 \section{Camada de excitação dos motores}
@@ -182,7 +182,7 @@ Essa é a primeira camada, abaixo da camada de estabilização de vôo. Responsável 
 
 \subsection{Componentes}
 
-É constituída pelos $n$ motores, hélices e controladores eletrônicos de velocidade ({\it eletronic speed controllers} - ESCs), sendo $n$ o número de rotores do multirrotor. Os ESCs projetados, por sua vez, são constituídos por duas placas de circuito, uma responsável pela lógica e a outra pelo fornecimento de potência aos motores. ESCs comerciais costumam ter esses dois sub-circuitos na mesma placa.
+É constituída pelos $n$ motores, hélices e controladores eletrônicos de velocidade ({\it eletronic speed controllers} - ESCs), sendo $n$ o número de rotores do multi-rotor. Os ESCs projetados, por sua vez, são constituídos por duas placas de circuito, uma responsável pela lógica e a outra pelo fornecimento de potência aos motores. ESCs comerciais costumam ter esses dois sub-circuitos na mesma placa.
 
 \subsection{Comportamento}
 
@@ -201,7 +201,7 @@ Abaixo, um diagrama que representa esse comportamento:
 
 \subsection{Comunicação entre os componentes}
 
-Cada ESC precisa comunicar-se com o microcontrolador ARM da camada de estabilização de vôo. O ESC projetado o faz através do protocolo I$^2$C, enquanto que a maior parte dos ESCs comerciais recebe um PWM como entrada, com a limitação de não poderem enviar o estado do motor. Devido ao alto custo de fabricação em baixa escala, foram usados ESCs comerciais no protótipo do multirrotor. Apenas um ESC projetado foi construído, como prova de conceito.
+Cada ESC precisa comunicar-se com o microcontrolador ARM da camada de estabilização de vôo. O ESC projetado o faz através do protocolo I$^2$C, enquanto que a maior parte dos ESCs comerciais recebe um PWM como entrada, com a limitação de não poderem enviar o estado do motor. Devido ao alto custo de fabricação em baixa escala, foram usados ESCs comerciais no protótipo do multi-rotor. Apenas um ESC projetado foi construído, como prova de conceito.
 Os motores recebem três PWMs dos ESCs, que o alimentam.
 
 \subsection{Parâmetros de entrada e saída}
@@ -226,7 +226,7 @@ Os motores recebem três PWMs dos ESCs, que o alimentam.
 \section{Camada de estabilização do vôo}
 \subsection{Descrição}
 
-Processa os sinais dos sensores de estabilização (acelerômetros e giroscópios) e os parâmetros de navegação (ângulos de Euler e potência total dos motores) e gera os parâmetros de rotação de cada motor. Responsável por manter a estabilidade do vôo e controlar as velocidades de deslocamento e angular do multirrotor.
+Processa os sinais dos sensores de estabilização (acelerômetros e giroscópios) e os parâmetros de navegação (ângulos de Euler e potência total dos motores) e gera os parâmetros de rotação de cada motor. Responsável por manter a estabilidade do vôo e controlar as velocidades de deslocamento e angular do multi-rotor.
 
 \subsection{Componentes}
 
@@ -276,7 +276,7 @@ O microcontrolador dessa camada comunica-se com os ESCs da camada de excitação p
 \section{Camada de navegação}
 \subsection{Descrição}
 
-Responsável por processar os sinais dos sensores de navegação (GPS, magnetômetro e sensor de distância ultrassônico) e os parâmetros do rádio-controle. Gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) do multirrotor, de forma a fazê-lo mover-se com a direção e a velocidade pretendidas e/ou girar em torno de seu eixo vertical.
+Responsável por processar os sinais dos sensores de navegação (GPS, magnetômetro e sensor de distância ultrassônico) e os parâmetros do rádio-controle. Gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) do multi-rotor, de forma a fazê-lo mover-se com a direção e a velocidade pretendidas e/ou girar em torno de seu eixo vertical.
 
 \subsection{Componentes}
 
@@ -284,9 +284,9 @@ Camada constituída por uma placa Arduino Mega dotada de um microcontrolador da A
 
 \subsection{Comportamento}
 
-A camada de navegação possui um laço principal que tem início com a leitura dos parâmetros de direção e velocidades de translação e angular, os quais são obtidos do módulo de recepção do rádio-controle e/ou podem ser gerados por outros módulos na camada de periféricos. Isso abre a possibilidade de aplicações arbitrárias determinarem a direção e as velocidades do multirrotor.
+A camada de navegação possui um laço principal que tem início com a leitura dos parâmetros de direção e velocidades de translação e angular, os quais são obtidos do módulo de recepção do rádio-controle e/ou podem ser gerados por outros módulos na camada de periféricos. Isso abre a possibilidade de aplicações arbitrárias determinarem a direção e as velocidades do multi-rotor.
 
-Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS, magnetômetro e sensor de distância ultrassônico). O GPS fornece a informação de onde o multirrotor está e a sua altitude, o magnetômetro indica para que direção ele está voltado e o sensor ultrassônico, colocado apontando para baixo, também indica a altitude. A utilidade do sensor ultrassônico é que ele é mais preciso que o GPS e funciona em ambientes internos, diferentemente deste. Sua limitação é o alcance, limitado a três metros. A partir disso os dados do GPS são usados, se disponíveis.
+Em seguida ocorre a leitura dos sinais dos sensores de navegação (GPS, magnetômetro e sensor de distância ultrassônico). O GPS fornece a informação de onde o multi-rotor está e a sua altitude, o magnetômetro indica para que direção ele está voltado e o sensor ultrassônico, colocado apontando para baixo, também indica a altitude. A utilidade do sensor ultrassônico é que ele é mais preciso que o GPS e funciona em ambientes internos, diferentemente deste. Sua limitação é o alcance, limitado a três metros. A partir disso os dados do GPS são usados, se disponíveis.
 
 A partir desses parâmetros e sinais é realizado o processamento que gera os parâmetros de navegação (ângulos de Euler e potência total dos motores) que são enviados para o microcontrolador da camada de estabilização. A figura \ref{fig.navfunc} representa esse comportamento.
 
@@ -309,7 +309,7 @@ O Arduino comunica-se por UART com o microcontrolador ARM da camada de estabiliz
   \item da camada de periféricos:
     \begin{itemize}
       \item sinais dos sensores de navegação (GPS, magnetômetro e sensor ultrassônico);
-      \item parâmetros de direção e velocidades de translação e angular do multirrotor.
+      \item parâmetros de direção e velocidades de translação e angular do multi-rotor.
     \end{itemize}
   \item da camada de estabilização de vôo:
   \begin{itemize}
@@ -365,14 +365,14 @@ Os módulos GPS e magnetômetro e o receptor de rádio-controle comunicam-se com o 
   \item   para a camada de navegação:
   \begin{itemize}
     \item sinais dos sensores de navegação (GPS, magnetômetro e sensor ultrassônico);
-    \item parâmetros de direção e velocidades do multirrotor.
+    \item parâmetros de direção e velocidades do multi-rotor.
   \end{itemize}
   \item   para o rádio-controle remoto:
   \begin{itemize}
     \item estado de cada motor: funcinamento correto ou erro (apenas para o ESC projetado);
     \item dados dos sensores de estabilização (acelerômetro e giroscópio);
     \item dados dos sensores de navegação (GPS, magnetômetro e sensor ultrassônico);
-    \item parâmetros de direção e velocidades do multirrotor, caso gerados por algum módulo embarcado.
+    \item parâmetros de direção e velocidades do multi-rotor, caso gerados por algum módulo embarcado.
   \end{itemize}
 \end{itemize}
 
@@ -405,7 +405,7 @@ A maioria dos motores de corrente contínua utilizam um dispositivo denominado es
 
 Há motores de corrente contínua que não utilizam escovar para fazer o chaveamento, estes são denominados \textit{brushless} (``sem escova'' em inglês). Estes motores são semelhantes em construção síncronos trifásicos com imãs permanentes, mas otimizados para operação em corrente contínua.
 
-Por não possuir a escova para fazer o chaveamento entre os enrolamentos, é necessário um circuito eletrônico que execute a mesma função. Apesar de aumentar a complexidade do sistema, multirrotores necessitam de motores com rotações elevadas, o que impossibilita o uso da escova. Além disto, como os multirrotores são alimentados por uma bateria, é interessante que o sistema seja o mais eficiente o possível, para aumentar o tempo de vôo.
+Por não possuir a escova para fazer o chaveamento entre os enrolamentos, é necessário um circuito eletrônico que execute a mesma função. Apesar de aumentar a complexidade do sistema, multi-rotores necessitam de motores com rotações elevadas, o que impossibilita o uso da escova. Além disto, como os multi-rotores são alimentados por uma bateria, é interessante que o sistema seja o mais eficiente o possível, para aumentar o tempo de vôo.
 
 Estes motores geralmente possuem 3 enrolamentos que controlam o campo no estator, enquanto o rotor utiliza imãs permanentes. Isto elimina a necessidade da escova para gerar o campo no rotor.
 
@@ -506,7 +506,7 @@ A carga deve estar numa faixa conhecida. Se a carga estiver muito abaixo do espe
 
 \section{Bateria de lítio-polímero}
 
-A bateria é o elemento que provê a energia necessária ao funcionamento eletromecânico e eletrônico do multirrotor. É desejável que sua massa seja baixa, já que um peso maior significará mais empuxo nos motores e uma maior corrente drenada. Ao mesmo tempo, é desejável uma carga elétrica alta, para se ter mais autonomia.
+A bateria é o elemento que provê a energia necessária ao funcionamento eletromecânico e eletrônico do multi-rotor. É desejável que sua massa seja baixa, já que um peso maior significará mais empuxo nos motores e uma maior corrente drenada. Ao mesmo tempo, é desejável uma carga elétrica alta, para se ter mais autonomia.
 
 O lítio é o mais leve dentre os metais e com o maior potencial eletroquímico, o que o torna uma escolha bastante atraente para o uso em baterias. Devido à sua grande reatividade, porém, seu uso na forma metálica não é conveniente, sendo mais usados os compostos que provêem íons de lítio sem sofrer grandes modificações estruturais \cite{lipoeval,batterysearch}. 
 
@@ -594,7 +594,7 @@ Como a distancia e medida pelo tempo (ao invés da intensidade como no sensor inf
 
 O módulo utilizado, modelo $HC-SR04$ produzido por diversos fabricantes, contém ainda a lógica para a geração e detecção dos sinais. Basta que o microcontrolador envie o sinal de acionamento (trigger) e meça o tempo até o pino eco (echo) ficar ativo. Isto permite que o modulo central execute outras funções e confere maior confiabilidade aos dados, já que ele trabalha em tempo real.
 
-O $HC-SR04$ apresenta alcance de ate $4,5$ metros e abertura de $15^o$, o que é suficiente para controle de altura e prevenção de colisões. Neste projeto foi utilizado para controle de altura, mas o código desenvolvido pode ser facilmente adaptado para outras funcoes. 
+O $HC-SR04$ apresenta alcance de ate $4,5$ metros e abertura de $15^o$, o que é suficiente para controle de altura e prevenção de colisões. Neste projeto foi utilizado para controle de altura, mas o código desenvolvido pode ser facilmente adaptado para outras funções. 
 
 % \section{Zigbee}
 	
@@ -606,11 +606,11 @@ O $HC-SR04$ apresenta alcance de ate $4,5$ metros e abertura de $15^o$, o que é 
 
 \section{Controle}\label{sec:controle}
 
-O tema sobre controle de multirrotores voltou a ser estudado, graças a tecnologias novas e o grande interesse em \textit{VANTs}. Há diversas pesquisas já publicadas e os métodos desenvolvidos obtém resultados satisfatório, apesar de não haver o estabelecimento de uma teoria clássica especificamente para multirrotores. 
+O tema sobre controle de multi-rotores voltou a ser estudado, graças a tecnologias novas e o grande interesse em \textit{VANTs}. Há diversas pesquisas já publicadas e os métodos desenvolvidos obtém resultados satisfatório, apesar de não haver o estabelecimento de uma teoria clássica especificamente para multi-rotores. 
 
 \subsection{Características}
 
-O controle de um veículo multirrotor apresenta diversas diferenças em relação a sistemas lineares invariantes no tempo, que são estudados mais a fundo no curso. Primeiramente, se trata de um sistema de múltiplas entradas e múltiplas saídas, sendo que todas as entradas influenciam todas as saídas. Além disto, é um sistema não-linear e dinâmico.
+O controle de um veículo multi-rotor apresenta diversas diferenças em relação a sistemas lineares invariantes no tempo, que são estudados mais a fundo no curso. Primeiramente, se trata de um sistema de múltiplas entradas e múltiplas saídas, sendo que todas as entradas influenciam todas as saídas. Além disto, é um sistema não-linear e dinâmico.
 
 Observa-se que os motores apresentam relação não-linear entre a potência consumida e o empuxo gerado. \citeonline{nlflight} expressam o torque e empuxo gerados por:
 
@@ -645,9 +645,41 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \subsection{Implementação}
 
-Para controlar os ângulos e aceleração vertical independentemente foram utiliz
-As variáveis criadas serão denominadas A, B, C e D. Blablablá explicar o funcionamento do controle 
+A figura \ref{fig.topo} mostra a visão superior do multi-rotor. Os motores são denominados $1$, $2$, $3$ e $4$, sendo que o Motor $1$ é o motor no 1$^o$ quadrante.
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=3in]{./FigsControle/Topo.eps}
+  \caption[Vista superior do veículo]%
+  {Vista superior do veículo}\label{fig.topo}
+\end{figure}
+
+Observando-se o veículo apartir da vista lateral (figura \ref{fig.lateral}) é fácil de observar como as forças atuam sobre o ângulo do multi-rotor.
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=3in]{./FigsControle/Hover.eps}
+  \caption[Vista lateral do veículo]%
+  {Vista lateral do veículo}\label{fig.lateral}
+\end{figure}
+
+Considerando o ângulo entre o vetor normal à base e a aceleração da gravidade como $\theta$ e o rotor simétrico e com o centro de massa no centro geométrico. Pode-se escrever a equação que descreve o comportamento desse sistema como:
+
+\begin{equation}
+  \ddot{\theta} = - J_\theta (F_{M_1} + F_{M_2} - F_{M_3} - F_{M_4})d
+\end{equation}
+Onde:
+\begin{description}[style=multiline,leftmargin=3cm]
+  \item[$J_\theta$] é o momento angular do veículo em relação ao eixo
+\end{description}
+Semelhantemente, pode-se escrever a equação para o outro ângulo ($\phi$) em relação à aceleração da gravidade:
+
+\begin{equation}
+  \ddot{\theta} = - J_\theta (F_{M_1} + F_{M_2} - F_{M_3} - F_{M_4}) d
+\end{equation}
+
+
+Para controlar os ângulos e aceleração vertical independentemente foram criados quatro variáveis intermediárias, que atuam apenas em um dos ângulos. As variáveis criadas são denominadas A, B, C e D. 
 
 \chapter{Desenvolvimento do Trabalho}
 
@@ -661,16 +693,16 @@ O grupo é composto por três alunos: Bruno Pinho, Danilo Luvizotto e Pedro Nariyo
 
 Bruno foi o responsável pela camada de navegação e de seus periféricos, como o gps, magnetometro e sensor de distancia. Responsável também da geração das curvas relacionadas ao trabalho. Também auxiliou nas demais partes do projeto.
 
-Danilo foi o responsável por implementar a camada de controle. Responsável também pela estrutura do multirrotor, e auxiliando no desenvolvimento da arquitetura e nas demais partes do projeto.
+Danilo foi o responsável por implementar a camada de controle. Responsável também pela estrutura do multi-rotor, e auxiliando no desenvolvimento da arquitetura e nas demais partes do projeto.
 
-Pedro foi o responsável por coordenar o projeto. Sendo responsável também pelo desenvolvimento da parte teórica do projeto. Trabalhou também na estrutura do multirrotor e participou ativamente de todas as atividades do projeto.
+Pedro foi o responsável por coordenar o projeto. Sendo responsável também pelo desenvolvimento da parte teórica do projeto. Trabalhou também na estrutura do multi-rotor e participou ativamente de todas as atividades do projeto.
 
 Na etapa de planejamento, a equipe contava com mais um integrante, Marcos Tortólio, que não está mais participando devido a um programa de intercâmbio na Espanha, como previsto.
 Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de hardware e software do veículo. 
 
 \section{Problema a ser resolvido}
 
-	Apesar da existência produtos no mercado que utilizam sistemas multirrotores, não há nenhuma plataforma de desenvolvimento para aplicações diversas. Para fins de aprendizado e pesquisa, é comum que se desenvolvam sistemas de maneira independente e os utilizem para apenas um propósito. Nosso projeto busca criar uma plataforma de desenvolvimento versátil, disponibilizando abertamente o software, o hardware, os conhecimentos e a documentação gerados, de forma a criar uma base de conhecimento para o desenvolvimento do projeto e para seu uso como ferramenta.
+	Apesar da existência produtos no mercado que utilizam sistemas multi-rotores, não há nenhuma plataforma de desenvolvimento para aplicações diversas. Para fins de aprendizado e pesquisa, é comum que se desenvolvam sistemas de maneira independente e os utilizem para apenas um propósito. Nosso projeto busca criar uma plataforma de desenvolvimento versátil, disponibilizando abertamente o software, o hardware, os conhecimentos e a documentação gerados, de forma a criar uma base de conhecimento para o desenvolvimento do projeto e para seu uso como ferramenta.
 
 	A Escola Politécnica da Universidade de São Paulo possui diversos laboratórios que poderiam utilizar o dispositivo para pesquisa, como reconstrução 3D de objetos, algoritmos de controle, aprendizado de máquina etc. O foco não é pesquisar nenhuma dessas áreas a fundo, mas sim criar uma ferramenta capaz de ser utilizada facilmente nessas aplicações.
 
@@ -678,7 +710,7 @@ Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de 
 	
 \section{Motivações e Justificativas Técnicas}
 
-	Um multirrotor com um número par de rotores tem vantagens substanciais sobre helicópteros convencionais. Se cada par adjacente de hélices girar em sentido oposto, é possível controlar o momento angular controlando a razão entre a rotação das hélices. Assim, um multirrotor é capaz de reduzir o problema eletromecânico de voar a um problema de controle eletrônico.
+	Um multi-rotor com um número par de rotores tem vantagens substanciais sobre helicópteros convencionais. Se cada par adjacente de hélices girar em sentido oposto, é possível controlar o momento angular controlando a razão entre a rotação das hélices. Assim, um multi-rotor é capaz de reduzir o problema eletromecânico de voar a um problema de controle eletrônico.
 
 	O projeto implementa conhecimentos diversos da Engenharia Elétrica, como controle, programação, processamento de sinais, redes de computadores, circuitos elétricos, e é, portanto, é adequado e representativo à meta generalista do curso.
 
@@ -707,10 +739,10 @@ As etapas do projeto foram: Estudo Preliminar, Definições, Construção da Platafo
   \item definir o número de hélices.
 \end{itemize}
 
-  \item Estudo de um multirrotor comercial:
+  \item Estudo de um multi-rotor comercial:
   \begin{itemize}
     \item escolha de um modelo comparando com outros existentes no mercado;
-    \item compra e estudo teórico do multirrotor escolhido;
+    \item compra e estudo teórico do multi-rotor escolhido;
     \item montagem e estudo da parte estrutural;
     \item avaliação dos pontos fortes e fracos;
     \item utilizar a experiência e o conhecimento adquirido para auxiliar na construção do protótipo.
@@ -728,7 +760,7 @@ As etapas do projeto foram: Estudo Preliminar, Definições, Construção da Platafo
   \item Estudo de Algoritmos de Controle\\
 	Nesta etapa, os objetivos foram:
 \begin{itemize}
-  \item estudar a construção de um multirrotor comercial;
+  \item estudar a construção de um multi-rotor comercial;
   \item pesquisar possíveis algoritmos de controle.
 \end{itemize}
 
@@ -772,7 +804,7 @@ O projeto resultou em quatro produtos, descritos abaixo:
 
 \begin{enumerate}
 
-  \item Curvas que relacionem as seguintes variáveis de interesse do multirrotor:
+  \item Curvas que relacionem as seguintes variáveis de interesse do multi-rotor:
   \begin{itemize}
     \item força dos motores;
     \item autonomia;
@@ -788,7 +820,7 @@ O projeto resultou em quatro produtos, descritos abaixo:
     \item comunicação sem fio.
   \end{itemize}
   
-  \item Protótipo funcional de multirrotor que com as seguintes capacidades:
+  \item Protótipo funcional de multi-rotor que com as seguintes capacidades:
   \begin{itemize}
     \item receber dados de um controlador manual;
     \item voar pelo menos 10 minutos;
@@ -798,9 +830,9 @@ O projeto resultou em quatro produtos, descritos abaixo:
     \item possuir expansibilidade para módulos extras.
   \end{itemize}
   
-  \item{Manual de projeto e construção de multirrotores, contendo:}
+  \item{Manual de projeto e construção de multi-rotores, contendo:}
   \begin{itemize}
-    \item guia para a construção de um multirrotor;
+    \item guia para a construção de um multi-rotor;
     \item explicação sobre o uso das curvas geradas;
     \item descrição da arquitetura;
     \item detalhamento do hardware suficiente para o uso e modificação por um iniciante;
@@ -841,7 +873,7 @@ No entanto, a disciplina foi capaz de expor estas deficências da equipe e exerci
 \chapter{Orçamento}
 
 \section{Considerações Iniciais}
-Neste capítulo, foi feito um orçamento para fazer um estudo da viabilidade financeira do projeto e também para auxiliar na reprodução deste multirrotor dando idéia do preço dos componentes utilizados. Não foi considerado o frete nem o custo de impostos para importação.
+Neste capítulo, foi feito um orçamento para fazer um estudo da viabilidade financeira do projeto e também para auxiliar na reprodução deste multi-rotor dando idéia do preço dos componentes utilizados. Não foi considerado o frete nem o custo de impostos para importação.
 
 \section{Valores}
 \begin{tabular}{lr}
@@ -883,7 +915,7 @@ Total - Protótipo: & \$447.82
 \end{tabular}
 
 \section{Conclusão}
-Os valores apresentados neste capítulo servem para mostrar que o multirrotor proposto no projeto é viável financeiramente visto que os modelos comerciais possuem valores maiores que os cotados para construir este protótipo. 
+Os valores apresentados neste capítulo servem para mostrar que o multi-rotor proposto no projeto é viável financeiramente visto que os modelos comerciais possuem valores maiores que os cotados para construir este protótipo. 
 Também é necessário relembrar que os valores mostrados não estão inclusos frete e importação e podem variar. Alguns componentes também podem ser trocados de modo que o protótipo pode ficar com um valor menor que o atual.
 
 
@@ -895,7 +927,7 @@ transforma.}''\\
 {\small Lavousier}\end{flushright}{\small \par}
 \vfill{}
 
-Plataformas de desenvolvimento de veículos voadores autônomos são interessantes por permitirem a implementação de algoritmos e aplicativos de forma simples e rápida. Consegue-se isto isolando a aplicação dos outros módulos envolvidos no desenvolvimento de um multirrotor.
+Plataformas de desenvolvimento de veículos voadores autônomos são interessantes por permitirem a implementação de algoritmos e aplicativos de forma simples e rápida. Consegue-se isto isolando a aplicação dos outros módulos envolvidos no desenvolvimento de um multi-rotor.
     
 \section{Dificuldades encontradas}
 
@@ -909,7 +941,7 @@ Existe também os riscos associados a realização do projeto. Para montagem do har
 
 A ênfase de Sistemas Eletrônicos tem por objetivo ser uma ênfase generalista, oferecendo tanto uma base sólida de conhecimentos fundamentais quanto um leque de opções para a especialização em uma área específica da Engenharia Elétrica. Neste projeto utiliza-se conceitos de dessas áreas aprendidos em diversas disciplinas.
 
-Para a levitação e movimentação do multirrotor, utiliza-se conhecimentos aprendidos nas matérias do núcleo de controle, PTC2412 (Controle I) e PTC2512 (Laboratório de Controle). Além destas, a disciplina PSI2662 (Sensores e Atuadores) complementa este conjunto com metodologia de implementação de projetos embarcados e sensores para evitar colisões, e a disciplina PSI2661 (Transceptores) viabiliza a transmissão dos dados por radiofrequência.
+Para a levitação e movimentação do multi-rotor, utiliza-se conhecimentos aprendidos nas matérias do núcleo de controle, PTC2412 (Controle I) e PTC2512 (Laboratório de Controle). Além destas, a disciplina PSI2662 (Sensores e Atuadores) complementa este conjunto com metodologia de implementação de projetos embarcados e sensores para evitar colisões, e a disciplina PSI2661 (Transceptores) viabiliza a transmissão dos dados por radiofrequência.
 
 A implementação do módulo de controle envolve as matérias de circuitos integrados PSI2451, PSI2452 e PSI2553 e de programação MAC2166 (Introdução à programação), MAC0122 (Algoritmos) e PCS2478 (Tópicos em Programação). Além disto, a construção dos circuitos de interface entre o controle e os motores e entre o controle e os sensores, utiliza-se conceitos aprendidos nos módulos de eletrônica, como PSI2223 (Introdução à eletrônica), PSI2324 (Eletrônica I) e PSI2326 (Eletrônica II).
 
@@ -929,9 +961,9 @@ O resultado final do projeto é um legado a ser deixado para o departamento de si
 % \begin{appendix}
   
 
-\chapter{Apêndice A - Comparativos entre outros multirrotores}
+\chapter{Apêndice A - Comparativos entre outros multi-rotores}
 
-Existem diversas plataformas de multirrotores no mercado. A maioria composta por quadrirrotores. Entre estes, são notáveis: Aeroquad \citeonline{aeroquad}, Ardrone\citeonline{ardrone}, Microdrones\citeonline{microdrone}, Mikrokopter\citeonline{mikrokopter}.
+Existem diversas plataformas de multi-rotores no mercado. A maioria composta por quadrirrotores. Entre estes, são notáveis: Aeroquad \citeonline{aeroquad}, Ardrone\citeonline{ardrone}, Microdrones\citeonline{microdrone}, Mikrokopter\citeonline{mikrokopter}.
 
 O AeroQuad é um projeto de software e hardware livre dedicado à construção de helicópteros de quatro rotores de controle remoto. O hardware do AeroQuad consiste tipicamente em um microcontrolador Arduino (Mega-2560 ou Uno) que funciona como o controlador de vôo, juntamente com vários  sensores, como acelerômetros e giroscópios. O software, é escrito principalmente em C e enviado ao micro-controlador Arduino através do IDE, atualmente suporta o modo "Acrobatic", que usa apenas o giroscópio para auxiliar o vôo, e um modo "Estável" que usa tanto o giroscópio e acelerômetro para ajudar no vôo. 
 
@@ -939,11 +971,11 @@ ARDrone pertence à empresa Norte-Americana Parrot que atua na área de desenvolvi
 
 Microdrones é uma empresa alemã cujo foco é o desenvolvimento de pequenas aeronaves, principalmente quadrirrotores. Possui hoje dois modelos comerciais à venda.
 
-	Mikrokopter, é uma \textit{empresa} alemã dedicada a projetos de multirrotores, dentre as empresas pesquisadas, esta apresenta a maior quantidade de combinações. Há modelos com quatro, seis e oito hélices. Há documentação de muitos componentes, inclusive uma descrição detalhada sobre o tempo de vôo para diferentes configurações. Para mais informações, conferir \cite{mikrokopter}.
+	Mikrokopter, é uma \textit{empresa} alemã dedicada a projetos de multi-rotores, dentre as empresas pesquisadas, esta apresenta a maior quantidade de combinações. Há modelos com quatro, seis e oito hélices. Há documentação de muitos componentes, inclusive uma descrição detalhada sobre o tempo de vôo para diferentes configurações. Para mais informações, conferir \cite{mikrokopter}.
 	
 	% 
 
-% \chapter{Manual de Construção de um Multirrotor}
+% \chapter{Manual de Construção de um multi-rotor}
 %(AINDA FALTA)
 % Anexo consiste em um texto ou documento não elaborado pelo autor, que serve de fundamentação, comprovação e ilustração. Os anexos são identificados por letras maiúsculas consecutivas, travessão e pelos respectivos títulos. É elemento opcional. 
 
@@ -987,7 +1019,7 @@ Falta a geração das curvas.
 
 
 
-\part{Segunda Parte - Manual de Construção de um Multirrotor}
+\part{Segunda Parte - Manual de Construção de um multi-rotor}
 %\setcounter{chapter}{0}
 
 \chapter{Considerações Iniciais}
