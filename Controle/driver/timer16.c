@@ -391,7 +391,7 @@ void init_timer16PWM(uint8_t timer_num, uint32_t period, uint8_t match_enable, u
 		
 		/* Enable the selected PWMs and enable Match3 */
 		LPC_TMR16B0->PWMC = (1<<3)|(match_enable);
-		LPC_TMR16B0->PR = KHZ_PRESCALE/100;  /* set prescaler to get 100 counts/sec */
+		LPC_TMR16B0->PR = KHZ_PRESCALE/3000;  /* set prescaler to get 100 counts/sec */
 		
 		/* Setup the match registers */
 		/* set the period value to a global variable */

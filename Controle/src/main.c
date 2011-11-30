@@ -45,7 +45,7 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 #define ClrGPIOBit(port,bit) ClrGPIOBits((port), 1<<(bit))
 
 #define Tamostragem 100                              // O tempo de amostragem em ms.
-#define pwm_periodo 1999                             // PWM de 50Hz. Ver o ajuste do prescaler no driver.
+#define pwm_periodo 60000                            // PWM de 50Hz. Ver o ajuste do prescaler no driver.
 volatile uint16_t throttle_min = 95*(pwm_periodo+1)/100; // O throttle mínimo ocorre quando o dutty cicle está
 volatile uint16_t throttle_max = 90*(pwm_periodo+1)/100; // em 95% e o máximo quando o dutty cicle está em 90%
 
@@ -99,6 +99,9 @@ void inicializa() {
 	for(i = 0; i < 3; ++i) {
 		pid_angles[i] = init_pid_data();
 		pid_angles[i]->SampleTime = Tamostragem;            //default Controller Sample Time is 0.1 seconds
+		pid_setTunings(pid_angles[i], 1.0/128, 0, 0);
+		pid_angles[i]->outMax = 4;
+		pid_angles[i]->outMin = -4;
 	}
 	
 	pid_pitch = pid_angles[0];
@@ -112,10 +115,8 @@ void inicializa() {
 	//Inicialização do PWM do timer32 0, ativando as saídas PWMs 0 e 1.
 	//init_timer32PWM(1, period, MATCH0);
 	init_timer16PWM(0, pwm_periodo, MATCH0 | MATCH1, FALSE);
-	//setMatch_timer16PWM (0, 0, 10);
-	//setMatch_timer16PWM (0, 1, 10);
-	//throttle(0, 0, 0);
-	//throttle(0, 1, 0);
+	throttle(0, 0, 0);
+	throttle(0, 1, 0);
 	enable_timer16(0);
 
 	//Inicialização do PWM do timer32 1, ativando as saídas PWMs 0 e 1.
@@ -133,7 +134,6 @@ void inicializa() {
 	NVIC_EnableIRQ(TIMER_16_1_IRQn);
 	/* Enable timer 0. */
 	enable_timer16(1);
-	/* Initialize GPIO (sets up clock) */
 }
 
 void le_nav(nav_params_t params)
@@ -163,10 +163,7 @@ int main(void)
 	while(1) {
 		//apague = LPC_TMR16B1->TC;
         still_running = TRUE;
-        throttle(0, 0, percent);
-        throttle(0, 1, percent);
-        throttle(1, 0, percent);
-        throttle(1, 1, percent);
+
         //Lê sinais dos sensores
         Gyro_Update(gyro_data);
         Accel_Update(accel_data);
@@ -177,6 +174,7 @@ int main(void)
 
         //Realiza o processamento PID
         for(i = 0; i < 3; ++i) {
+        	pid_update_data(pid_angles[i], accel_data->x, 0);
             pid_compute(pid_angles[i]);
         }
 
