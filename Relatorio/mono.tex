@@ -889,11 +889,9 @@ Também é necessário relembrar que os valores mostrados não estão inclusos frete 
 
 \chapter{Conclusões e trabalhos futuros\label{cap:conclusao}}
 
-\vfill{}
 \begin{flushright}{}``\emph{Nada se cria, nada se perde, tudo se
 transforma.}''\\
 {\small Lavousier}\end{flushright}{\small \par}
-\vfill{}
 
 Plataformas de desenvolvimento de veículos voadores autônomos são interessantes por permitirem a implementação de algoritmos e aplicativos de forma simples e rápida. Consegue-se isto isolando a aplicação dos outros módulos envolvidos no desenvolvimento de um multirrotor.
     
@@ -976,10 +974,7 @@ Para gerar os parâmetros e auxiliar na construção do protótipo foram obtidas tab
 
   Para gerar as curvas, foram feitas sete medidas, cada uma com um sinal do controle diferente, com as seguintes medidas: 16, 33, 50, 66, 84 e 100\%. Com isto a força que cada motor pode executar foi medida. Juntamente com a medida da força, a corrente e a tensão também foram obtidas para calcular a potência que o motor absorve e também a rotação para comparar com a força gerada.
 
-  Sabendo a carga da bateria, a autonomia pode ser calculada.
-
   Foram utilizadas 2 tipos de hélices para tentar fazer uma melhor comparação de como estas podem alterar os demais parâmetros do projeto. Também foi alterado a tensão utilizando a hélice padrão para obter um melhor entendimento do funcionamento dos motores.
-
 
 \section{Resultados}
 
@@ -993,11 +988,11 @@ Para gerar os parâmetros e auxiliar na construção do protótipo foram obtidas tab
 
   \hline
 
-  & & Hélice 10 / 4.5 (Padrão) & & & Hélice 9 / 3.8 & \\
+  & Hélice & 10 / 4.5 & (Padrão) & Hélice & 9 / 3.8 & \\
 
   \hline
 
-  Sinal & Força(mN) & i(A) & Rotação(rpm) & Força(mN) & Corrente(A) & Rotação(rpm) \\
+  Sinal & Força(mN) & i(A) & Rotação(rpm) & Força(mN) & i(A) & Rotação(rpm) \\
 
   \hline
   \hline
@@ -1060,19 +1055,60 @@ Tensão(V) & Força(mN) & i(A) \\
 \label{tabmotortensao}
 \end{table}
 
-A partir das três tabelas criadas foram obtidas todas as curvas. A primeira delas é ---.
+A partir das três tabelas criadas foram obtidas todas as seguintes curvas:
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=0]{./Figuras/forcaxhelice}
+  \caption[Curva: Força x Sinal]
+  {Curva: Força x Sinal}\label{curvas.forcaxhelice}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=0]{./Figuras/rotacaoxhelice}
+  \caption[Curva: Rotação x Sinal]
+  {Curva: Rotação x Sinal}\label{curvas.rotacaoxhelice}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=0]{./Figuras/correntexhelice}
+  \caption[Curva: Corrente x Sinal]
+  {Curva: Corrente x Sinal}\label{curvas.correntexhelice}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=0]{./Figuras/tensaoxcorrente}
+  \caption[Curva: Corrente x Tensão]
+  {Curva: Corrente x Tensão}\label{curvas.tensaoxcorrente}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[angle=0]{./Figuras/tensaoxforca}
+  \caption[Força x Tensão]
+  {Força x Tensão}\label{curvas.tensaoxforca}
+\end{figure}
+
 
 \section{Conclusão}
 
  As curvas que foram geradas mostraram o comportamento básico do motor facilitando melhor seu entendimento. Com isto foi possível escolher motores e hélices que melhor atendessem os objetivos propostos. Outra vantagem das curvas geradas foi poder escolher melhor o ponto de operação do multirrotor.
 
-A tabela \ref{tabmotor} foi a responsável por gerar as curvas ------ ------ -----, de modo que as conclusões possam ser mais fáceis percebidas. Com base nesta foi possível comparar dois modelos de hélices diferentes e também seus principais parâmetros como a rotação, a tensão, a força e a corrente. 
+A tabela \ref{tabmotor} foi a responsável por gerar as curvas \ref{curvas.forcaxhelice}, \ref{curvas.rotacaoxhelice} e \ref{curvas.correntexhelice}, de modo que as conclusões possam ser mais fáceis percebidas. Com base nesta foi possível comparar dois modelos de hélices diferentes e também seus principais parâmetros como a rotação, a tensão, a força e a corrente. 
+
+O primeiro tipo de hélice, a padrão, é maior que a segunda usado para a comparação. Observando a curva \ref{curvas.rotacaoxhelice}, observamos que a rotação aumenta conforme a hélice diminui. A rotação também parece ser linear com o sinal enviado para a ativação do motor.
+
+Segundo as curvas \ref{curvas.forcaxhelice} e \ref{curvas.correntexhelice} percebe-se que a força e a corrente gerada pelo motor com uma hélice menor é também menor, diferentemente da rotação. Também é possível observar que a variação da força e da corrente não é linear com o sinal enviado. Conforme o sinal enviado se aproxima do máximo do motor a corrente e a força tendem a aumentar mais.
 
 Com base na tabela \ref{tabmotor2}, pode-se fazer uma comparação do motor funcionando com uma tensão 50\% menor que a tensão da tabela \ref{tabmotor}. Podemos perceber que assim como a tensão diminuiu pela metade a corrente também caiu por praticamente a metade, reduzindo assim a potência pelo mesmo valor.
 O valor da força que o motor gera cai também para um valor próximo da metade, mostrando que a força varia proporcionalmente com a potência do motor.
  
-A partir do gráfico ------- e também da tabela \ref{tabmotortensao} pode ser observado a influência da variação da tensão na força e na corrente do motor.
+A partir dos gráficos \ref{curvas.rotacaoxhelice} e \ref{curvas.tensaoxcorrente} e também da tabela \ref{curvas.tensaoxforca} pode ser observado a influência da variação da tensão na força e na corrente do motor. Tanto a força quanto a corrente são praticamente lineares com a variação da tensão.
 
+Outro fator importante que pode ser observado é que a corrente aumenta mais com a variação do sinal que a força gerada. Com base nesta informação, podemos admitir que o ponto ótimo para o funcionamento do motor é na faixa de 30\% a 60\%. Levando em conta que a corrente vai aumentar mais e a duração da bateria vai cair proporcionalmente, enquanto que a força gerada será um pouco menor se considerarmos a proporção.
 
 \part{Segunda Parte - Manual de Construção de um Multirrotor}
 %\setcounter{chapter}{0}
