@@ -990,28 +990,110 @@ Este capítulo mostrará as curvas geradas para a obtenção de parâmetros do motor 
 
 \section{Curvas a serem geradas}
 
-Para gerar os parâmetros e auxiliar na construção do protótipo foram obtidas as seguintes curvas:
+Para gerar os parâmetros e auxiliar na construção do protótipo foram obtidas tabelas e curvas com os seguintes parâmetros:
   \begin{itemize}
-    \item força dos motores x potência(em porcentagem);
-    \item autonomia x potência(em porcentagem);
+    \item dois modelos de hélices diferentes;
+    \item força resultante;
+    \item corrente de alimentação do motor;
+    \item rotação da hélice;
+    \item tensão de alimentação do motor;
+    \item sinal do controle;
    \end{itemize}
-   Foram feito estas curvas para 2 tipos diferentes de hélices.
 
 \section{Metodologia}
  
-	Para tentar padronizar as medidas de modo que os resultados possam ser melhores comparados, foi-se atribuida a seguinte metodologia.
-Foi utilizada uma balança que foi acoplada a um suporte para os motores de modo que seja possível medir a força de cada motor. Para evitar certas interferências, o aparato tenta distanciar o máximo possível o motor da balança.
-	
-	Para gerar as curvas, foram feitas sete medidas, cada uma com uma potência do motor, com as seguintes medidas: 10, 20, 40, 50, 60, 80 e 100\%. Com isto a força que cada motor pode executar foi medida. Juntamente com a medida da força, a corrente e a tensão também foram obtidas para calcular a potência que o motor absorve.
-	
-	Sabendo a carga da bateria, a autonomia pode ser calculada.
+  Para tentar padronizar as medidas de modo que os resultados possam ser melhores comparados, foi-se atribuida a seguinte metodologia.
 
-	Foram utilizadas 2 tipos de hélices para tentar fazer uma melhor comparação de como estas podem alterar os demais parâmetros do projeto.
+  Foi utilizada uma balança que foi acoplada a um suporte para os motores de modo que seja possível medir a força de cada motor. Para evitar certas interferências, o aparato tenta distanciar o máximo possível o motor da balança.
+
+  Para gerar as curvas, foram feitas sete medidas, cada uma com um sinal do controle diferente, com as seguintes medidas: 16, 33, 50, 66, 84 e 100\%. Com isto a força que cada motor pode executar foi medida. Juntamente com a medida da força, a corrente e a tensão também foram obtidas para calcular a potência que o motor absorve e também a rotação para comparar com a força gerada.
+
+  Sabendo a carga da bateria, a autonomia pode ser calculada.
+
+  Foram utilizadas 2 tipos de hélices para tentar fazer uma melhor comparação de como estas podem alterar os demais parâmetros do projeto. Também foi alterado a tensão utilizando a hélice padrão para obter um melhor entendimento do funcionamento dos motores.
 
 
 \section{Resultados}
 
-Falta a geração das curvas.
+blablabla
+
+\begin{table}
+
+  \centering
+
+  \begin{tabular}{|c|ccc|ccc|}
+
+  \hline
+
+  & & Hélice 10 / 4.5  & & & Hélice 9 / 3.8 & \\
+
+  \hline
+
+  Sinal & Força(mN) & i(A) & Rotação(rpm) & Força(mN) & Corrente(A) & Rotação(rpm) \\
+
+  \hline
+  \hline
+
+  16 \% & 68 & 0.5 & 2100 & 56 & 0.4 & 2880 \\
+  33 \% & 163 & 1.2 & 3300 & 140 & 1.0 & 4260 \\
+  50 \% & 295 & 2.5 & 4350 & 222 & 1.9 & 5310 \\
+  66 \% & 454 & 4.5 & 5360 & 320 & 2.9 & 6240 \\
+  84 \% & 650 & 7.6 & 6330 & 460 & 4.8 & 7410 \\
+  100 \% & 810 & 10.9 & 7020 & 624 & 7.2 & 8340 \\
+  \hline
+  \end{tabular}
+  \caption{Parâmetros relacionados aos motores de acordo com o modelo de hélices - Tensão 15V}
+  \label{tabmotor}
+\end{table}
+
+Tabela gerada
+
+\begin{table}
+\centering
+\begin{tabular}{|c|cc|}
+\hline
+
+Sinal & Força(mN) & i(A) \\
+
+\hline
+\hline
+
+16 \% & 20 & 0.2 \\
+33 \% & 51 & 0.5 \\
+50 \% & 94 & 1.1 \\
+66 \% & 153 & 1.8 \\
+84 \% & 220 & 2.9 \\
+100 \% & 292 & 4.3 \\
+\hline
+\end{tabular}
+\caption{Parâmetros do motor com hélice padrão e tensão de variável}
+\label{tabmotor2}
+\end{table}
+
+Porque não consigo escrever texto entre as tabelas? Alguém sabe a resposta?
+
+\begin{table}
+\centering
+\begin{tabular}{|ccc|}
+\hline
+
+Tensão & Força(mN) & i(A) \\
+
+\hline
+\hline
+
+7.5 \% & 94 & 1.1 \\
+10.0 \% & 144 & 1.4 \\
+12.5 \% & 204 & 1.8 \\
+15.0 \% & 295 & 2.5 \\
+\hline
+\end{tabular}
+\caption{Parâmetros do motor com hélice padrão e tensão de 7.5V}
+\label{tabmotortensao}
+\end{table}
+
+E no final delas, funciona?
+
 
 \section{Conclusão}
 
