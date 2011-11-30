@@ -1035,7 +1035,7 @@ Para gerar os parâmetros e auxiliar na construção do protótipo foram obtidas tab
 
 \section{Resultados}
 
-blablabla
+ A primeira tabela gerada foi a dos parâmetros relacionados aos motores de acordo com o modelo de hélices. Para isto foi utilizado uma tensão fixa de 15V e apenas o sinal do controle foi variado.
 
 \begin{table}[h!]
 
@@ -1045,7 +1045,7 @@ blablabla
 
   \hline
 
-  & & Hélice 10 / 4.5  & & & Hélice 9 / 3.8 & \\
+  & & Hélice 10 / 4.5 (Padrão) & & & Hélice 9 / 3.8 & \\
 
   \hline
 
@@ -1066,7 +1066,7 @@ blablabla
   \label{tabmotor}
 \end{table}
 
-Tabela gerada
+A seguir a tensão foi diminuida pela metade para observar o comportamento dos demais parâmetros. 
 
 \begin{table}[h!]
 \centering
@@ -1090,39 +1090,40 @@ Sinal & Força(mN) & i(A) \\
 \label{tabmotor2}
 \end{table}
 
-Porque não consigo escrever texto entre as tabelas? Alguém sabe a resposta?
-
-\newpage
+Para observar melhor a influência da tensão sobre os parâmetros, foi gerada a tabela abaixo, mantendo o sinal do controle constante e variando apenas a tensão.
 
 \begin{table}[h!]
 \centering
 \begin{tabular}{|ccc|}
 \hline
 
-Tensão & Força(mN) & i(A) \\
+Tensão(V) & Força(mN) & i(A) \\
 
 \hline
 \hline
 
-7.5 \% & 94 & 1.1 \\
-10.0 \% & 144 & 1.4 \\
-12.5 \% & 204 & 1.8 \\
-15.0 \% & 295 & 2.5 \\
+7.5  & 94 & 1.1 \\
+10.0  & 144 & 1.4 \\
+12.5  & 204 & 1.8 \\
+15.0  & 295 & 2.5 \\
 \hline
 \end{tabular}
 \caption{Parâmetros do motor com hélice padrão e tensão de 7.5V}
 \label{tabmotortensao}
 \end{table}
 
-
-
-E no final delas, funciona?
-
+A partir das três tabelas criadas foram obtidas todas as curvas. A primeira delas é ---.
 
 \section{Conclusão}
 
-Falta a geração das curvas.
+ As curvas que foram geradas mostraram o comportamento básico do motor facilitando melhor seu entendimento. Com isto foi possível escolher motores e hélices que melhor atendessem os objetivos propostos. Outra vantagem das curvas geradas foi poder escolher melhor o ponto de operação do multirrotor.
 
+A tabela \ref{tabmotor} foi a responsável por gerar as curvas ------ ------ -----, de modo que as conclusões possam ser mais fáceis percebidas. Com base nesta foi possível comparar dois modelos de hélices diferentes e também seus principais parâmetros como a rotação, a tensão, a força e a corrente. 
+
+Com base na tabela \ref{tabmotor2}, pode-se fazer uma comparação do motor funcionando com uma tensão 50\% menor que a tensão da tabela \ref{tabmotor}. Podemos perceber que assim como a tensão diminuiu pela metade a corrente também caiu por praticamente a metade, reduzindo assim a potência pelo mesmo valor.
+O valor da força que o motor gera cai também para um valor próximo da metade, mostrando que a força varia proporcionalmente com a potência do motor.
+ 
+A partir do gráfico ------- e também da tabela \ref{tabmotortensao} pode ser observado a influência da variação da tensão na força e na corrente do motor.
 
 
 \part{Segunda Parte - Manual de Construção de um Multirrotor}
