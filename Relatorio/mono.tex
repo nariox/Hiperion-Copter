@@ -148,7 +148,7 @@ O protótipo final deverá possuir capacidades suficientes para o seu uso como uma
 \end{itemize}
 
 A navegação poderá ser de duas formas. O modo manual, onde o multirrotor é controlado remotamente pelo usuário. E o modo semi-autônomo, que utiliza rotas pré-definidas, guiando-se pelo GPS, incluindo a funcionalidade de voltar ao ponto de origem caso seja perdida a conexão com o controle manual.
-%Além disso, o vídeo capturado poderá ser transmitido para acompanhamento do operador em terra.
+
 
 \section{Organização do Trabalho}
 
@@ -643,8 +643,9 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \citeonline{fuzzycontrol} formula um sistema de controle inteligente de quadrrotores baseado na lógica fuzzy. As entradas para o sistemas são o valores desejados para altura e os ângulos em relação aos três eixos de referência que passam pelo centro de massa, e as saídas são as potências de cada um dos quatro rotores para se atender à especificação. Por fim, são feitas simulações para validar a eficiência da estratégia de controle.
 
-\subsection{Implementação}
+\subsection{Ortognalização}
 
+Para sanar o problema pelas múltiplas entradas e saídas. Foi utilizada uma técnica para poder controlá-los independentemente. Para isso foi necessária uma troca de base. Esta operação é linear
 A figura \ref{fig.topo} mostra a visão superior do multi-rotor. Os motores são denominados $1$, $2$, $3$ e $4$, sendo que o Motor $1$ é o motor no 1$^o$ quadrante.
 
 \begin{figure}[h!]
@@ -724,7 +725,7 @@ Utilizando essa nova base, pode-se controlar os parâmetros de forma independente
   \end{align}
 \end{subequations}
 
-O problema das múltiplas variáveis se extingue dessa maneira. O controle PID pode então ser aplicado às variáveis A, B, C e D e então estas são transformadas nas forças dos motores individualmente.
+O problema das múltiplas variáveis se extingue dessa maneira. O controle PID pode então ser aplicado às variáveis A, B, C e D e então estas são decompostas nas forças dos motores individuais. Esta abordagem permite ainda que sejam utilizados métodos diferentes para controlar cada variável.
 
 \chapter{Desenvolvimento do Trabalho}
 
