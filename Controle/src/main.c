@@ -49,6 +49,10 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 volatile uint16_t throttle_min = 95*(pwm_periodo+1)/100; // O throttle mínimo ocorre quando o dutty cicle está
 volatile uint16_t throttle_max = 90*(pwm_periodo+1)/100; // em 95% e o máximo quando o dutty cicle está em 90%
 
+// Parâmetros do controle
+float Kp = 1.000;
+float Kd = 0.001;
+
 typedef struct nav_params_t {
 	int pitch, roll, yaw;  // Ângulos de Euler, variando de -128 a 127
 	int throttle;          // Potência total dos motores, variando de 0 a 255
