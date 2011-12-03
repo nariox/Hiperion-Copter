@@ -94,7 +94,6 @@ void Gyro_GetZ()
 float Gyro_GetTemp(gyro_data_t gyro_data)
 {
 	int16_t Gyro_Temp = 13200+gyro_data->temp;    //Get the offset temp
-    float Gyro_Tempr = ((float)Gyro_Temp)/280;    //Convert the offset to degree C
-	return Gyro_Tempr + 35;    //Add 35 degrees C to compensate for the offset
-	//return Gyro_Temp;
+    float Gyro_Tempr = ((float)Gyro_Temp)/280.0;    //Convert the offset to degree C
+	return Gyro_Tempr + 35.0;    //Add 35 degrees C to compensate for the offset
 }

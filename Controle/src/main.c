@@ -19,6 +19,7 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 /////////////////////////////////////////////////////////////////
 
 #include <stdlib.h>
+#include <math.h>
 
 //Configs
 #include "driver_config.h"
@@ -44,10 +45,13 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 #define ClrGPIOBits(port,bits) ( *GPIOMaskAddress((port),(bits)) = 0 )
 #define ClrGPIOBit(port,bit) ClrGPIOBits((port), 1<<(bit))
 
+#define M_PI 3.14159265358979323846                  // pi
 #define Tamostragem 100                              // O tempo de amostragem em ms.
-#define pwm_periodo 60000                            // PWM de 50Hz. Ver o ajuste do prescaler no driver.
-volatile uint16_t throttle_min = 95*(pwm_periodo+1)/100; // O throttle mínimo ocorre quando o dutty cicle está
-volatile uint16_t throttle_max = 90*(pwm_periodo+1)/100; // em 95% e o máximo quando o dutty cicle está em 90%
+#define pwm_periodo 59999                            // PWM de 50Hz. Ver o ajuste do prescaler no driver.
+volatile uint16_t throttle_min = 95.0*(pwm_periodo+1)/100; // O throttle mínimo ocorre quando o dutty cicle está
+volatile uint16_t throttle_max = 90.0*(pwm_periodo+1)/100; // em 95% e o máximo quando o dutty cicle está em 90%
+volatile float accel_scale = 1.0/128;             // fator de escala do giroscópio. //TODO: explicar
+volatile float gyro_scale = 1.0/5175;                  // fator de escala do giroscópio. //TODO: explicar
 
 typedef struct nav_params_t {
 	int pitch, roll, yaw;  // Ângulos de Euler, variando de -128 a 127
@@ -58,16 +62,18 @@ nav_params_t nav_params;
 gyro_data_t gyro_data;
 accel_data_t accel_data;
 
-pid_data_t pid_angles[3];
-pid_data_t pid_pitch;
-pid_data_t pid_roll;
-pid_data_t pid_yaw;
+pid_data_t pids[3];
+float kp = 0;      // Constante proporcional do controlador PD
+float kd = 0;      // Constante derivativa do controlador PD
+float kd_yaw = 0;  // Constante derivativa do yaw do controlador PD
+float A, B, C, D;      // Ver "Controle - ortogonalização" na monografia associada a esse código.
 
 nav_params_t init_nav_params() { return malloc(sizeof(struct nav_params_t)); }
 gyro_data_t init_gyro_data() { return malloc(sizeof(struct gyro_data_t)); }
 accel_data_t init_accel_data() { return malloc(sizeof(struct accel_data_t)); }
 pid_data_t init_pid_data() { return malloc(sizeof(struct pid_data_t)); }
 void throttle(uint8_t timer_num, uint8_t match, float percent);
+void processa();
 
 uint8_t still_running;
 
@@ -97,20 +103,16 @@ void inicializa() {
 
 	//Inicializa as estruturas de dados dos PIDs
 	for(i = 0; i < 3; ++i) {
-		pid_angles[i] = init_pid_data();
-		pid_angles[i]->SampleTime = Tamostragem;            //default Controller Sample Time is 0.1 seconds
-		pid_setTunings(pid_angles[i], 1.0/128, 0, 0);
-		pid_angles[i]->outMax = 4;
-		pid_angles[i]->outMin = -4;
+		pids[i] = init_pid_data();
+		pids[i]->SampleTime = Tamostragem;            //default Controller Sample Time is 0.1 seconds
+		pid_setTunings(pids[i], 1.0/128, 0, 0);
+		pids[i]->outMax = 4;
+		pids[i]->outMin = -4;
 	}
-	
-	pid_pitch = pid_angles[0];
-	pid_roll  = pid_angles[1];
-	pid_yaw   = pid_angles[2];
 
-	//O timer 1 será usado apenas para gerar atrasos
-	//init_timer16(1, 1*Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
-	//enable_timer16(1);
+	//O timer 0 será usado apenas para gerar atrasos
+	init_timer32(0, 1*Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
+	enable_timer32(0);
 
 	//Inicialização do PWM do timer32 0, ativando as saídas PWMs 0 e 1.
 	//init_timer32PWM(1, period, MATCH0);
@@ -125,7 +127,7 @@ void inicializa() {
 	throttle(1, 1, 0);
 	enable_timer32(1);
 
-	//delayMs(1, 2000); //Atraso para que os periféricos e componentes externos inicializem
+	delay32Ms(0, 6000); //Atraso para que os periféricos e componentes externos inicializem
 
 	//O timer 1 será usado para gerar o intervalo de 100ms, que é o tempo de amostragem.
 	/* Initialize 16-bit timer 1. TIME_INTERVAL is defined as 1mS */
@@ -149,15 +151,45 @@ void throttle(uint8_t timer_num, uint8_t match, float percent) {
     else
         setMatch_timer16PWM (0, match, throttle_min - (throttle_min - throttle_max)*percent);
 }
-float percent = 0.5;
 
-uint32_t apague = 0;
+void processa()
+{
+    A = kp*( nav_params->pitch/2*M_PI - asin(accel_data->x*accel_scale) )  + kd*gyro_data->x*gyro_scale;
+    B = kp*( nav_params->roll/2*M_PI - asin(accel_data->y*accel_scale) )  + kd*gyro_data->y*gyro_scale;
+    C = kd_yaw*(nav_params->yaw/2*M_PI - kd_yaw*gyro_data->z*gyro_scale);
+}
+
+void envia_rotacoes()
+{
+	float throttles[4];
+	int i;
+
+	throttles[0] = (-A -B +C +D)/4;
+	throttles[1] = (-A +B -C +D)/4;
+	throttles[2] = ( A +B +C +D)/4;
+	throttles[3] = ( A -B -C +D)/4;
+
+	for(i = 0; i < 4; ++i) {
+		if (throttles[i] > 1)
+		    throttles[i] = 1;
+		else if (throttles[i] < 0)
+			throttles[i] = 0;
+	}
+
+    throttle(0, 0, throttles[0]);
+	throttle(0, 1, throttles[1]);
+	throttle(1, 0, throttles[2]);
+	throttle(1, 1, throttles[3]);
+}
 
 int main(void)
 {
-	uint8_t i;
-
 	inicializa();
+
+	kp = 1;      // Constante proporcional do controlador PD
+	kd = 1;      // Constante derivativa do controlador PD
+	kd_yaw = 1;  // Constante derivativa do yaw do controlador PD
+	D = 0;
 
 	//Loop principal
 	while(1) {
@@ -171,15 +203,15 @@ int main(void)
 
         //Lê parâmetros de navegação
         //le_nav();
+        nav_params->pitch = 0;
+        nav_params->roll = 0;
+        nav_params->yaw = 0;
 
         //Realiza o processamento PID
-        for(i = 0; i < 3; ++i) {
-        	pid_update_data(pid_angles[i], accel_data->x, 0);
-            pid_compute(pid_angles[i]);
-        }
+        processa();
 
         //Envia as rotações dos motores aos ESCs
-        //envia_rotacoes();
+        envia_rotacoes();
 
         still_running = FALSE;
         /* Go to sleep to save power between timer interrupts */
@@ -193,10 +225,10 @@ int main(void)
 void TIMER16_1_IRQHandler(void)
 {
     if(still_running) { // O laço principal ainda está rodando e não deveria. Isso é um erro.
-        //NVIC_DisableIRQ(TIMER_16_0_IRQn); // Desabilita a interrupção do timer,
-        //delayMs(0, 2000);                 // espera...
-        //ClrGPIOBit( LED_PORT, LED_BIT );  // Mantém o LED aceso para indicar o erro.
-        //disable_timer16(0);               // Desliga o timer 0.
+        NVIC_DisableIRQ(TIMER_16_1_IRQn);   // Desabilita a interrupção do timer,
+        delay32Ms(0, 2000);                 // espera...
+        ClrGPIOBit( LED_PORT, LED_BIT );    // Mantém o LED aceso para indicar o erro.
+        disable_timer16(1);                 // Desliga o timer.
     }
 
     if ( LPC_TMR16B1->IR & 0x1 )
