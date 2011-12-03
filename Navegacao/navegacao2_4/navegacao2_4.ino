@@ -157,18 +157,8 @@ void loop() {
   }
 
   if(MODO == DESLIGAR) { //Desligar os motores
-<<<<<<< HEAD
-    if(distancia < 20  && distancia != 0) {
-      manda_dados(CENTRADO, CENTRADO, CENTRADO, 0);
-=======
     if(altura < 20  && altura != 0) {
-      Serial.print("R0P0Y0T0");
-      roll = 0;
-      pitch = 0;
-      yaw = 0;
-      throttle = 0;
->>>>>>> 411e8c1a29374e210a3d9b96bd91586c0140ac2a
-    }
+      manda_dados(CENTRADO, CENTRADO, CENTRADO, 0);
     else { //Impede o desligamento no ar. (Senao iria  cair :P)
       MODO == POUSAR;
     }
