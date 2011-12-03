@@ -32,7 +32,6 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 #include "type.h"
 
 // Libraries
-#include "PID.h"
 #include "I2C.h"
 #include "ITG3200.h"
 #include "ADXL345.h"
@@ -62,7 +61,6 @@ nav_params_t nav_params;
 gyro_data_t gyro_data;
 accel_data_t accel_data;
 
-pid_data_t pids[3];
 float kp = 0;      // Constante proporcional do controlador PD
 float kd = 0;      // Constante derivativa do controlador PD
 float kd_yaw = 0;  // Constante derivativa do yaw do controlador PD
@@ -71,7 +69,6 @@ float A, B, C, D;      // Ver "Controle - ortogonalização" na monografia assoc
 nav_params_t init_nav_params() { return malloc(sizeof(struct nav_params_t)); }
 gyro_data_t init_gyro_data() { return malloc(sizeof(struct gyro_data_t)); }
 accel_data_t init_accel_data() { return malloc(sizeof(struct accel_data_t)); }
-pid_data_t init_pid_data() { return malloc(sizeof(struct pid_data_t)); }
 void throttle(uint8_t timer_num, uint8_t match, float percent);
 void processa();
 
@@ -100,15 +97,6 @@ void inicializa() {
 
 	//Inicializa a estrutura de dados do acelerômetro
 	accel_data = init_accel_data();
-
-	//Inicializa as estruturas de dados dos PIDs
-	for(i = 0; i < 3; ++i) {
-		pids[i] = init_pid_data();
-		pids[i]->SampleTime = Tamostragem;            //default Controller Sample Time is 0.1 seconds
-		pid_setTunings(pids[i], 1.0/128, 0, 0);
-		pids[i]->outMax = 4;
-		pids[i]->outMin = -4;
-	}
 
 	//O timer 0 será usado apenas para gerar atrasos
 	init_timer32(0, 1*Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
