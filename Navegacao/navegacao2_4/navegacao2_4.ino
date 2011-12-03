@@ -11,11 +11,13 @@
 #define echoPin 52 //Pino 52 recebe o pulso do echo SENSOR DISTANCIA
 #define trigPin 50 //Pino 48 envia o pulso para gerar o echo SENSOR DISTANCIA
 //Constantes
+#define CENTRADO 127 // Os comandos variam de 0 a 255 - 127 e' o centro
 #define ANGULOMAX 30 // Valor do angulo max de Euler
 #define ANGULOGPS 15 // Valor do angulo usado no GPS
 #define VELPADRAO 2 // 0.2 m/s
 #define VELPADRAOMAX 5 // 0.5 m/s
 #define YAWPADRAO 25 // Velocidade padrao de rotacao
+#define THROTTLE_MIN 3 // Valor do throttle ao ligar (Ainda alterar)
 #define MARGEMGPS 0,02 // Margem de erro do GPS(Ainda alterar)
 #define MAGTEMPO 10 // Auxiliar no GPS sem o magnetometro (.x segundos)
 #define MAXDIST 300 // Distancia maxima do sensor de distancia (em cm)
@@ -47,9 +49,22 @@ float angmag=500; // Angulo do magnetometro, valor inicial 500 que significa que
 float rollcontrol=0, pitchcontrol=0, yawcontrol=0, throttlecontrol=0; //Dados do controle , tambem usado como variavel auxiliar no gps
 long tempo; // teste
 
+void manda_dados(byte yaw, byte roll, byte pitch, byte throttle) {
+      Serial2.print("R");
+      Serial2.print(roll);
+      Serial2.print("P");
+      Serial2.print(pitch);
+      Serial2.print("Y");
+      Serial2.print(yaw);
+      Serial2.print("T");
+      Serial2.print(throttle);
+}
+
+
 void setup() {
-   Serial.begin(115200);
-   Serial1.begin(57600);
+   Serial.begin(115200); // Para debug
+   Serial1.begin(57600); // Para GPS
+   Serial2.begin(115200); // Para a camada de Controle
    pinMode(echoPin, INPUT); // define o pino 52 como entrada (recebe) SENSOR DISTANCIA
    pinMode(trigPin, OUTPUT); // define o pino 48 como saida (envia) SENSOR DISTANCIA
 }
@@ -114,6 +129,7 @@ void loop() {
         if(distancia < MAXDIST  && distancia != 0) // So entra no modo pousar se estiver ate 3m, diminuir altitude antes de entrar neste modo
           if(MODO == MANUAL || MODO == GPS) // So entra no modo pousar se ele estiver nos modos manual ou gps
             MODO = POUSAR;
+          
       }
       
       if(newmodo == MANUAL) { // Condicoes para alterar o modo para MANUAL
@@ -138,19 +154,15 @@ void loop() {
 
   if(MODO == DESLIGAR) { //Desligar os motores
     if(distancia < 20  && distancia != 0) {
-      Serial.print("R0P0Y0T0");
-      roll = 0;
-      pitch = 0;
-      yaw = 0;
-      throttle = 0;
+      manda_dados(CENTRADO, CENTRADO, CENTRADO, 0);
     }
-    else { //Impede ele de desligar no ar. Vai cair :P
+    else { //Impede o desligamento no ar. (Senao iria  cair :P)
       MODO == POUSAR;
     }
   }
   
   else if(MODO == LIGAR) { //Liga os motores em baixa potencia e aguarda nova ordem no solo
-    Serial.print("R0P0Y0T1"); // Throttle = 1, valor apenas para ligar os motores
+      manda_dados(CENTRADO, CENTRADO, CENTRADO, THROTTLE_MIN);
   }
   
   else if(MODO == DECOLAR) { //Decolar e subir at 1m 
