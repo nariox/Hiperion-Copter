@@ -22,7 +22,7 @@
 #ifndef TinyGPS_h
 #define TinyGPS_h
 
-#include "WProgram.h"
+#include "Arduino.h"
 
 #define _GPS_VERSION 10 // software version of this library
 #define _GPS_MPH_PER_KNOT 1.15077945

@@ -33,7 +33,7 @@ TinyGPS gps;
 bool feedgps();
 
 //Variaveis
-int distancia; //SENSOR DISTANCIA se distancia = 0, sensor nao encontrou distancia.
+int altura; //SENSOR DISTANCIA se altura = 0, sensor nao encontrou distancia.
 float roll=0, pitch=0, yaw=0, throttle=0; //Dados para a camada de controle
 int MODO = DESLIGAR; // Modo de navegacao
 int newmodo = -1; // Alterar o modo
@@ -41,7 +41,7 @@ int t_padrao = 1; //Throttle minimo para comecar a se mover verticalmente
 long lat, lon, alt; //Latitude, Longitude e altura(cm) (GPS)
 unsigned long age, date, time, chars; // date(ddmmyy), time(hhmmsscc) GPS
 unsigned short sentences, failed; // Informacoes GPS
-int distantiga=0; // Distancia anterior
+int altantiga=0; // Distancia anterior
 long latdestino, londestino, latresultante, lonresultante, modlat, modlon, distgps = 0, distantgps; //Usado para navegacao GPS
 float angmag=500; // Angulo do magnetometro, valor inicial 500 que significa que o magnetometro nao esta conectado
 float rollcontrol=0, pitchcontrol=0, yawcontrol=0, throttlecontrol=0; //Dados do controle , tambem usado como variavel auxiliar no gps
@@ -54,27 +54,29 @@ void setup() {
    pinMode(trigPin, OUTPUT); // define o pino 48 como saida (envia) SENSOR DISTANCIA
 }
 
-int altura()
+//Calcula a altura em centimetros atraves do sensor de distancia ultrassonico
+int distancia() {
+  //seta o pino 48 com um pulso baixo "LOW" (ou desligado ou ainda 0)
+  digitalWrite(trigPin, LOW);
+  // delay de 2 microssegundos
+  delayMicroseconds(2);
+  //seta o pino 48 com pulso alto "HIGH" (ou ligado ou ainda 1)
+  digitalWrite(trigPin, HIGH);
+  //delay de 10 microssegundos
+  delayMicroseconds(10);
+  //seta o pino 48 com pulso baixo novamente
+  digitalWrite(trigPin, LOW);
+  // função Ranging, faz a conversão do tempo de SENSOR DISTANCIA resposta do echo em centimetros
+  return (ultrasonic.Ranging(CM));
+}
 
 void loop() {
   tempo = millis();
   //Tratar dados do Controle remoto
-  
-  
-  //Sensor de distancia - distancia em cm 
-  //seta o pino 48 com um pulso baixo "LOW" ou desligado ou ainda 0 SENSOR DISTANCIA
-  digitalWrite(trigPin, LOW);
-  // delay de 2 microssegundos SENSOR DISTANCIA
-  delayMicroseconds(2);
-  //seta o pino 48 com pulso alto "HIGH" ou ligado ou ainda 1 SENSOR DISTANCIA
-  digitalWrite(trigPin, HIGH);
-  //delay de 10 microssegundos SENSOR DISTANCIA
-  delayMicroseconds(10);
-  //seta o pino 48 com pulso baixo novamente SENSOR DISTANCIA
-  digitalWrite(trigPin, LOW);
-  // função Ranging, faz a conversão do tempo de SENSOR DISTANCIA resposta do echo em centimetros, e armazena na variavel distancia
-  distancia = (ultrasonic.Ranging(CM));
-  
+    
+  //Calcula a altura em centimetros atraves do sensor de distancia ultrassonico
+  altura = distancia();
+    
   //Mexer com dados do GPS
   bool newdata = false;
   if (feedgps())
@@ -113,7 +115,7 @@ void loop() {
       }
       
       if(newmodo == POUSAR) { // Condicoes para alterar o modo para POUSAR
-        if(distancia < MAXDIST  && distancia != 0) // So entra no modo pousar se estiver ate 3m, diminuir altitude antes de entrar neste modo
+        if(altura < MAXDIST  && altura != 0) // So entra no modo pousar se estiver ate 3m, diminuir altitude antes de entrar neste modo
           if(MODO == MANUAL || MODO == GPS) // So entra no modo pousar se ele estiver nos modos manual ou gps
             MODO = POUSAR;
       }
@@ -139,7 +141,7 @@ void loop() {
   }
 
   if(MODO == DESLIGAR) { //Desligar os motores
-    if(distancia < 20  && distancia != 0) {
+    if(altura < 20  && altura != 0) {
       Serial.print("R0P0Y0T0");
       roll = 0;
       pitch = 0;
@@ -156,13 +158,13 @@ void loop() {
   }
   
   else if(MODO == DECOLAR) { //Decolar e subir at 1m 
-    if(distancia >= 100) MODO == MANUAL; //Liberar o Controle apos atingir 1m de altura
-    else if(distancia == 0) //Sensor de distancia nao encontrado
+    if(altura >= 100) MODO == MANUAL; //Liberar o Controle apos atingir 1m de altura
+    else if(altura == 0) //Sensor de distancia nao encontrado
       MODO = DESLIGAR;
     else {
-      if(distancia-distantiga<=VELPADRAO) // Velocidade padrao de subida
+      if(altura-altantiga<=VELPADRAO) // Velocidade padrao de subida
         t_padrao++;
-      if(distancia-distantiga>=VELPADRAOMAX) // Velocidade Maxima Padrao
+      if(altura-altantiga>=VELPADRAOMAX) // Velocidade Maxima Padrao
         t_padrao--;
       if(t_padrao < 1)
         t_padrao = 1;
@@ -172,13 +174,13 @@ void loop() {
   }
   
   else if(MODO == POUSAR) { //Fazer ele pousar em seguranca
-    if(distancia == 0) { //Sensor de distancia nao encontrado, modo livre ativado
+    if(altura == 0) { //Sensor de distancia nao encontrado, modo livre ativado
       MODO = LIVRE;
     }
     else {
-      if(distantiga-distancia<=VELPADRAO) // Velocidade padrao de descida.
+      if(altantiga-altura<=VELPADRAO) // Velocidade padrao de descida.
         t_padrao--;
-      else if(distancia-distantiga>=VELPADRAOMAX) // Velocidade maxima de descida
+      else if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima de descida
         t_padrao--;
       Serial.print("R0P0Y0T");
       Serial.print(t_padrao);
@@ -186,13 +188,13 @@ void loop() {
   }
   
   else if(MODO == MANUAL) { //Habilitar o controle manual
-    if(distancia == 0) { //Sensor de distancia nao encontrado, modo livre ativado
+    if(altura == 0) { //Sensor de altura nao encontrado, modo livre ativado
       MODO = LIVRE;
     }
-    else if(distancia <= 45 && distancia != 0) { // Altura minima para seguranca: 30cm
-      if(distancia-distantiga<=VELPADRAO) // Velocidade padrao
+    else if(altura <= 45 && altura != 0) { // Altura minima para seguranca: 30cm
+      if(altura-altantiga<=VELPADRAO) // Velocidade padrao
         t_padrao++;
-      if(distancia-distantiga>=VELPADRAOMAX) // Velocidade maxima padrao
+      if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima padrao
         t_padrao--;
       Serial.print("R0P0Y0T");
       Serial.print(t_padrao);
@@ -211,10 +213,10 @@ void loop() {
   }
   
   else if(MODO == GPS) { //Habilitar o controle GPS
-    if(distancia < 100 && distancia != 0) {
-      if(distancia-distantiga<=VELPADRAO) // Velocidade Padrao
+    if(altura < 100 && altura != 0) {
+      if(altura-altantiga<=VELPADRAO) // Velocidade Padrao
         t_padrao++;
-      if(distancia-distantiga>=VELPADRAOMAX) // Velocidade maxima padrao
+      if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima padrao
         t_padrao--;
       if(t_padrao < 1)
         t_padrao = 1;
@@ -236,7 +238,7 @@ void loop() {
             if(distgps <= distantgps || distantgps == 0) //Se distancia estiver diminuindo ou quando iniciado(distantgps=0) ele segue em frente
               yaw = 0;
             else //Caso contrario ele vira a direita.
-              yaw = ANGULOSGPS;
+              yaw = ANGULOGPS;
           }
           Serial.print("R");
           Serial.print(roll);
@@ -267,19 +269,19 @@ void loop() {
           modlat = abs(latresultante);
           modlon = abs(lonresultante);
           if(modlat < MARGEMGPS && modlon < MARGEMGPS) { // Chegou na localizacao, mantem ele estavel
-            if(distancia <= MAXDIST && distancia > 100) { // Altura maxima para o calculo do throttle, usando o sensor de distancia
-              if(distancia-distantiga<0) // Descendo
+            if(altura <= MAXDIST && altura > 100) { // Altura maxima para o calculo do throttle, usando o sensor de distancia
+              if(altura-altantiga<0) // Descendo
                 t_padrao++;
-              if(distancia-distantiga>0) // Subindo
+              if(altura-altantiga>0) // Subindo
                 t_padrao--;
             }
-            else if(distancia < 100  && distancia != 0) { // Altura minima de seguranca
-              if(distancia-distantiga<=VELPADRAO) // Velocidade Padrao
+            else if(altura < 100  && altura != 0) { // Altura minima de seguranca
+              if(altura-altantiga<=VELPADRAO) // Velocidade Padrao
                 t_padrao++;
-              if(distancia-distantiga>=VELPADRAOMAX) // Velocidade maxima padrao
+              if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima padrao
                 t_padrao--;
             }
-            else if(distancia > MAXDIST || distancia == 0) { //Utiliza a altitude para calcular o throtle
+            else if(altura > MAXDIST || altura == 0) { //Utiliza a altitude para calcular o throtle
               //Utiliza a altitude para calcular o throtle
             }
             Serial.print("R0P0Y0T");
@@ -362,25 +364,25 @@ void loop() {
         }
       }
       else { //Sem sinal do GPS, mantem ele estavel
-        if(distancia <= MAXDIST && distancia > 100 && distancia != 0) { // Altura maxima para o calculo do throttle, usando o sensor de distancia
-          if(distancia-distantiga<0) // Descendo
+        if(altura <= MAXDIST && altura > 100 && altura != 0) { // Altura maxima para o calculo do throttle, usando o sensor de distancia
+          if(altura-altantiga<0) // Descendo
             t_padrao++;
-          if(distancia-distantiga>0) // Subindo
+          if(altura-altantiga>0) // Subindo
             t_padrao--;
           Serial.print("R0P0Y0T");
           Serial.print(t_padrao);
         }
         
-        else if(distancia < 100 && distancia != 0) { // Altura minima de seguranca
-          if(distancia-distantiga<=VELPADRAO) // Velocidade Padrao
+        else if(altura < 100 && altura != 0) { // Altura minima de seguranca
+          if(altura-altantiga<=VELPADRAO) // Velocidade Padrao
             t_padrao++;
-          if(distancia-distantiga>=VELPADRAOMAX) // Velocidade maxima padrao
+          if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima padrao
             t_padrao--;
           Serial.print("R0P0Y0T");
           Serial.print(t_padrao);
         }
         
-        else if(distancia > MAXDIST || distancia == 0) { //Necessario usar outros sensores
+        else if(altura > MAXDIST || altura == 0) { //Necessario usar outros sensores
           MODO = LIVRE;
         }
       }
@@ -401,7 +403,7 @@ void loop() {
 
   tempo = millis()-tempo;
   Serial.println(tempo);
-  distantiga = distancia;
+  altantiga = altura;
   newmodo = -1;
   delay(3000); //trocar este comando por millis()
 }
