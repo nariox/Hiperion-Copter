@@ -54,6 +54,8 @@ void setup() {
    pinMode(trigPin, OUTPUT); // define o pino 48 como saida (envia) SENSOR DISTANCIA
 }
 
+int altura()
+
 void loop() {
   tempo = millis();
   //Tratar dados do Controle remoto

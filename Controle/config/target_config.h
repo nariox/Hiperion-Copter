@@ -28,6 +28,7 @@
 #define LED_TOGGLE_TICKS 200 // 100 ticks = 1 Hz flash rate
 #define FAST_LED_TOGGLE_TICKS 50 // 100 ticks = 1 Hz flash rate
 #define COUNT_MAX		3 // how high to count on the LED display
+#define UART_BAUD 115200
 
 /*********************************************************************************
 **                            End Of File
