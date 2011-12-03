@@ -52,10 +52,6 @@ void Gyro_Update(gyro_data_t gyro_data)
 {
 	char aux0=0,aux1=0;
 
-	gyro_data->x_ant = gyro_data->x;
-	gyro_data->y_ant = gyro_data->y;
-	gyro_data->z_ant = gyro_data->z;
-
 	I2C_read(ITG_ADDR, GYRO_XOUT_H, &aux1);
 	I2C_read(ITG_ADDR, GYRO_XOUT_L, &aux0);
 	gyro_data->x = (aux1<<8)|aux0;
