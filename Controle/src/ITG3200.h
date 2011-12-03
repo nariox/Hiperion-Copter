@@ -8,6 +8,7 @@
 
 typedef struct gyro_data_t {
 	int16_t x, y, z;     // Sinal tridimensional do giroscópio
+	int16_t x_ant,y_ant,z_ant;
 	int16_t temp;        // Temperatura do giroscópio
 }* gyro_data_t;
 
