@@ -1,4 +1,4 @@
-DOC=rt1
+DOC=mono
 
 all: dvi bib.aux
 	dvipdf $(DOC).dvi

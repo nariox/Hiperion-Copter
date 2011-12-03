@@ -53,6 +53,10 @@ volatile uint16_t throttle_max = 90.0*(pwm_periodo+1)/100; // em 95% e o máximo
 volatile float accel_scale = 1.0/128;             // fator de escala do giroscópio. //TODO: explicar
 volatile float gyro_scale = 1.0/5175;                  // fator de escala do giroscópio. //TODO: explicar
 
+// Parâmetros do controle
+float Kp = 1.000;
+float Kd = 0.001;
+
 typedef struct nav_params_t {
 	int pitch, roll, yaw;  // Ângulos de Euler, variando de -128 a 127
 	int throttle;          // Potência total dos motores, variando de 0 a 255

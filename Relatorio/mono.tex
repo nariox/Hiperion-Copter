@@ -148,7 +148,7 @@ O protótipo final deverá possuir capacidades suficientes para o seu uso como uma
 \end{itemize}
 
 A navegação poderá ser de duas formas. O modo manual, onde o multirrotor é controlado remotamente pelo usuário. E o modo semi-autônomo, que utiliza rotas pré-definidas, guiando-se pelo GPS, incluindo a funcionalidade de voltar ao ponto de origem caso seja perdida a conexão com o controle manual.
-%Além disso, o vídeo capturado poderá ser transmitido para acompanhamento do operador em terra.
+
 
 \section{Organização do Trabalho}
 
@@ -643,7 +643,9 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \citeonline{fuzzycontrol} formula um sistema de controle inteligente de quadrrotores baseado na lógica fuzzy. As entradas para o sistemas são o valores desejados para altura e os ângulos em relação aos três eixos de referência que passam pelo centro de massa, e as saídas são as potências de cada um dos quatro rotores para se atender à especificação. Por fim, são feitas simulações para validar a eficiência da estratégia de controle.
 
-\subsection{Implementação}
+\subsection{Ortognalização}
+
+Para sanar o problema pelas múltiplas entradas e saídas. Foi utilizada uma técnica para poder controlá-los independentemente. Para isso foi necessária uma troca de base.
 
 A figura \ref{fig.topo} mostra a visão superior do multi-rotor. Os motores são denominados $1$, $2$, $3$ e $4$, sendo que o Motor $1$ é o motor no 1$^o$ quadrante.
 
@@ -724,7 +726,7 @@ Utilizando essa nova base, pode-se controlar os parâmetros de forma independente
   \end{align}
 \end{subequations}
 
-O problema das múltiplas variáveis se extingue dessa maneira. O controle PID pode então ser aplicado às variáveis A, B, C e D e então estas são transformadas nas forças dos motores individualmente.
+O problema das múltiplas variáveis se extingue dessa maneira. O controle PID pode então ser aplicado às variáveis A, B, C e D e então estas são decompostas nas forças dos motores individuais. Esta abordagem permite ainda que sejam utilizados métodos diferentes para controlar cada variável.
 
 \chapter{Desenvolvimento do Trabalho}
 
@@ -1136,35 +1138,35 @@ A partir das três tabelas criadas foram obtidas todas as seguintes curvas:
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[angle=0]{./Figuras/forcaxhelice}
+  \includegraphics[angle=0]{./Figuras/forcaxhelice.eps}
   \caption[Curva: Força x Sinal]
   {Curva: Força x Sinal}\label{curvas.forcaxhelice}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[angle=0]{./Figuras/rotacaoxhelice}
+  \includegraphics[angle=0]{./Figuras/rotacaoxhelice.eps}
   \caption[Curva: Rotação x Sinal]
   {Curva: Rotação x Sinal}\label{curvas.rotacaoxhelice}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[angle=0]{./Figuras/correntexhelice}
+  \includegraphics[angle=0]{./Figuras/correntexhelice.eps}
   \caption[Curva: Corrente x Sinal]
   {Curva: Corrente x Sinal}\label{curvas.correntexhelice}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[angle=0]{./Figuras/tensaoxcorrente}
+  \includegraphics[angle=0]{./Figuras/tensaoxcorrente.eps}
   \caption[Curva: Corrente x Tensão]
   {Curva: Corrente x Tensão}\label{curvas.tensaoxcorrente}
 \end{figure}
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[angle=0]{./Figuras/tensaoxforca}
+  \includegraphics[angle=0]{./Figuras/tensaoxforca.eps}
   \caption[Força x Tensão]
   {Força x Tensão}\label{curvas.tensaoxforca}
 \end{figure}
@@ -1187,39 +1189,40 @@ A partir dos gráficos \ref{curvas.rotacaoxhelice} e \ref{curvas.tensaoxcorrente}
 
 Outro fator importante que pode ser observado é que a corrente aumenta mais com a variação do sinal que a força gerada. Com base nesta informação, podemos admitir que o ponto ótimo para o funcionamento do motor é na faixa de 30\% a 60\%. Levando em conta que a corrente vai aumentar mais e a duração da bateria vai cair proporcionalmente, enquanto que a força gerada será um pouco menor se considerarmos a proporção.
 
-\part{Segunda Parte - Manual de Construção de um Multirrotor}
-%\setcounter{chapter}{0}
 
-\chapter{Considerações Iniciais}
-TODO
+% \part{Segunda Parte - Manual de Construção de um Multirrotor}
+% %\setcounter{chapter}{0}
 
-\chapter{Peças}
+% \chapter{Considerações Iniciais}
+% TODO
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics{./Figuras/cad_suporte_motor.eps}
-  \caption[Placa de suporte do motor]
-  {Placa de suporte do motor}\label{fig.protsupmotor}
-\end{figure}
+% \chapter{Peças}
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics{./Figuras/cad_central_superior}
-  \caption[Placa central superior do protótipo]
-  {Placa central superior do protótipo}\label{fig.protcentsup}
-\end{figure}
+% \begin{figure}[h!]
+%   \centering
+%   \includegraphics{./Figuras/cad_suporte_motor.eps}
+%   \caption[Placa de suporte do motor]
+%   {Placa de suporte do motor}\label{fig.protsupmotor}
+% \end{figure}
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics{./Figuras/cad_central_inferior}
-  \caption[Placa central inferior do protótipo]
-  {Placa central inferior do protótipo}\label{fig.protcentinf}
-\end{figure}
+% \begin{figure}[h!]
+%   \centering
+%   \includegraphics{./Figuras/cad_central_superior.eps}
+%   \caption[Placa central superior do protótipo]
+%   {Placa central superior do protótipo}\label{fig.protcentsup}
+% \end{figure}
 
-\chapter{Instruções de montagem}
-TODO
+% \begin{figure}[h!]
+%   \centering
+%   \includegraphics{./Figuras/cad_central_inferior.eps}
+%   \caption[Placa central inferior do protótipo]
+%   {Placa central inferior do protótipo}\label{fig.protcentinf}
+% \end{figure}
 
-\chapter{Considerações Finais}
-TODO
+% \chapter{Instruções de montagem}
+% TODO
+
+% \chapter{Considerações Finais}
+% TODO
 
 \end{document}
