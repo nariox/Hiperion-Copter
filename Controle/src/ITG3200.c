@@ -19,8 +19,8 @@
 #include "I2C.h"
 
 extern volatile uint32_t I2CCount;
-extern volatile uint8_t I2CMasterBuffer[BUFSIZE];
-extern volatile uint8_t I2CSlaveBuffer[BUFSIZE];
+extern volatile uint8_t I2CMasterBuffer[I2C_BUFSIZE];
+extern volatile uint8_t I2CSlaveBuffer[I2C_BUFSIZE];
 extern volatile uint32_t I2CMasterState;
 extern volatile uint32_t I2CReadLength, I2CWriteLength;
 

@@ -5,7 +5,6 @@
   iteadstudio.com
 */
 
-#include "WProgram.h"
 #include "Ultrasonic.h"
 #define TMAX 35000 // em micro segundos
 

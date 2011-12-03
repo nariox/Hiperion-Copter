@@ -8,7 +8,7 @@
 #ifndef Ultrasonic_h
 #define Ultrasonic_h
 
-#include "WProgram.h"
+#include "Arduino.h"
 
 #define CM 1
 #define INC 0

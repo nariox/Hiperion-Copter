@@ -30,6 +30,7 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 #include "timer32.h"
 #include "gpio.h"
 #include "type.h"
+#include "uart.h"
 
 // Libraries
 #include "I2C.h"
@@ -45,12 +46,16 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 #define ClrGPIOBit(port,bit) ClrGPIOBits((port), 1<<(bit))
 
 #define M_PI 3.14159265358979323846                  // pi
+#define NAV_MES_SIZE 7                               // Tamanho da mensagem recebida da navegação.
 #define Tamostragem 100                              // O tempo de amostragem em ms.
 #define pwm_periodo 59999                            // PWM de 50Hz. Ver o ajuste do prescaler no driver.
 volatile uint16_t throttle_min = 95.0*(pwm_periodo+1)/100; // O throttle mínimo ocorre quando o dutty cicle está
 volatile uint16_t throttle_max = 90.0*(pwm_periodo+1)/100; // em 95% e o máximo quando o dutty cicle está em 90%
 volatile float accel_scale = 1.0/128;             // fator de escala do giroscópio. //TODO: explicar
 volatile float gyro_scale = 1.0/5175;                  // fator de escala do giroscópio. //TODO: explicar
+extern volatile uint32_t UARTCount;
+extern volatile uint8_t UARTBuffer[UART_BUFSIZE];
+
 
 typedef struct nav_params_t {
 	int pitch, roll, yaw;  // Ângulos de Euler, variando de -128 a 127
@@ -75,15 +80,17 @@ void processa();
 uint8_t still_running;
 
 void inicializa() {
-	uint8_t i;
-
-	if ( I2CInit( (uint32_t)I2CMASTER ) == FALSE )    /* initialize I2c */ {
+    // Inicializa o I2C
+	if ( I2CInit( (uint32_t)I2CMASTER ) == FALSE ) {
 	    //TODO: sinalizar o erro de alguma forma no futuro
-	    while ( 1 );                /* Fatal error */
+	    while ( 1 );                // Fatal error
 	}
 
+	//Inicializa o UART
+	UARTInit(UART_BAUD);
+
 	//GPIOInit();
-	/* Set LED port pin to output */
+	//Set LED port pin to output
 	GPIOSetDir( LED_PORT, LED_BIT, 1 );
 
 	Gyro_Init();     //Inicializa o giroscópio
@@ -115,20 +122,29 @@ void inicializa() {
 	throttle(1, 1, 0);
 	enable_timer32(1);
 
-	delay32Ms(0, 6000); //Atraso para que os periféricos e componentes externos inicializem
+	delay32Ms(0, 3000); //Atraso para que os periféricos e componentes externos inicializem
 
 	//O timer 1 será usado para gerar o intervalo de 100ms, que é o tempo de amostragem.
-	/* Initialize 16-bit timer 1. TIME_INTERVAL is defined as 1mS */
+	// Initialize 16-bit timer 1. TIME_INTERVAL is defined as 1mS
 	init_timer16(1, Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
-	/* Enable the TIMER1 Interrupt */
+	// Enable the TIMER1 Interrupt
 	NVIC_EnableIRQ(TIMER_16_1_IRQn);
-	/* Enable timer 0. */
+	// Enable timer 0.
 	enable_timer16(1);
 }
 
-void le_nav(nav_params_t params)
+void le_nav()
 {
-    //TODO: implementar
+	  while (1)
+	  {				/* Loop forever */
+		if ( UARTCount == NAV_MES_SIZE )
+		{
+		  LPC_UART->IER = IER_THRE | IER_RLS;			/* Disable RBR */
+		  UARTSend( (uint8_t *)UARTBuffer, UARTCount );
+		  UARTCount = 0;
+		  LPC_UART->IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
+		}
+	  }
 }
 
 float temp=0;
@@ -172,6 +188,7 @@ void envia_rotacoes()
 
 int main(void)
 {
+
 	inicializa();
 
 	kp = 1;      // Constante proporcional do controlador PD
@@ -190,7 +207,7 @@ int main(void)
         temp = Gyro_GetTemp(gyro_data);
 
         //Lê parâmetros de navegação
-        //le_nav();
+	    le_nav();
         nav_params->pitch = 0;
         nav_params->roll = 0;
         nav_params->yaw = 0;
@@ -202,8 +219,9 @@ int main(void)
         envia_rotacoes();
 
         still_running = FALSE;
-        /* Go to sleep to save power between timer interrupts */
+        // Go to sleep to save power between timer interrupts
         __WFI();
+
         }
 
     // Enter an infinite loop, just incrementing a counter
@@ -213,10 +231,10 @@ int main(void)
 void TIMER16_1_IRQHandler(void)
 {
     if(still_running) { // O laço principal ainda está rodando e não deveria. Isso é um erro.
-        NVIC_DisableIRQ(TIMER_16_1_IRQn);   // Desabilita a interrupção do timer,
-        delay32Ms(0, 2000);                 // espera...
-        ClrGPIOBit( LED_PORT, LED_BIT );    // Mantém o LED aceso para indicar o erro.
-        disable_timer16(1);                 // Desliga o timer.
+        //NVIC_DisableIRQ(TIMER_16_1_IRQn);   // Desabilita a interrupção do timer,
+        //delay32Ms(0, 2000);                 // espera...
+        //ClrGPIOBit( LED_PORT, LED_BIT );    // Mantém o LED aceso para indicar o erro.
+        //disable_timer16(1);                 // Desliga o timer.
     }
 
     if ( LPC_TMR16B1->IR & 0x1 )
