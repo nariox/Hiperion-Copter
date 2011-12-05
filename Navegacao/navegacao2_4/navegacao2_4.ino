@@ -9,7 +9,7 @@
 
 //Define a pinagem
 #define echoPin 52 //Pino 52 recebe o pulso do echo SENSOR DISTANCIA
-#define trigPin 50 //Pino 48 envia o pulso para gerar o echo SENSOR DISTANCIA
+#define trigPin 50 //Pino 50 envia o pulso para gerar o echo SENSOR DISTANCIA
 //Constantes
 #define CENTRADO 127 // Os comandos variam de 0 a 255 - 127 e' o centro
 #define ANGULOMAX 30 // Valor do angulo max de Euler
@@ -70,22 +70,6 @@ void setup() {
    delay(3000);  // Espera 3 segundos para garantir que os periféricos e componentes externos estão prontos.
 }
 
-//Calcula a altura em centimetros atraves do sensor de distancia ultrassonico
-int distancia() {
-  //seta o pino 48 com um pulso baixo "LOW" (ou desligado ou ainda 0)
-  digitalWrite(trigPin, LOW);
-  // delay de 2 microssegundos
-  delayMicroseconds(2);
-  //seta o pino 48 com pulso alto "HIGH" (ou ligado ou ainda 1)
-  digitalWrite(trigPin, HIGH);
-  //delay de 10 microssegundos
-  delayMicroseconds(10);
-  //seta o pino 48 com pulso baixo novamente
-  digitalWrite(trigPin, LOW);
-  // função Ranging, faz a conversão do tempo de SENSOR DISTANCIA resposta do echo em centimetros
-  return (ultrasonic.Ranging(CM));
-}
-
 bool le_gps() {
     if (feedgps()) {
         gps.get_position(&lat, &lon, &age);
@@ -123,7 +107,7 @@ void loop() {
   
   //TODO: Tratar dados do Controle remoto
     
-  altura = distancia();   //Calcula a altura em centimetros atraves do sensor de distância
+  altura = ultrasonic.distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
   bool gps_disponivel = le_gps();               //Lê os dados do GPS
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
 

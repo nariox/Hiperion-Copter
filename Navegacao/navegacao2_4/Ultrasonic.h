@@ -2,6 +2,7 @@
   Ultrasonic.h - Library for HR-SC04 Ultrasonic Ranging Module.
   Created by ITead studio. Alex, Apr 20, 2010.
   iteadstudio.com
+  Adapted for Hiperion - Dez, 2011.
 */
 
 
@@ -19,6 +20,7 @@ class Ultrasonic
     Ultrasonic(int TP, int EP);
     long Timing();
     long Ranging(int sys);
+    long Distancia(int trigger);
 
     private:
     int Trig_pin;
