@@ -24,12 +24,16 @@
 #define T_AMOSTRAGEM 100
 //Modos de navegacao
 #define DESLIGAR 0
-#define LIGAR 1
-#define DECOLAR 2
-#define POUSAR 3
-#define MANUAL 4
-#define GPS 5
-#define LIVRE 6
+#define POUSAR 1
+#define MANUAL 2
+#define LIVRE 3
+#define GPS 4
+
+//Controle de altura
+#define altura_throttle_max 100
+#define altura_throttle_min 0
+#define ALTURA_POUSO 5
+#define ki 1
 
 Ultrasonic ultrasonic(50,52); //iniciando a função e passando os pinos SENSOR DISTANCIA
 TinyGPS gps;
@@ -44,10 +48,15 @@ long lat, lon, alt; //Latitude, Longitude e altura(cm) (GPS)
 unsigned long age, date, time, chars; // date(ddmmyy), time(hhmmsscc) GPS
 unsigned short sentences, failed; // Informacoes GPS
 int altantiga=0; // Distancia anterior
+int novaltura = 0;
 long latdestino, londestino, latresultante, lonresultante, modlat, modlon, distgps = 0, distantgps; //Usado para navegacao GPS
 float angmag=500; // Angulo do magnetometro, valor inicial 500 que significa que o magnetometro nao esta conectado
 float rollcontrol=0, pitchcontrol=0, yawcontrol=0, throttlecontrol=0; //Dados do controle , tambem usado como variavel auxiliar no gps
 long ultima_execucao; // teste
+//Objeto controlador proporcional, integral e derivativo.
+int altura_alvo;
+int altura_saida;
+int altura_erro_acumulado = 0;
 
 void manda_dados(byte yaw, byte roll, byte pitch, byte throttle) {
       Serial2.print("R");
@@ -61,13 +70,13 @@ void manda_dados(byte yaw, byte roll, byte pitch, byte throttle) {
 }
 
 void setup() {
-   Serial.begin(115200); // Para debug
-   Serial1.begin(57600); // Para GPS
-   Serial2.begin(115200); // Para a camada de Controle
-   pinMode(echoPin, INPUT); // define o pino 52 como entrada (recebe) SENSOR DISTANCIA
-   pinMode(trigPin, OUTPUT); // define o pino 48 como saida (envia) SENSOR DISTANCIA
-   pinMode(13, OUTPUT); // O pino 13 é um led, que será usado para indicar erro.
-   delay(3000);  // Espera 3 segundos para garantir que os periféricos e componentes externos estão prontos.
+    Serial.begin(115200); // Para debug
+    Serial1.begin(57600); // Para GPS
+    Serial2.begin(115200); // Para a camada de Controle
+    pinMode(echoPin, INPUT); // define o pino 52 como entrada (recebe) SENSOR DISTANCIA
+    pinMode(trigPin, OUTPUT); // define o pino 48 como saida (envia) SENSOR DISTANCIA
+    pinMode(13, OUTPUT); // O pino 13 é um led, que será usado para indicar erro.
+    delay(3000);  // Espera 3 segundos para garantir que os periféricos e componentes externos estão prontos.
 }
 
 bool le_gps() {
@@ -98,6 +107,16 @@ void sinaliza_erro(char error_code) {
     }
 }
 
+int cont_altura() {
+    int erro = altura_alvo - altura;
+    altura_erro_acumulado += (ki * erro);
+    if(altura_erro_acumulado > altura_throttle_max)
+        altura_erro_acumulado = altura_throttle_max;
+    else if(altura_erro_acumulado < altura_throttle_min)
+        altura_erro_acumulado = altura_throttle_min;
+    return altura_erro_acumulado;
+}
+
 void loop() {
   if(millis() - ultima_execucao > T_AMOSTRAGEM )
       sinaliza_erro(0);    // O último loop demorou mais que T_AMOSTRAGEM para ser executado.
@@ -112,53 +131,27 @@ void loop() {
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
 
     switch(MODO) {
-        //Decolar e subir até 1m
-        case DECOLAR:
-            if(altura >= 100)       //Liberar o Controle apos atingir 1m de altura
-                MODO == MANUAL;
-            else if(altura == 0)    //Erro: altura não encontrada pelo sensor
-                MODO = DESLIGAR;  
-            else {                  //Aumentar o throttle gradativamente até o máximo permitido
-                if(altura-altantiga<=VELPADRAO) // Velocidade padrao de subida
-                    t_padrao++;
-                if(altura-altantiga>=VELPADRAOMAX) // Velocidade Maxima Padrao
-                    t_padrao--;
-                if(t_padrao < 1)
-                    t_padrao = 1;
-                manda_dados(0, 0, 0, t_padrao);
-            }
+        case DESLIGAR:                //Fazer o multirrotor pousar em segurança
+            manda_dados(CENTRADO, CENTRADO, CENTRADO, 0);   //Desliga os motores
             break;
-
+                    
         case POUSAR:                //Fazer o multirrotor pousar em segurança
             if(altura == 0)         //Sensor de distancia nao encontrado, modo livre ativado
-                MODO = LIVRE;
-            else if(altura < 20)
+                MODO = LIVRE;       //TODO: reportar erro
+            else if(altura < ALTURA_POUSO)
                 manda_dados(CENTRADO, CENTRADO, CENTRADO, 0);   //Desliga os motores
             else {                  //Diminui o throtle gradativamente até o throttle mínimo permitido
-                //TODO: controlador integral
-                if(altantiga-altura<=VELPADRAO) // Velocidade padrao de descida.
-                    t_padrao--;
-                else if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima de descida
-                    t_padrao--;
-                    manda_dados(0, 0, 0, t_padrao);
+                altura_alvo = 0;
+                manda_dados(roll, pitch, yaw, cont_altura());
             }
             break;
 
         case MANUAL:                //O multirrotor está no modo de navegação manual
             if(altura == 0)         //Sensor de altura nao encontrado, modo livre ativado
-                MODO = LIVRE;
-            else if(altura <= 45) {  // Altura minima para seguranca: 30cm
-                //TODO: controlador integral
-                if(altura-altantiga<=VELPADRAO)     // Velocidade padrao
-                    t_padrao++;
-                if(altura-altantiga>=VELPADRAOMAX)  // Velocidade maxima padrao
-                    t_padrao--;
-                manda_dados(roll, pitch, yaw, t_padrao);
-            }
-            else {
+                MODO = LIVRE;       //TODO: reportar erro
+            else
                 //TODO: Obter os dados pelo controle - Fazer conversao dos dados
-                manda_dados(roll, pitch, yaw, throttle);
-            }            
+                manda_dados(roll, pitch, yaw, cont_altura());
             break;
             
         case LIVRE:                 //O multirrotor está no modo de navegação livre
