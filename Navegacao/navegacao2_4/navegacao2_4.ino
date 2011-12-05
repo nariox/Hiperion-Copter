@@ -128,14 +128,6 @@ void loop() {
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
 
     switch(MODO) {
-        //Desliga os motores
-        case DESLIGAR:
-            if(altura < 20  && altura != 0)
-                manda_dados(CENTRADO, CENTRADO, CENTRADO, 0);
-            else   //Impede o desligamento no ar (Senao iria  cair :P)
-                MODO = POUSAR;
-            break;
-            
         //Decolar e subir até 1m
         case DECOLAR:
             if(altura >= 100)       //Liberar o Controle apos atingir 1m de altura
@@ -149,21 +141,22 @@ void loop() {
                     t_padrao--;
                 if(t_padrao < 1)
                     t_padrao = 1;
-                Serial.print("R0P0Y0T");
-                Serial.print(t_padrao);
+                manda_dados(0, 0, 0, t_padrao);
             }
             break;
 
         case POUSAR:                //Fazer o multirrotor pousar em segurança
             if(altura == 0)         //Sensor de distancia nao encontrado, modo livre ativado
                 MODO = LIVRE;
+            else if(altura < 20)
+                manda_dados(CENTRADO, CENTRADO, CENTRADO, 0);   //Desliga os motores
             else {                  //Diminui o throtle gradativamente até o throttle mínimo permitido
+                //TODO: controlador integral
                 if(altantiga-altura<=VELPADRAO) // Velocidade padrao de descida.
                     t_padrao--;
                 else if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima de descida
                     t_padrao--;
-                    Serial.print("R0P0Y0T");
-                    Serial.print(t_padrao);
+                    manda_dados(0, 0, 0, t_padrao);
             }
             break;
 
@@ -171,36 +164,22 @@ void loop() {
             if(altura == 0)         //Sensor de altura nao encontrado, modo livre ativado
                 MODO = LIVRE;
             else if(altura <= 45) {  // Altura minima para seguranca: 30cm
+                //TODO: controlador integral
                 if(altura-altantiga<=VELPADRAO)     // Velocidade padrao
                     t_padrao++;
                 if(altura-altantiga>=VELPADRAOMAX)  // Velocidade maxima padrao
                     t_padrao--;
-                Serial.print("R0P0Y0T");
-                Serial.print(t_padrao);
+                manda_dados(roll, pitch, yaw, t_padrao);
             }
             else {
-                //Obter os dados pelo controle - Fazer conversao dos dados
-                Serial.print("R");
-                Serial.print(roll);
-                Serial.print("P");
-                Serial.print(pitch);
-                Serial.print("Y");
-                Serial.print(yaw);
-                Serial.print("T");
-                Serial.print(throttle); 
+                //TODO: Obter os dados pelo controle - Fazer conversao dos dados
+                manda_dados(roll, pitch, yaw, throttle);
             }            
             break;
             
         case LIVRE:                 //O multirrotor está no modo de navegação livre
-            //Obter os dados pelo controle - Fazer conversao dos dados
-            Serial.print("R");
-            Serial.print(roll);
-            Serial.print("P");
-            Serial.print(pitch);
-            Serial.print("Y");
-            Serial.print(yaw);
-            Serial.print("T");
-            Serial.print(throttle); 
+            //TODO: Obter os dados pelo controle - Fazer conversao dos dados
+            manda_dados(roll, pitch, yaw, throttle);
             break;
             
         case GPS:                   //O multirrotor está navegando pelo GPS
@@ -211,8 +190,7 @@ void loop() {
                     t_padrao--;
                 if(t_padrao < 1)
                     t_padrao = 1;
-                Serial.print("R0P0Y0T");
-                Serial.print(t_padrao);
+                manda_dados(roll, pitch, yaw, t_padrao);
                 }
             else {
                 if (gps_disponivel) { //GPS esta com sinal
@@ -231,28 +209,17 @@ void loop() {
                             else //Caso contrario ele vira a direita.
                             yaw = ANGULOGPS;
                         }
-                        Serial.print("R");
-                        Serial.print(roll);
-                        Serial.print("P0Y");
-                        Serial.print(yaw);
-                        Serial.print("T");
-                        Serial.print(throttle); // Calcular o throttle
+                        manda_dados(roll, 0, yaw, throttle);
                         distantgps = distgps; // distantgps guarda a distancia gps para usar na proxima iteracao
                     }
                 //Fazer a rotacao ate sincronizar com o norte utilizando o magnetometro
                 else if(angmag > 3 && angmag <=180) { // Colocar uma margem de erro de 3 graus - Sentido horario
                     //Calcular o throttle.
-                    Serial.print("R0P0Y");
-                    Serial.print(YAWPADRAO);
-                    Serial.print("T");
-                    Serial.print(throttle);
+                    manda_dados(0, 0, YAWPADRAO, throttle);
                 }       
                 else if(angmag > 180 && angmag < 357) { // Sentido anti-horario com uma margem de 3 graus
                     //Calcular o throttle.
-                    Serial.print("R0P0Y");
-                    Serial.print(50+YAWPADRAO);
-                    Serial.print("T");
-                    Serial.print(throttle);
+                    manda_dados(0, 0, 50+YAWPADRAO, throttle);
                 }
                 else { //Compara destino GPS
                     latresultante = latdestino-lat;
@@ -273,47 +240,34 @@ void loop() {
                             t_padrao--;
                         }
                         else if(altura > MAXDIST || altura == 0) { //Utiliza a altitude para calcular o throtle
-                        //Utiliza a altitude para calcular o throtle
+                            //Utiliza a altitude para calcular o throtle
                         }
-                        Serial.print("R0P0Y0T");
-                        Serial.print(t_padrao);
+                        manda_dados(0, 0, 0, t_padrao);
                     }
                 
                     else if(modlat < MARGEMGPS) { // Latitude alcancada
                         if(latresultante < 0) { // Esquerda
-                        //Calcular o throttle
-                        roll = ANGULOGPS;
-                        Serial.print("R");
-                        Serial.print(roll);
-                        Serial.print("P0Y0T");
-                        Serial.print(throttle);              
+                            //Calcular o throttle
+                            roll = ANGULOGPS;
+                            manda_dados(roll, 0, 0, throttle);
                         }
                         else { // Direita
-                        //Calcular o throttle
-                        roll = - ANGULOGPS;
-                        Serial.print("R");
-                        Serial.print(roll);
-                        Serial.print("P0Y0T");
-                        Serial.print(throttle);                            
+                            //Calcular o throttle
+                            roll = - ANGULOGPS;
+                            manda_dados(roll, 0, 0, throttle);
                         }            
                     }
                     
                     else if(modlon < MARGEMGPS) { // Longitude alcancada
                         if(lonresultante < 0) { // 
-                        //Calcular o throttle
-                        pitch = ANGULOGPS;
-                        Serial.print("R0P");
-                        Serial.print(pitch);
-                        Serial.print("Y0T");
-                        Serial.print(throttle);              
+                            //Calcular o throttle
+                            pitch = ANGULOGPS;
+                            manda_dados(0, pitch, 0, throttle);              
                         }
                         else { // Frente
-                        //Calcular o throttle
-                        pitch = - ANGULOGPS;
-                        Serial.print("ROP");
-                        Serial.print(pitch);
-                        Serial.print("Y0T");
-                        Serial.print(throttle);                            
+                            //Calcular o throttle
+                            pitch = - ANGULOGPS;
+                            manda_dados(0, pitch, 0, throttle);                            
                         }            
                     }
                     
@@ -326,13 +280,7 @@ void loop() {
                             pitch = ANGULOGPS * (modlon / modlat);
                         else
                             pitch = - ANGULOGPS * (modlon / modlat);
-                        Serial.print("R");
-                        Serial.print(roll);
-                        Serial.print("P");
-                        Serial.print(pitch);
-                        Serial.print("Y0");
-                        Serial.print("T");
-                        Serial.print(throttle); //Falta calcular o throttle
+                        manda_dados(roll, pitch, 0, throttle);
                     }
                     
                     else if(modlon >= modlat) { // Caso ele tenha que andar mais lontitude que latitude
@@ -344,13 +292,7 @@ void loop() {
                             roll = ANGULOGPS * (modlat / modlon);
                         else
                             roll = - ANGULOGPS * (modlat / modlon);
-                        Serial.print("R");
-                        Serial.print(roll);
-                        Serial.print("P");
-                        Serial.print(pitch);
-                        Serial.print("Y0");
-                        Serial.print("T");
-                        Serial.print(throttle); //Falta calcular o throttle            
+                        manda_dados(roll, pitch, 0, throttle);
                     }
                 }
             }
@@ -360,8 +302,7 @@ void loop() {
                         t_padrao++;
                     if(altura-altantiga>0) // Subindo
                         t_padrao--;
-                    Serial.print("R0P0Y0T");
-                    Serial.print(t_padrao);
+                    manda_dados(0, 0, 0, t_padrao);
                 }
                 
                 else if(altura < 100 && altura != 0) { // Altura minima de seguranca
@@ -369,8 +310,7 @@ void loop() {
                         t_padrao++;
                     if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima padrao
                         t_padrao--;
-                    Serial.print("R0P0Y0T");
-                    Serial.print(t_padrao);
+                    manda_dados(0, 0, 0, t_padrao);
                 }
                 
                 else if(altura > MAXDIST || altura == 0) { //Necessario usar outros sensores
