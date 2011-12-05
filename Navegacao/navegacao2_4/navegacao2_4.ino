@@ -126,7 +126,7 @@ void loop() {
   
   //TODO: Tratar dados do Controle remoto
     
-  altura = ultrasonic.distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
+  altura = ultrasonic.Distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
   bool gps_disponivel = le_gps();               //Lê os dados do GPS
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
 
