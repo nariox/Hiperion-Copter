@@ -1,6 +1,4 @@
 //Throttle e Roll vai de 0 a 99, seria em porcentagem da potencia maxima. Yaw de 0 a 49 horario, 50 a 99 anti horario
-//Angulo vai de 45 a -45 graus
-//Receber os dados por bluetooth semelhante ao carrinho. Para efetuar testes.
 //  Serial.print(" (mps): "); printFloat(gps.f_speed_mps()); Serial.print(" (kmph): "); printFloat(gps.f_speed_kmph()); Serial.println();
 
 
@@ -12,14 +10,9 @@
 #define trigPin 50 //Pino 50 envia o pulso para gerar o echo SENSOR DISTANCIA
 //Constantes
 #define CENTRADO 127 // Os comandos variam de 0 a 255 - 127 e' o centro
-#define ANGULOMAX 30 // Valor do angulo max de Euler
 #define ANGULOGPS 15 // Valor do angulo usado no GPS
-#define VELPADRAO 2 // 0.2 m/s
-#define VELPADRAOMAX 5 // 0.5 m/s
-#define YAWPADRAO 25 // Velocidade padrao de rotacao
-#define THROTTLE_MIN 3 // Valor do throttle ao ligar (Ainda alterar)
+#define YAWPADRAO 30 // Velocidade padrao de rotacao
 #define MARGEMGPS 0,02 // Margem de erro do GPS(Ainda alterar)
-#define MAGTEMPO 10 // Auxiliar no GPS sem o magnetometro (.x segundos)
 #define MAXDIST 300 // Distancia maxima do sensor de distancia (em cm)
 #define T_AMOSTRAGEM 1000
 //Modos de navegacao
@@ -28,7 +21,6 @@
 #define MANUAL 2
 #define LIVRE 3
 #define GPS 4
-
 //Controle de altura
 #define altura_throttle_max 100
 #define altura_throttle_min 1
@@ -58,15 +50,15 @@ int altura_erro_acumulado = 0;
 //Bluetooth
 int Conectado = 0;
 
-void manda_dados(byte yaw, byte roll, byte pitch, byte throttle) {
+void manda_dados(int roll, int pitch, int yaw, int throttle) {
       Serial2.print("R");
-      Serial2.print(roll);
+      Serial2.print(roll+127);
       Serial2.print("P");
-      Serial2.print(pitch);
+      Serial2.print(pitch+127);
       Serial2.print("Y");
-      Serial2.print(yaw);
+      Serial2.print(yaw+127);
       Serial2.print("T");
-      Serial2.print(throttle);
+      Serial2.print(throttle+127);
 }
 
 void setup() {
@@ -155,64 +147,69 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
       }
     }   
   }
-  
+
   if(Conectado == 1) {
-    for(int i = 1; i <= 6; i++) {
+    for(int i = 1; i <= 8; i++) {
       inByte = Serial3.read();
       switch(inByte) {
         case 'M': //Modo sendo recebido
           MODO = Serial3.read();
-          if(MODO == GPS || MODO == LIVRE)
-            i=+2; // Possui apenas 4 dados (6-2)
-          else if(MODO == DESLIGAR || MODO == POUSAR)
-            i=+5; // Possui apenas 1 dado (6-5)
           break;
-        //Falta implementar os itens abaixo
+        
         case 'R': //Roll sendo recebido
-          roll = (Serial3.read() ) * 100;
-          roll =+ (Serial3.read() ) * 10;
-          roll =+ (Serial3.read() ) * 1;
+          roll = (Serial3.read() - '0') * 100;
+          roll =+ (Serial3.read() - '0') * 10;
+          roll =+ (Serial3.read() - '0') * 1;
+          roll =- 127;
           break;
 
         case 'P': //Pitch sendo recebido
-          pitch = (Serial3.read() ) * 100;
-          pitch =+ (Serial3.read() ) * 10;
-          pitch =+ (Serial3.read() ) * 1;
+          pitch = (Serial3.read() - '0') * 100;
+          pitch =+ (Serial3.read() - '0') * 10;
+          pitch =+ (Serial3.read() - '0') * 1;
+          pitch =- 127;
           break;
 
         case 'Y': //Yaw sendo recebido
-          yaw = (Serial3.read() ) * 100;
-          yaw =+ (Serial3.read() ) * 10;
-          yaw =+ (Serial3.read() ) * 1;
+          yaw = (Serial3.read() - '0') * 100;
+          yaw =+ (Serial3.read() - '0') * 10;
+          yaw =+ (Serial3.read() - '0') * 1;
+          yaw =- 127;
           break;
 
         case 'T': //Throttle sendo recebido
-          throttle = (Serial3.read() ) * 100;
-          throttle =+ (Serial3.read() ) * 10;
-          throttle =+ (Serial3.read() ) * 1;
+          throttle = (Serial3.read() - '0') * 100;
+          throttle =+ (Serial3.read() - '0') * 10;
+          throttle =+ (Serial3.read() - '0') * 1;
+          throttle =- 127;
           break;
         
         case 'A': //Altura sendo recebida
-          altura_alvo = (Serial3.read() ) * 10;
-          altura_alvo =+ (Serial3.read() ) * 1;
-          altura_alvo =+ (Serial3.read() ) * 0.1;
+          altura_alvo = (Serial3.read() - '0') * 1000;
+          altura_alvo =+ (Serial3.read() - '0') * 100;
+          altura_alvo =+ (Serial3.read() - '0') * 10;
           break;
-        
+        //Ainda estao erradas latitude e longitude.
         case 'K': //latitude sendo recebida
-          altura_alvo = (Serial3.read() ) * 10;
-          altura_alvo =+ (Serial3.read() ) * 1;
-          altura_alvo =+ (Serial3.read() ) * 0.1;
+          altura_alvo = (Serial3.read() - '0') * 10;
+          altura_alvo =+ (Serial3.read() - '0') * 1;
+          altura_alvo =+ (Serial3.read() - '0') * 0.1;
+          altura_alvo =+ (Serial3.read() - '0') * 0.01;
+          altura_alvo =+ (Serial3.read() - '0') * 0.001;
           break;
 
         case 'L': //longitude sendo recebida
-          altura_alvo = (Serial3.read() ) * 10;
-          altura_alvo =+ (Serial3.read() ) * 1;
-          altura_alvo =+ (Serial3.read() ) * 0.1;
+          altura_alvo = (Serial3.read() - '0') * 10;
+          altura_alvo =+ (Serial3.read() - '0') * 1;
+          altura_alvo =+ (Serial3.read() - '0') * 0.1;
+          altura_alvo =+ (Serial3.read() - '0') * 0.01;
+          altura_alvo =+ (Serial3.read() - '0') * 0.001;
           break;
 
         break;
       }
-    }  
+    }
+    Serial3.flush();
   }
 }
 
@@ -248,12 +245,10 @@ void loop() {
             break;
 
         case MANUAL:                //O multirrotor está no modo de navegação manual
-                //TODO: Obter os dados pelo controle - Fazer conversao dos dados
              manda_dados(roll, pitch, yaw, cont_altura());
             break;
             
         case LIVRE:                 //O multirrotor está no modo de navegação livre
-            //TODO: Obter os dados pelo controle - Fazer conversao dos dados
             manda_dados(roll, pitch, yaw, throttle);
             break;
             
@@ -280,7 +275,7 @@ void loop() {
                   manda_dados(0, 0, YAWPADRAO, cont_altura());
                      
               else if(angmag > 180 && angmag < 357)  // Sentido anti-horario com uma margem de 3 graus
-                  manda_dados(0, 0, 50+YAWPADRAO, cont_altura());
+                  manda_dados(0, 0, -YAWPADRAO, cont_altura());
               
               else { //Compara destino GPS
                   latresultante = latdestino-lat;
@@ -289,7 +284,7 @@ void loop() {
                   modlon = abs(lonresultante);
                   if(modlat < MARGEMGPS && modlon < MARGEMGPS) // Chegou na localizacao, mantem ele estavel
                       estavel();    
-                
+
                   else if(modlat < MARGEMGPS) { // Latitude alcancada
                       if(latresultante < 0) { // Esquerda
                           roll = ANGULOGPS;
@@ -300,7 +295,7 @@ void loop() {
                           manda_dados(roll, 0, 0, cont_altura());
                       }            
                   }
-                    
+
                   else if(modlon < MARGEMGPS) { // Longitude alcancada
                       if(lonresultante < 0) { // 
                           pitch = ANGULOGPS;
@@ -311,7 +306,7 @@ void loop() {
                           manda_dados(0, pitch, 0, cont_altura());                            
                       }            
                   }
-                    
+
                   else if(modlat > modlon) { // Caso ele tenha que andar mais latitude que longitude
                       if(latresultante > 0)
                           roll = ANGULOGPS;
