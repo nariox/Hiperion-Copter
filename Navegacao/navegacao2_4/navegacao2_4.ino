@@ -21,7 +21,7 @@
 #define MARGEMGPS 0,02 // Margem de erro do GPS(Ainda alterar)
 #define MAGTEMPO 10 // Auxiliar no GPS sem o magnetometro (.x segundos)
 #define MAXDIST 300 // Distancia maxima do sensor de distancia (em cm)
-#define T_AMOSTRAGEM 100
+#define T_AMOSTRAGEM 1000
 //Modos de navegacao
 #define DESLIGAR 0
 #define POUSAR 1
@@ -31,7 +31,7 @@
 
 //Controle de altura
 #define altura_throttle_max 100
-#define altura_throttle_min 0
+#define altura_throttle_min 1
 #define ALTURA_POUSO 5
 #define ki 1
 
@@ -41,15 +41,13 @@ bool feedgps();
 
 //Variaveis
 int altura; //SENSOR DISTANCIA se altura = 0, sensor nao encontrou distancia.
-float roll=0, pitch=0, yaw=0, throttle=0; //Dados para a camada de controle
+int roll=0, pitch=0, yaw=0, throttle=0; //Dados para a camada de controle
 int MODO = DESLIGAR; // Modo de navegacao
-int t_padrao = 1; //Throttle minimo para comecar a se mover verticalmente
 long lat, lon, alt; //Latitude, Longitude e altura(cm) (GPS)
 unsigned long age, date, time, chars; // date(ddmmyy), time(hhmmsscc) GPS
 unsigned short sentences, failed; // Informacoes GPS
-int altantiga=0; // Distancia anterior
-int novaltura = 0;
 long latdestino, londestino, latresultante, lonresultante, modlat, modlon, distgps = 0, distantgps; //Usado para navegacao GPS
+bool gps_disponivel;
 float angmag=500; // Angulo do magnetometro, valor inicial 500 que significa que o magnetometro nao esta conectado
 float rollcontrol=0, pitchcontrol=0, yawcontrol=0, throttlecontrol=0; //Dados do controle , tambem usado como variavel auxiliar no gps
 long ultima_execucao; // teste
@@ -77,6 +75,7 @@ void setup() {
     pinMode(trigPin, OUTPUT); // define o pino 48 como saida (envia) SENSOR DISTANCIA
     pinMode(13, OUTPUT); // O pino 13 é um led, que será usado para indicar erro.
     delay(3000);  // Espera 3 segundos para garantir que os periféricos e componentes externos estão prontos.
+    ultima_execucao = millis();
 }
 
 bool le_gps() {
@@ -107,51 +106,60 @@ void sinaliza_erro(char error_code) {
     }
 }
 
-int cont_altura() {
-    int erro = altura_alvo - altura;
-    altura_erro_acumulado += (ki * erro);
-    if(altura_erro_acumulado > altura_throttle_max)
-        altura_erro_acumulado = altura_throttle_max;
-    else if(altura_erro_acumulado < altura_throttle_min)
-        altura_erro_acumulado = altura_throttle_min;
+int cont_altura() { // Controle de altura
+  if(altura == 0) // usando o sensor de distancia
     return altura_erro_acumulado;
+    
+  int erro = altura_alvo - altura;
+  altura_erro_acumulado += (ki * erro);
+  if(altura_erro_acumulado > altura_throttle_max)
+      altura_erro_acumulado = altura_throttle_max;
+  else if(altura_erro_acumulado < altura_throttle_min)
+      altura_erro_acumulado = altura_throttle_min;
+  return altura_erro_acumulado;
+}
+
+void estavel() {   // Mantem o multirrotor estavel
+  //Calcula o Roll e pitch caso seja necessario para ajudar na estabilizacao
+  roll = 0;
+  pitch = 0;
+  yaw = 0;
+  manda_dados(roll, pitch, yaw, cont_altura());
 }
 
 void loop() {
   if(millis() - ultima_execucao > T_AMOSTRAGEM )
-      sinaliza_erro(0);    // O último loop demorou mais que T_AMOSTRAGEM para ser executado.
+      //sinaliza_erro(0);    // O último loop demorou mais que T_AMOSTRAGEM para ser executado.
+      Serial.println("ERRO!");
       
-  // Espera o tempo de amostragem
+   //Espera o tempo de amostragem
   while(millis() - ultima_execucao < T_AMOSTRAGEM);
   
   //TODO: Tratar dados do Controle remoto
     
   altura = ultrasonic.Distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
-  bool gps_disponivel = le_gps();               //Lê os dados do GPS
+  gps_disponivel = le_gps();               //Lê os dados do GPS
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
 
+      Serial.print("Distancia: ");
+      Serial.println(altura);
     switch(MODO) {
         case DESLIGAR:                //Fazer o multirrotor pousar em segurança
-            manda_dados(CENTRADO, CENTRADO, CENTRADO, 0);   //Desliga os motores
+            manda_dados(0, 0, 0, 0);   //Desliga os motores
             break;
                     
         case POUSAR:                //Fazer o multirrotor pousar em segurança
-            if(altura == 0)         //Sensor de distancia nao encontrado, modo livre ativado
-                MODO = LIVRE;       //TODO: reportar erro
-            else if(altura < ALTURA_POUSO)
-                manda_dados(CENTRADO, CENTRADO, CENTRADO, 0);   //Desliga os motores
+            if(altura < ALTURA_POUSO)
+                manda_dados(0, 0, 0, 0);   //Desliga os motores
             else {                  //Diminui o throtle gradativamente até o throttle mínimo permitido
                 altura_alvo = 0;
-                manda_dados(roll, pitch, yaw, cont_altura());
+                manda_dados(0, 0, 0, cont_altura());
             }
             break;
 
         case MANUAL:                //O multirrotor está no modo de navegação manual
-            if(altura == 0)         //Sensor de altura nao encontrado, modo livre ativado
-                MODO = LIVRE;       //TODO: reportar erro
-            else
                 //TODO: Obter os dados pelo controle - Fazer conversao dos dados
-                manda_dados(roll, pitch, yaw, cont_altura());
+             manda_dados(roll, pitch, yaw, cont_altura());
             break;
             
         case LIVRE:                 //O multirrotor está no modo de navegação livre
@@ -160,146 +168,89 @@ void loop() {
             break;
             
         case GPS:                   //O multirrotor está navegando pelo GPS
-            if(altura < 100 && altura != 0) {
-                if(altura-altantiga<=VELPADRAO) // Velocidade Padrao
-                    t_padrao++;
-                if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima padrao
-                    t_padrao--;
-                if(t_padrao < 1)
-                    t_padrao = 1;
-                manda_dados(roll, pitch, yaw, t_padrao);
+            if (gps_disponivel) { //GPS esta com sinal
+              if(angmag == 500) { // Magnetometro desconectado ou inexistente
+                roll = ANGULOGPS;
+                latresultante = latdestino-lat;
+                lonresultante = londestino-lon;
+                distgps = latresultante*latresultante + lonresultante*lonresultante;
+                if(distgps < MARGEMGPS) 
+                  estavel();
+                else {
+                  if(distgps <= distantgps || distantgps == 0) //Se distancia estiver diminuindo ou quando iniciado(distantgps=0) ele segue em frente
+                    yaw = 0;
+                  else //Caso contrario ele vira a direita.
+                    yaw = YAWPADRAO;
                 }
-            else {
-                if (gps_disponivel) { //GPS esta com sinal
-                    if(angmag == 500) { // Magnetometro desconectado ou inexistente
-                        roll = ANGULOGPS;
-                        latresultante = latdestino-lat;
-                        lonresultante = londestino-lon;
-                        distgps = latresultante*latresultante + lonresultante*lonresultante;
-                        if(distgps < MARGEMGPS) {
-                            roll =0;
-                            yaw = 0;
-                        }
-                        else {
-                            if(distgps <= distantgps || distantgps == 0) //Se distancia estiver diminuindo ou quando iniciado(distantgps=0) ele segue em frente
-                            yaw = 0;
-                            else //Caso contrario ele vira a direita.
-                            yaw = ANGULOGPS;
-                        }
-                        manda_dados(roll, 0, yaw, throttle);
-                        distantgps = distgps; // distantgps guarda a distancia gps para usar na proxima iteracao
-                    }
-                //Fazer a rotacao ate sincronizar com o norte utilizando o magnetometro
-                else if(angmag > 3 && angmag <=180) { // Colocar uma margem de erro de 3 graus - Sentido horario
-                    //Calcular o throttle.
-                    manda_dados(0, 0, YAWPADRAO, throttle);
-                }       
-                else if(angmag > 180 && angmag < 357) { // Sentido anti-horario com uma margem de 3 graus
-                    //Calcular o throttle.
-                    manda_dados(0, 0, 50+YAWPADRAO, throttle);
-                }
-                else { //Compara destino GPS
-                    latresultante = latdestino-lat;
-                    lonresultante = londestino-lon;
-                    modlat = abs(latresultante);
-                    modlon = abs(lonresultante);
-                    if(modlat < MARGEMGPS && modlon < MARGEMGPS) { // Chegou na localizacao, mantem ele estavel
-                        if(altura <= MAXDIST && altura > 100) { // Altura maxima para o calculo do throttle, usando o sensor de distancia
-                        if(altura-altantiga<0) // Descendo
-                            t_padrao++;
-                        if(altura-altantiga>0) // Subindo
-                            t_padrao--;
-                        }
-                        else if(altura < 100  && altura != 0) { // Altura minima de seguranca
-                        if(altura-altantiga<=VELPADRAO) // Velocidade Padrao
-                            t_padrao++;
-                        if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima padrao
-                            t_padrao--;
-                        }
-                        else if(altura > MAXDIST || altura == 0) { //Utiliza a altitude para calcular o throtle
-                            //Utiliza a altitude para calcular o throtle
-                        }
-                        manda_dados(0, 0, 0, t_padrao);
-                    }
+                manda_dados(roll, 0, yaw, cont_altura());
+                distantgps = distgps; // distantgps guarda a distancia gps para usar na proxima iteracao
+              }
+              //Fazer a rotacao ate sincronizar com o norte utilizando o magnetometro
+              else if(angmag > 3 && angmag <=180)  // Colocar uma margem de erro de 3 graus - Sentido horario
+                  manda_dados(0, 0, YAWPADRAO, cont_altura());
+                     
+              else if(angmag > 180 && angmag < 357)  // Sentido anti-horario com uma margem de 3 graus
+                  manda_dados(0, 0, 50+YAWPADRAO, cont_altura());
+              
+              else { //Compara destino GPS
+                  latresultante = latdestino-lat;
+                  lonresultante = londestino-lon;
+                  modlat = abs(latresultante);
+                  modlon = abs(lonresultante);
+                  if(modlat < MARGEMGPS && modlon < MARGEMGPS) // Chegou na localizacao, mantem ele estavel
+                      estavel();    
                 
-                    else if(modlat < MARGEMGPS) { // Latitude alcancada
-                        if(latresultante < 0) { // Esquerda
-                            //Calcular o throttle
-                            roll = ANGULOGPS;
-                            manda_dados(roll, 0, 0, throttle);
-                        }
-                        else { // Direita
-                            //Calcular o throttle
-                            roll = - ANGULOGPS;
-                            manda_dados(roll, 0, 0, throttle);
-                        }            
-                    }
+                  else if(modlat < MARGEMGPS) { // Latitude alcancada
+                      if(latresultante < 0) { // Esquerda
+                          roll = ANGULOGPS;
+                          manda_dados(roll, 0, 0, cont_altura());
+                      }
+                      else { // Direita
+                          roll = - ANGULOGPS;
+                          manda_dados(roll, 0, 0, cont_altura());
+                      }            
+                  }
                     
-                    else if(modlon < MARGEMGPS) { // Longitude alcancada
-                        if(lonresultante < 0) { // 
-                            //Calcular o throttle
-                            pitch = ANGULOGPS;
-                            manda_dados(0, pitch, 0, throttle);              
-                        }
-                        else { // Frente
-                            //Calcular o throttle
-                            pitch = - ANGULOGPS;
-                            manda_dados(0, pitch, 0, throttle);                            
-                        }            
-                    }
+                  else if(modlon < MARGEMGPS) { // Longitude alcancada
+                      if(lonresultante < 0) { // 
+                          pitch = ANGULOGPS;
+                          manda_dados(0, pitch, 0, cont_altura());
+                      }
+                      else { // Frente
+                          pitch = - ANGULOGPS;
+                          manda_dados(0, pitch, 0, cont_altura());                            
+                      }            
+                  }
                     
-                    else if(modlat > modlon) { // Caso ele tenha que andar mais latitude que longitude
-                        if(latresultante > 0)
-                            roll = ANGULOGPS;
-                        else 
-                            roll = -ANGULOGPS;
-                        if(lonresultante > 0)
-                            pitch = ANGULOGPS * (modlon / modlat);
-                        else
-                            pitch = - ANGULOGPS * (modlon / modlat);
-                        manda_dados(roll, pitch, 0, throttle);
-                    }
+                  else if(modlat > modlon) { // Caso ele tenha que andar mais latitude que longitude
+                      if(latresultante > 0)
+                          roll = ANGULOGPS;
+                      else 
+                          roll = -ANGULOGPS;
+                      if(lonresultante > 0)
+                          pitch = ANGULOGPS * (modlon / modlat);
+                      else
+                          pitch = - ANGULOGPS * (modlon / modlat);
+                      manda_dados(roll, pitch, 0, cont_altura());
+                  }
                     
-                    else if(modlon >= modlat) { // Caso ele tenha que andar mais lontitude que latitude
-                        if(lonresultante > 0)
-                            pitch = ANGULOGPS;
-                        else
-                            pitch = -ANGULOGPS;
-                        if(latresultante > 0)
-                            roll = ANGULOGPS * (modlat / modlon);
-                        else
-                            roll = - ANGULOGPS * (modlat / modlon);
-                        manda_dados(roll, pitch, 0, throttle);
-                    }
-                }
-            }
-            else { //Sem sinal do GPS, mantem ele estavel
-                if(altura <= MAXDIST && altura > 100 && altura != 0) { // Altura maxima para o calculo do throttle, usando o sensor de distancia
-                    if(altura-altantiga<0) // Descendo
-                        t_padrao++;
-                    if(altura-altantiga>0) // Subindo
-                        t_padrao--;
-                    manda_dados(0, 0, 0, t_padrao);
-                }
-                
-                else if(altura < 100 && altura != 0) { // Altura minima de seguranca
-                    if(altura-altantiga<=VELPADRAO) // Velocidade Padrao
-                        t_padrao++;
-                    if(altura-altantiga>=VELPADRAOMAX) // Velocidade maxima padrao
-                        t_padrao--;
-                    manda_dados(0, 0, 0, t_padrao);
-                }
-                
-                else if(altura > MAXDIST || altura == 0) { //Necessario usar outros sensores
-                    MODO = LIVRE;
-                }
-            }
+                  else if(modlon >= modlat) { // Caso ele tenha que andar mais lontitude que latitude
+                      if(lonresultante > 0)
+                          pitch = ANGULOGPS;
+                      else
+                          pitch = -ANGULOGPS;
+                      if(latresultante > 0)
+                          roll = ANGULOGPS * (modlat / modlon);
+                      else
+                          roll = - ANGULOGPS * (modlat / modlon);
+                      manda_dados(roll, pitch, 0, cont_altura());
+                  }
+              }
         }
+        else //Sem sinal do GPS, mantem ele estavel
+            estavel();
         break;
     }
-
-    altantiga = altura;
-
     ultima_execucao = millis();
 }
 
