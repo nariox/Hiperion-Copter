@@ -55,6 +55,8 @@ long ultima_execucao; // teste
 int altura_alvo;
 int altura_saida;
 int altura_erro_acumulado = 0;
+//Bluetooth
+int Conectado = 0;
 
 void manda_dados(byte yaw, byte roll, byte pitch, byte throttle) {
       Serial2.print("R");
@@ -71,6 +73,7 @@ void setup() {
     Serial.begin(115200); // Para debug
     Serial1.begin(57600); // Para GPS
     Serial2.begin(115200); // Para a camada de Controle
+    Serial2.begin(115200); // Para bluetooth
     pinMode(echoPin, INPUT); // define o pino 52 como entrada (recebe) SENSOR DISTANCIA
     pinMode(trigPin, OUTPUT); // define o pino 48 como saida (envia) SENSOR DISTANCIA
     pinMode(13, OUTPUT); // O pino 13 é um led, que será usado para indicar erro.
@@ -127,6 +130,93 @@ void estavel() {   // Mantem o multirrotor estavel
   manda_dados(roll, pitch, yaw, cont_altura());
 }
 
+void bluetooth() {   // Tratamento dos dados do bluetooth
+  int inByte;
+  if(Conectado == 0 && Serial3.available()) {
+    inByte = Serial3.read();    
+    if (inByte = 'R') {
+      inByte = Serial3.read();
+      if (inByte = 'F') {
+        inByte = Serial3.read();
+        if (inByte = 'C') {
+          inByte = Serial3.read();
+          if (inByte = 'O') {
+            inByte = Serial3.read();
+            if (inByte = 'M') {
+              inByte = Serial3.read();
+              if (inByte = 'M') {
+                Conectado = 1;
+                delay(50);
+                Serial3.flush();
+              }
+            }
+          }
+        }
+      }
+    }   
+  }
+  
+  if(Conectado == 1) {
+    for(int i = 1; i <= 6; i++) {
+      inByte = Serial3.read();
+      switch(inByte) {
+        case 'M': //Modo sendo recebido
+          MODO = Serial3.read();
+          if(MODO == GPS || MODO == LIVRE)
+            i=+2; // Possui apenas 4 dados (6-2)
+          else if(MODO == DESLIGAR || MODO == POUSAR)
+            i=+5; // Possui apenas 1 dado (6-5)
+          break;
+        //Falta implementar os itens abaixo
+        case 'R': //Roll sendo recebido
+          roll = (Serial3.read() ) * 100;
+          roll =+ (Serial3.read() ) * 10;
+          roll =+ (Serial3.read() ) * 1;
+          break;
+
+        case 'P': //Pitch sendo recebido
+          pitch = (Serial3.read() ) * 100;
+          pitch =+ (Serial3.read() ) * 10;
+          pitch =+ (Serial3.read() ) * 1;
+          break;
+
+        case 'Y': //Yaw sendo recebido
+          yaw = (Serial3.read() ) * 100;
+          yaw =+ (Serial3.read() ) * 10;
+          yaw =+ (Serial3.read() ) * 1;
+          break;
+
+        case 'T': //Throttle sendo recebido
+          throttle = (Serial3.read() ) * 100;
+          throttle =+ (Serial3.read() ) * 10;
+          throttle =+ (Serial3.read() ) * 1;
+          break;
+        
+        case 'A': //Altura sendo recebida
+          altura_alvo = (Serial3.read() ) * 10;
+          altura_alvo =+ (Serial3.read() ) * 1;
+          altura_alvo =+ (Serial3.read() ) * 0.1;
+          break;
+        
+        case 'K': //latitude sendo recebida
+          altura_alvo = (Serial3.read() ) * 10;
+          altura_alvo =+ (Serial3.read() ) * 1;
+          altura_alvo =+ (Serial3.read() ) * 0.1;
+          break;
+
+        case 'L': //longitude sendo recebida
+          altura_alvo = (Serial3.read() ) * 10;
+          altura_alvo =+ (Serial3.read() ) * 1;
+          altura_alvo =+ (Serial3.read() ) * 0.1;
+          break;
+
+        break;
+      }
+    }  
+  }
+}
+
+
 void loop() {
   if(millis() - ultima_execucao > T_AMOSTRAGEM )
       //sinaliza_erro(0);    // O último loop demorou mais que T_AMOSTRAGEM para ser executado.
@@ -136,7 +226,7 @@ void loop() {
   while(millis() - ultima_execucao < T_AMOSTRAGEM);
   
   //TODO: Tratar dados do Controle remoto
-    
+  bluetooth(); // Pegar dados pelo bluetooth
   altura = ultrasonic.Distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
   gps_disponivel = le_gps();               //Lê os dados do GPS
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
