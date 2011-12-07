@@ -1,6 +1,14 @@
-//Throttle e Roll vai de 0 a 99, seria em porcentagem da potencia maxima. Yaw de 0 a 49 horario, 50 a 99 anti horario
-//  Serial.print(" (mps): "); printFloat(gps.f_speed_mps()); Serial.print(" (kmph): "); printFloat(gps.f_speed_kmph()); Serial.println();
+/*
+===============================================================================
 
+ Name        : navegacao.ino
+ Author      : Bruno Pinho
+ Revision    : Danilo Luvizotto e Pedro Nariyoshi
+ Version     : 0.8
+ Description : Navigation of Hiperion - Quadcopter
+
+===============================================================================
+*/
 
 #include "Ultrasonic.h"
 #include "TinyGPS.h"
@@ -153,10 +161,33 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
       inByte = Serial3.read();
       switch(inByte) {
         case 'M': //Modo sendo recebido
-          MODO = Serial3.read();
+          inByte = Serial3.read();
+          if(inByte == 'N') {
+            inByte = Serial3.read();    
+            if (inByte = 'O') {
+              inByte = Serial3.read();
+              if (inByte = ' ') {
+                inByte = Serial3.read();
+                if (inByte = 'C') {
+                  inByte = Serial3.read();
+                  if (inByte = 'A') {
+                    inByte = Serial3.read();
+                    if (inByte = 'R') {
+                      Conectado = 0;
+                      delay(50);
+                      Serial3.flush();
+                    }
+                  }
+                }
+              }
+            }
+          }
+          else
+            MODO = inByte;          
           break;
         
         case 'R': //Roll sendo recebido
+          inByte = Serial3.read();
           roll = (Serial3.read() - '0') * 100;
           roll =+ (Serial3.read() - '0') * 10;
           roll =+ (Serial3.read() - '0') * 1;
@@ -205,25 +236,69 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
           altura_alvo =+ (Serial3.read() - '0') * 0.01;
           altura_alvo =+ (Serial3.read() - '0') * 0.001;
           break;
+          
+        case 'N': // Caso a conexao tenha sido perdida
+          inByte = Serial3.read();    
+          if (inByte = 'O') {
+            inByte = Serial3.read();
+            if (inByte = ' ') {
+              inByte = Serial3.read();
+              if (inByte = 'C') {
+                inByte = Serial3.read();
+                if (inByte = 'A') {
+                  inByte = Serial3.read();
+                  if (inByte = 'R') {
+                    Conectado = 0;
+                    delay(50);
+                    Serial3.flush();
+                  }
+                }
+              }
+            }
+          }   
+          break;
+          
+        case 'O': // Caso a conexao tenha sido perdida
+          inByte = Serial3.read();
+          if (inByte = ' ') {
+            inByte = Serial3.read();
+            if (inByte = 'C') {
+              inByte = Serial3.read();
+              if (inByte = 'A') {
+                inByte = Serial3.read();
+                if (inByte = 'R') {
+                  Conectado = 0;
+                  delay(50);
+                  Serial3.flush();
+                }
+              }
+            }
+          }
+          break;
 
-        break;
+        default:
+          break;
       }
     }
     Serial3.flush();
   }
 }
 
-
 void loop() {
   if(millis() - ultima_execucao > T_AMOSTRAGEM )
       //sinaliza_erro(0);    // O último loop demorou mais que T_AMOSTRAGEM para ser executado.
       Serial.println("ERRO!");
+
+      Serial.print("Tempo");
+      Serial.println(millis()-ultima_execucao);
       
    //Espera o tempo de amostragem
   while(millis() - ultima_execucao < T_AMOSTRAGEM);
   
   //TODO: Tratar dados do Controle remoto
   bluetooth(); // Pegar dados pelo bluetooth
+  if(Conectado == 0) //Caso o controle bluetooth esteja desconectado ele entra no modo POUSAR
+    MODO = POUSAR;
   altura = ultrasonic.Distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
   gps_disponivel = le_gps();               //Lê os dados do GPS
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
