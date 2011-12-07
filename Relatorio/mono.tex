@@ -1190,39 +1190,78 @@ A partir dos gráficos \ref{curvas.rotacaoxhelice} e \ref{curvas.tensaoxcorrente}
 Outro fator importante que pode ser observado é que a corrente aumenta mais com a variação do sinal que a força gerada. Com base nesta informação, podemos admitir que o ponto ótimo para o funcionamento do motor é na faixa de 30\% a 60\%. Levando em conta que a corrente vai aumentar mais e a duração da bateria vai cair proporcionalmente, enquanto que a força gerada será um pouco menor se considerarmos a proporção.
 
 
-% \part{Segunda Parte - Manual de Construção de um Multirrotor}
-% %\setcounter{chapter}{0}
+ \part{Segunda Parte - Manual de Construção de um Multirrotor}
+ %\setcounter{chapter}{0}
+ \chapter{Considerações Iniciais}
+ Este manual foi criado com o objetivo que qualquer pessoa com um mínimo de conhecimento técnico na área de microeletrônica seja capaz de construir seu próprio quadcóptero.
 
-% \chapter{Considerações Iniciais}
-% TODO
+Caso seja do desejo do leitor se aprofundar mais sobre a teoria por trás do desenvolvimento deste projeto, é fortemente recomendado que a monografia relacionada a este projeto também seja lida. Porém é perfeitamente possível a construção de um protótipo sem o conhecimento teórico.
 
-% \chapter{Peças}
+Aqui será citado as peças necessárias, o hardware e software utilizados bem como um guia para a montagem do protótipo.
 
-% \begin{figure}[h!]
-%   \centering
-%   \includegraphics{./Figuras/cad_suporte_motor.eps}
-%   \caption[Placa de suporte do motor]
-%   {Placa de suporte do motor}\label{fig.protsupmotor}
-% \end{figure}
+ \chapter{Peças}
 
-% \begin{figure}[h!]
-%   \centering
-%   \includegraphics{./Figuras/cad_central_superior.eps}
-%   \caption[Placa central superior do protótipo]
-%   {Placa central superior do protótipo}\label{fig.protcentsup}
-% \end{figure}
+ \begin{figure}[h!]
+   \centering
+   \includegraphics{./Figuras/cad_suporte_motor.eps}
+   \caption[Placa de suporte do motor]
+   {Placa de suporte do motor}\label{fig.protsupmotor}
+ \end{figure}
 
-% \begin{figure}[h!]
-%   \centering
-%   \includegraphics{./Figuras/cad_central_inferior.eps}
-%   \caption[Placa central inferior do protótipo]
-%   {Placa central inferior do protótipo}\label{fig.protcentinf}
-% \end{figure}
+ \begin{figure}[h!]
+   \centering
+   \includegraphics{./Figuras/cad_central_superior.eps}
+   \caption[Placa central superior do protótipo]
+   {Placa central superior do protótipo}\label{fig.protcentsup}
+ \end{figure}
 
-% \chapter{Instruções de montagem}
-% TODO
+ \begin{figure}[h!]
+   \centering
+   \includegraphics{./Figuras/cad_central_inferior.eps}
+   \caption[Placa central inferior do protótipo]
+   {Placa central inferior do protótipo}\label{fig.protcentinf}
+ \end{figure}
 
-% \chapter{Considerações Finais}
-% TODO
+ \chapter{Softwares}
+
+Neste capítulo serão listados todos os softwares utilizados e também aonde e como serão programados. Estes arquivos também se encontram no site: https://sites.google.com/site/hiperioncopter/ 
+
+  \section{Controle}
+
+  \section{Navegação}
+
+Nesta seção serão listados todo o software utilizado para navegação. Ele será dividido entre o programa que contém o loop principal e os arquivos auxiliares que contém parte do programa relativo ao GPS e ao sensor de proximidade.
+
+Todos estes softwares devem ser programados em uma placa arduíno Mega. Para obter mais informações sobre o Arduíno bem como programa-lo consulte o site: www.arduino.cc .
+
+  \subsection{Navegação - Loop principal}
+
+  \subsection{GPS}
+
+  \subsection{Sensor de proximidade}
+
+  \section{QuadArchon - Controle bluetooth}
+
+ \chapter{Instruções de montagem}
+ TODO
+
+ \chapter{ESC - Controlador eletrônico de velocidade}
+
+
+
+  \section{Software}
+
+
+
+  \section{Esquemático}
+
+
+
+  \section{Circuito impresso}
+
+
+
+ \chapter{Considerações Finais}
+ TODO
 
 \end{document}
