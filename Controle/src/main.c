@@ -159,8 +159,11 @@ void throttle(uint8_t timer_num, uint8_t match, float percent) {
 
 void processa()
 {
-    A = kp*( nav_params->pitch/2*M_PI - asin(accel_data->x*accel_scale) )  + kd*gyro_data->y*gyro_scale;
-    B = kp*( nav_params->roll/2*M_PI - asin(accel_data->y*accel_scale) )  - kd*gyro_data->x*gyro_scale;
+	int32_t accel_x_med = (accel_data->x = accel_data->x_ant)/2;
+	int32_t accel_y_med = (accel_data->y = accel_data->y_ant)/2;
+
+    A = kp*( nav_params->pitch/2*M_PI - asin(accel_x_med*accel_scale) )  + kd*gyro_data->y*gyro_scale;
+    B = kp*( nav_params->roll/2*M_PI - asin(accel_y_med*accel_scale) )  - kd*gyro_data->x*gyro_scale;
     C = kd_yaw*(nav_params->yaw/2*M_PI - kd_yaw*gyro_data->z*gyro_scale);
 }
 

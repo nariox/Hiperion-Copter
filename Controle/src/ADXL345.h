@@ -9,6 +9,7 @@
 
 typedef struct accel_data_t {
 	int16_t x, y, z;  // Sinal tridimensional do acelerômetro
+	int16_t x_ant, y_ant, z_ant;  // Sinal do passo anterior do acelerômetro
 }* accel_data_t;
 
 int Accel_X;
