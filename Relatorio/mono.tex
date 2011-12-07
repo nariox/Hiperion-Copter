@@ -28,11 +28,6 @@
 Orientador: Marcelo Knörich Zuffo\\
 Co-orientador: Sérgio Takeo Kofuji}
 
-%\orientador{Marcelo Knörich Zuffo}
-
-
-%\coorientador{Sérgio Takeo Kofuji}
-
 \instituicao{Departamento de Sistemas Eletrônicos \par Escola Politécnica\par Universidade
 de São Paulo}
 
@@ -56,7 +51,7 @@ de São Paulo}
 \begin{resumo}
   Este projeto tem como objetivo propor e implementar uma plataforma de desenvolvimento voadora. O intuito é criar uma base de conhecimento para que projetos posteriores possam se beneficiar do conhecimento adquirido. O projeto será implementado em camadas hierárquicas, tal como o modelo OSI. Esta abstração torna o projeto mais versátil e expansível.
   
-  Palavras chave: \textit{modular, vôo, brushless, multi-rotores, plataformas embarcadas, sistemas sem fio, telemetria, baterias Li-Poli sistemas eletrônicos}
+  Palavras chave: \textit{modular, vôo, brushless, multi-rotores, plataformas embarcadas, sistemas sem fio, telemetria, baterias Li-Poli, sistemas eletrônicos}
 \end{resumo}
 
 \begin{abstract}
@@ -86,7 +81,7 @@ de São Paulo}
 \begin{description}[style=multiline,leftmargin=3cm]
   \item[API] \textit{(Application Programming Interface)}   Interface de Programação de Aplicativo, um conjunto de normas que permite uma interface entre dois aplicativos ou um aplicativo e um plugin.
   \item[ARM] \textit{(Advanced Risc Machine)}   é uma arquitetura de processadores de 32-bits RISC.
-  \item[Brushless, Motor]    um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.
+  \item[Brushless Motor]    um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.
   \item[ESC] \textit{(Electronic Speed Controller)}   Controlador de Velocidade Eletrônico, é um dispositivo que faz a comutação das fases num motor sem escova.
   \item[GNU/Linux]   é um sistema operacional que utiliza as ferramentas do projeto GNU e o núcleo Linux.
   \item[GPS] \textit{(Global Positioning System)}    sistema utilizado para obter informações sobre tempo e posição de um objeto, utilizando 4 ou mais satélites.
@@ -105,7 +100,7 @@ de São Paulo}
 
 \listoffigures
 
-% \listoftables
+\listoftables
 
 \tableofcontents{}
 
@@ -118,7 +113,6 @@ de São Paulo}
                             foi ele também aquele que tornou esses fatos conhecidos;\\
                             e por esta razão ele foi chamado de pai desses corpos(...)}''\\
 {\small Diodoro da Sicília (5.67.1)}\end{flushright}{\small \par}
-\vfill{}
 
 \section{Contextualização e Motivação}
 A evolução da tecnologia ao longo da história permitiu ao homem desenvolver as mais diversas ferramentas, desde as que o auxiliam no trabalho até os dispositivos dedicados ao lazer. A depender do tamanho desses objetos, seus transportes podem ser feitos de diversas maneiras; pequenos objetos podem ser carregados, mas, para objetos um pouco maiores, isso já pode não ser possível ou conveniente, de forma que pode ser necessário incorporar a eles partes dedicadas a facilitar a sua movimentação. 
@@ -143,7 +137,6 @@ O protótipo final deverá possuir capacidades suficientes para o seu uso como uma
 \begin{itemize}
   \item Capacidade de vôo estável;
   \item movimentação em 3 eixos e rotação em torno do eixo vertical;
-%  \item mecanismo de prevenção de colisões;
   \item aferição e envio de dados dos sensores.
 \end{itemize}
 
@@ -157,6 +150,9 @@ Nos capítulos 5, 6, 7 e 8 serão apresentados os tópicos relacionados ao orçament
 Para finalizar, o capítulo 9 concluirá o trabalho, apresentado uma síntese de tudo que foi visto e, neste capítulo, também serão mostrados os resultados obtidos. Nas referências, bibliografias e nos anexos serão apresentados complementos e fontes de informações relevantes ao projeto.
 
 \chapter{Arquitetura}
+\begin{flushright}{}``\emph{Navegar é preciso, viver não é preciso.}''\\
+{\small Luís de Camões}\end{flushright}{\small \par}
+
 A arquitetura proposta foi pensada de forma a permitir ao multirrotor fácil adaptabilidade a projetos de pesquisa futuros e a outras finalidades não previstas ou não implementadas no protótipo inicial. O software e o hardware foram divididos em quatro camadas de abstração, cada qual com uma parcela bem definida das tarefas que, em conjunto, são responsáveis pelo funcionamento do sistema.
 
 As camadas são:
@@ -378,8 +374,9 @@ Os módulos GPS e magnetômetro e o receptor de rádio-controle comunicam-se com o 
 
 \chapter{Referencial Teórico\label{cap:referencialteorico}}
 
-\begin{flushright}{}``\emph{Navegar é preciso, viver não é preciso.}''\\
-{\small Luís de Camões}\end{flushright}{\small \par}
+\begin{flushright}{}``\emph{A mente que se abre a uma nova idéia \\
+jamais voltará ao seu tamanho original.}''\\
+{\small Albert Einstein}\end{flushright}{\small \par}
 
 \section{Considerações Iniciais}
 
@@ -570,7 +567,13 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
 
 \section{Sensores}
 
-% falta falta falta
+%\subsection{Acelerômetro}
+
+%\subsection{Giroscópio}
+
+%\subsection{GPS}
+
+%\subsection{Magnetômetro}
 
 \subsection{Sensor de distância}
 
@@ -729,6 +732,10 @@ Utilizando essa nova base, pode-se controlar os parâmetros de forma independente
 O problema das múltiplas variáveis se extingue dessa maneira. O controle PID pode então ser aplicado às variáveis A, B, C e D e então estas são decompostas nas forças dos motores individuais. Esta abordagem permite ainda que sejam utilizados métodos diferentes para controlar cada variável.
 
 \chapter{Desenvolvimento do Trabalho}
+
+\begin{flushright}{}``\emph{É fazendo que se aprende a fazer aquilo \\
+que se deve aprender a fazer.}''\\
+{\small Aristóteles}\end{flushright}{\small \par}
 
 \section{Considerações Iniciais}
 
@@ -918,6 +925,10 @@ No entanto, a disciplina foi capaz de expor estas deficências da equipe e exerci
 \end{figure}
 
 \chapter{Orçamento}
+
+\begin{flushright}{}``\emph{Quando o dinheiro vai na frente,\\
+todos os caminhos se abrem.}''\\
+{\small William Shakespeare}\end{flushright}{\small \par}
 
 \section{Considerações Iniciais}
 Neste capítulo, foi feito um orçamento para fazer um estudo da viabilidade financeira do projeto e também para auxiliar na reprodução deste multirrotor dando idéia do preço dos componentes utilizados. Não foi considerado o frete nem o custo de impostos para importação.
@@ -1200,7 +1211,9 @@ Caso seja do desejo do leitor se aprofundar mais sobre a teoria por trás do dese
 Aqui será citado as peças necessárias, o hardware e software utilizados bem como um guia para a montagem do protótipo.
 
  \chapter{Peças}
+Aqui todas as peças utilizadas no projeto, desde a parte estrutural quanto a parte funcional, serão mostradas de maneira que seja possível a reprodução da parte estrutural e as compras da parte funcional.
 
+ \section{Estruturais} 
  \begin{figure}[h!]
    \centering
    \includegraphics{./Figuras/cad_suporte_motor.eps}
@@ -1222,25 +1235,646 @@ Aqui será citado as peças necessárias, o hardware e software utilizados bem como
    {Placa central inferior do protótipo}\label{fig.protcentinf}
  \end{figure}
 
+ \section{Funcionais} 
+Todas as peças funcionais necessárias para a montagem do Hiperion está descrita neste capítulo, desde o hardware até os motores. A descrição de como fazer a ligação entre os componentes não será discutida aqui e sim na parte dedicada a montagem do protótipo. Assim também como o software utilizado será explicitado no seu devido capítulo.
+
+Dentre o material que foi comprado encontra-se: 
+
+\begin{itemize}
+  \item IMU Digital Combo Board - ITG3200/ADXL345 - 1un;
+  \item LS20031 GPS Receiver - 1un;
+  \item ultrasonic Sensor - HCRS04 - 1un;
+  \item LPC1114 LPCXpresso board - 1un;
+  \item arduino Mega board - 1un;
+  \item bateria - 1un; FALTA especificar
+  \item motor - 4un; FALTA especificar
+  \item ESC - 4un. FALTA especificar
+\end{itemize}
  \chapter{Softwares}
 
 Neste capítulo serão listados todos os softwares utilizados e também aonde e como serão programados. Estes arquivos também se encontram no site: https://sites.google.com/site/hiperioncopter/ 
 
   \section{Controle}
 
+Observar a seção da navegação.
+
+\begin{verbatim}
+Código da navegação 
+\end{verbatim}
+
   \section{Navegação}
 
 Nesta seção serão listados todo o software utilizado para navegação. Ele será dividido entre o programa que contém o loop principal e os arquivos auxiliares que contém parte do programa relativo ao GPS e ao sensor de proximidade.
 
-Todos estes softwares devem ser programados em uma placa arduíno Mega. Para obter mais informações sobre o Arduíno bem como programa-lo consulte o site: www.arduino.cc .
+Todos estes softwares devem ser programados em uma placa arduíno Mega. Para a gravação dos códigos da navegação foi utilizado a versão 1.0 do programa de gravação do arduíno. Para obter mais informações sobre o Arduíno bem como programa-lo consulte o site: www.arduino.cc .
 
   \subsection{Navegação - Loop principal}
 
+Todo o código do loop principal da navegação foi desenvolvido pelos membros deste projeto. Segue abaixo o código do programa desenvolvido.
+
+\begin{verbatim}
+Código da navegação 
+\end{verbatim}
+
+
   \subsection{GPS}
 
+Foi usada uma biblioteca para facilitar a obtenção dos dados do GPS pelo arduíno.
+
+Segue abaixo o arquivo:
+
+TinyGPS.h
+
+\begin{verbatim}
+/*
+  TinyGPS - a small GPS library for Arduino providing basic NMEA parsing
+  Based on work by and "distance_to" courtesy of Maarten Lamers.
+  Copyright (C) 2008-2011 Mikal Hart
+  All rights reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#ifndef TinyGPS_h
+#define TinyGPS_h
+
+#include "Arduino.h"
+
+#define _GPS_VERSION 10 // software version of this library
+#define _GPS_MPH_PER_KNOT 1.15077945
+#define _GPS_MPS_PER_KNOT 0.51444444
+#define _GPS_KMPH_PER_KNOT 1.852
+#define _GPS_MILES_PER_METER 0.00062137112
+#define _GPS_KM_PER_METER 0.001
+//#define _GPS_NO_STATS
+
+class TinyGPS
+{
+  public:
+    TinyGPS();
+    bool encode(char c); // process one character received from GPS
+    TinyGPS &operator << (char c) {encode(c); return *this;}
+    
+    // lat/long in hundred thousandths of a degree and age of fix in milliseconds
+    inline void get_position(long *latitude, long *longitude, unsigned long *fix_age = 0)
+    {
+      if (latitude) *latitude = _latitude;
+      if (longitude) *longitude = _longitude;
+      if (fix_age) *fix_age = _last_position_fix == GPS_INVALID_FIX_TIME ? 
+        GPS_INVALID_AGE : millis() - _last_position_fix;
+    }
+
+    // date as ddmmyy, time as hhmmsscc, and age in milliseconds
+    inline void get_datetime(unsigned long *date, unsigned long *time, unsigned long *fix_age = 0)
+    {
+      if (date) *date = _date;
+      if (time) *time = _time;
+      if (fix_age) *fix_age = _last_time_fix == GPS_INVALID_FIX_TIME ? 
+        GPS_INVALID_AGE : millis() - _last_time_fix;
+    }
+
+    // signed altitude in centimeters (from GPGGA sentence)
+    inline long altitude() { return _altitude; }
+
+    // course in last full GPRMC sentence in 100th of a degree
+    inline unsigned long course() { return _course; }
+    
+    // speed in last full GPRMC sentence in 100ths of a knot
+    unsigned long speed() { return _speed; }
+
+#ifndef _GPS_NO_STATS
+    void stats(unsigned long *chars, unsigned short *good_sentences, unsigned short *failed_cs);
+#endif
+
+    inline void f_get_position(float *latitude, float *longitude, unsigned long *fix_age = 0)
+    {
+      long lat, lon;
+      get_position(&lat, &lon, fix_age);
+      *latitude = lat / 100000.0;
+      *longitude = lon / 100000.0;
+    }
+
+    inline void crack_datetime(int *year, byte *month, byte *day, 
+      byte *hour, byte *minute, byte *second, byte *hundredths = 0, unsigned long *fix_age = 0)
+    {
+      unsigned long date, time;
+      get_datetime(&date, &time, fix_age);
+      if (year) 
+      {
+        *year = date % 100;
+        *year += *year > 80 ? 1900 : 2000;
+      }
+      if (month) *month = (date / 100) % 100;
+      if (day) *day = date / 10000;
+      if (hour) *hour = time / 1000000;
+      if (minute) *minute = (time / 10000) % 100;
+      if (second) *second = (time / 100) % 100;
+      if (hundredths) *hundredths = time % 100;
+    }
+
+    inline float f_altitude()    { return altitude() / 100.0; }
+    inline float f_course()      { return course() / 100.0; }
+    inline float f_speed_knots() { return speed() / 100.0; }
+    inline float f_speed_mph()   { return _GPS_MPH_PER_KNOT * f_speed_knots(); }
+    inline float f_speed_mps()   { return _GPS_MPS_PER_KNOT * f_speed_knots(); }
+    inline float f_speed_kmph()  { return _GPS_KMPH_PER_KNOT * f_speed_knots(); }
+
+    static int library_version() { return _GPS_VERSION; }
+
+    enum {GPS_INVALID_AGE = 0xFFFFFFFF, GPS_INVALID_ANGLE = 999999999, GPS_INVALID_ALTITUDE = 999999999, GPS_INVALID_DATE = 0,
+      GPS_INVALID_TIME = 0xFFFFFFFF, GPS_INVALID_SPEED = 999999999, GPS_INVALID_FIX_TIME = 0xFFFFFFFF};
+
+
+    static float distance_between (float lat1, float long1, float lat2, float long2);
+
+private:
+    enum {_GPS_SENTENCE_GPGGA, _GPS_SENTENCE_GPRMC, _GPS_SENTENCE_OTHER};
+    
+    // properties
+    unsigned long _time, _new_time;
+    unsigned long _date, _new_date;
+    long _latitude, _new_latitude;
+    long _longitude, _new_longitude;
+    long _altitude, _new_altitude;
+    unsigned long  _speed, _new_speed;
+    unsigned long  _course, _new_course;
+
+    unsigned long _last_time_fix, _new_time_fix;
+    unsigned long _last_position_fix, _new_position_fix;
+
+    // parsing state variables
+    byte _parity;
+    bool _is_checksum_term;
+    char _term[15];
+    byte _sentence_type;
+    byte _term_number;
+    byte _term_offset;
+    bool _gps_data_good;
+
+#ifndef _GPS_NO_STATS
+    // statistics
+    unsigned long _encoded_characters;
+    unsigned short _good_sentences;
+    unsigned short _failed_checksum;
+    unsigned short _passed_checksum;
+#endif
+
+    // internal utilities
+    int from_hex(char a);
+    unsigned long parse_decimal();
+    unsigned long parse_degrees();
+    bool term_complete();
+    bool gpsisdigit(char c) { return c >= '0' && c <= '9'; }
+    long gpsatol(const char *str);
+    int gpsstrcmp(const char *str1, const char *str2);
+};
+
+// Arduino 0012 workaround
+#undef int
+#undef char
+#undef long
+#undef byte
+#undef float
+#undef abs
+#undef round 
+
+#endif
+ 
+\end{verbatim}
+
+Segue abaixo o arquivo:
+
+TinyGPS.cpp
+
+\begin{verbatim}
+/*
+  TinyGPS - a small GPS library for Arduino providing basic NMEA parsing
+  Based on work by and "distance_to" courtesy of Maarten Lamers.
+  Copyright (C) 2008-2011 Mikal Hart
+  All rights reserved.
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#include "TinyGPS.h"
+
+#define _GPRMC_TERM   "GPRMC"
+#define _GPGGA_TERM   "GPGGA"
+
+TinyGPS::TinyGPS()
+:  _time(GPS_INVALID_TIME)
+,  _date(GPS_INVALID_DATE)
+,  _latitude(GPS_INVALID_ANGLE)
+,  _longitude(GPS_INVALID_ANGLE)
+,  _altitude(GPS_INVALID_ALTITUDE)
+,  _speed(GPS_INVALID_SPEED)
+,  _course(GPS_INVALID_ANGLE)
+,  _last_time_fix(GPS_INVALID_FIX_TIME)
+,  _last_position_fix(GPS_INVALID_FIX_TIME)
+,  _parity(0)
+,  _is_checksum_term(false)
+,  _sentence_type(_GPS_SENTENCE_OTHER)
+,  _term_number(0)
+,  _term_offset(0)
+,  _gps_data_good(false)
+#ifndef _GPS_NO_STATS
+,  _encoded_characters(0)
+,  _good_sentences(0)
+,  _failed_checksum(0)
+#endif
+{
+  _term[0] = '\0';
+}
+
+//
+// public methods
+//
+
+bool TinyGPS::encode(char c)
+{
+  bool valid_sentence = false;
+
+  ++_encoded_characters;
+  switch(c)
+  {
+  case ',': // term terminators
+    _parity ^= c;
+  case '\r':
+  case '\n':
+  case '*':
+    if (_term_offset < sizeof(_term))
+    {
+      _term[_term_offset] = 0;
+      valid_sentence = term_complete();
+    }
+    ++_term_number;
+    _term_offset = 0;
+    _is_checksum_term = c == '*';
+    return valid_sentence;
+
+  case '$': // sentence begin
+    _term_number = _term_offset = 0;
+    _parity = 0;
+    _sentence_type = _GPS_SENTENCE_OTHER;
+    _is_checksum_term = false;
+    _gps_data_good = false;
+    return valid_sentence;
+  }
+
+  // ordinary characters
+  if (_term_offset < sizeof(_term) - 1)
+    _term[_term_offset++] = c;
+  if (!_is_checksum_term)
+    _parity ^= c;
+
+  return valid_sentence;
+}
+
+#ifndef _GPS_NO_STATS
+void TinyGPS::stats(unsigned long *chars, unsigned short *sentences, unsigned short *failed_cs)
+{
+  if (chars) *chars = _encoded_characters;
+  if (sentences) *sentences = _good_sentences;
+  if (failed_cs) *failed_cs = _failed_checksum;
+}
+#endif
+
+//
+// internal utilities
+//
+int TinyGPS::from_hex(char a) 
+{
+  if (a >= 'A' && a <= 'F')
+    return a - 'A' + 10;
+  else if (a >= 'a' && a <= 'f')
+    return a - 'a' + 10;
+  else
+    return a - '0';
+}
+
+unsigned long TinyGPS::parse_decimal()
+{
+  char *p = _term;
+  bool isneg = *p == '-';
+  if (isneg) ++p;
+  unsigned long ret = 100UL * gpsatol(p);
+  while (gpsisdigit(*p)) ++p;
+  if (*p == '.')
+  {
+    if (gpsisdigit(p[1]))
+    {
+      ret += 10 * (p[1] - '0');
+      if (gpsisdigit(p[2]))
+        ret += p[2] - '0';
+    }
+  }
+  return isneg ? -ret : ret;
+}
+
+unsigned long TinyGPS::parse_degrees()
+{
+  char *p;
+  unsigned long left = gpsatol(_term);
+  unsigned long tenk_minutes = (left % 100UL) * 10000UL;
+  for (p=_term; gpsisdigit(*p); ++p);
+  if (*p == '.')
+  {
+    unsigned long mult = 1000;
+    while (gpsisdigit(*++p))
+    {
+      tenk_minutes += mult * (*p - '0');
+      mult /= 10;
+    }
+  }
+  return (left / 100) * 100000 + tenk_minutes / 6;
+}
+
+// Processes a just-completed term
+// Returns true if new sentence has just passed checksum test and is validated
+bool TinyGPS::term_complete()
+{
+  if (_is_checksum_term)
+  {
+    byte checksum = 16 * from_hex(_term[0]) + from_hex(_term[1]);
+    if (checksum == _parity)
+    {
+      if (_gps_data_good)
+      {
+#ifndef _GPS_NO_STATS
+        ++_good_sentences;
+#endif
+        _last_time_fix = _new_time_fix;
+        _last_position_fix = _new_position_fix;
+
+        switch(_sentence_type)
+        {
+        case _GPS_SENTENCE_GPRMC:
+          _time      = _new_time;
+          _date      = _new_date;
+          _latitude  = _new_latitude;
+          _longitude = _new_longitude;
+          _speed     = _new_speed;
+          _course    = _new_course;
+          break;
+        case _GPS_SENTENCE_GPGGA:
+          _altitude  = _new_altitude;
+          _time      = _new_time;
+          _latitude  = _new_latitude;
+          _longitude = _new_longitude;
+          break;
+        }
+
+        return true;
+      }
+    }
+
+#ifndef _GPS_NO_STATS
+    else
+      ++_failed_checksum;
+#endif
+    return false;
+  }
+
+  // the first term determines the sentence type
+  if (_term_number == 0)
+  {
+    if (!gpsstrcmp(_term, _GPRMC_TERM))
+      _sentence_type = _GPS_SENTENCE_GPRMC;
+    else if (!gpsstrcmp(_term, _GPGGA_TERM))
+      _sentence_type = _GPS_SENTENCE_GPGGA;
+    else
+      _sentence_type = _GPS_SENTENCE_OTHER;
+    return false;
+  }
+
+  if (_sentence_type != _GPS_SENTENCE_OTHER && _term[0])
+  switch((_sentence_type == _GPS_SENTENCE_GPGGA ? 200 : 100) + _term_number)
+  {
+    case 101: // Time in both sentences
+    case 201:
+      _new_time = parse_decimal();
+      _new_time_fix = millis();
+      break;
+    case 102: // GPRMC validity
+      _gps_data_good = _term[0] == 'A';
+      break;
+    case 103: // Latitude
+    case 202:
+      _new_latitude = parse_degrees();
+      _new_position_fix = millis();
+      break;
+    case 104: // N/S
+    case 203:
+      if (_term[0] == 'S')
+        _new_latitude = -_new_latitude;
+      break;
+    case 105: // Longitude
+    case 204:
+      _new_longitude = parse_degrees();
+      break;
+    case 106: // E/W
+    case 205:
+      if (_term[0] == 'W')
+        _new_longitude = -_new_longitude;
+      break;
+    case 107: // Speed (GPRMC)
+      _new_speed = parse_decimal();
+      break;
+    case 108: // Course (GPRMC)
+      _new_course = parse_decimal();
+      break;
+    case 109: // Date (GPRMC)
+      _new_date = gpsatol(_term);
+      break;
+    case 206: // Fix data (GPGGA)
+      _gps_data_good = _term[0] > '0';
+      break;
+    case 209: // Altitude (GPGGA)
+      _new_altitude = parse_decimal();
+      break;
+  }
+
+  return false;
+}
+
+long TinyGPS::gpsatol(const char *str)
+{
+  long ret = 0;
+  while (gpsisdigit(*str))
+    ret = 10 * ret + *str++ - '0';
+  return ret;
+}
+
+int TinyGPS::gpsstrcmp(const char *str1, const char *str2)
+{
+  while (*str1 && *str1 == *str2)
+    ++str1, ++str2;
+  return *str1;
+}
+
+/* static */
+float TinyGPS::distance_between (float lat1, float long1, float lat2, float long2) 
+{
+  // returns distance in meters between two positions, both specified 
+  // as signed decimal-degrees latitude and longitude. Uses great-circle 
+  // distance computation for hypothetical sphere of radius 6372795 meters.
+  // Because Earth is no exact sphere, rounding errors may be up to 0.5%.
+  // Courtesy of Maarten Lamers
+  float delta = radians(long1-long2);
+  float sdlong = sin(delta);
+  float cdlong = cos(delta);
+  lat1 = radians(lat1);
+  lat2 = radians(lat2);
+  float slat1 = sin(lat1);
+  float clat1 = cos(lat1);
+  float slat2 = sin(lat2);
+  float clat2 = cos(lat2);
+  delta = (clat1 * slat2) - (slat1 * clat2 * cdlong); 
+  delta = sq(delta); 
+  delta += sq(clat2 * sdlong); 
+  delta = sqrt(delta); 
+  float denom = (slat1 * slat2) + (clat1 * clat2 * cdlong); 
+  delta = atan2(delta, denom); 
+  return delta * 6372795; 
+} 
+\end{verbatim}
+
+
   \subsection{Sensor de proximidade}
+Os arquivos utilizados para auxiliar no controle do sensor de distância foi uma biblioteca encontrada na internet que foi devidamente adaptada para a utilização dela no projeto.
+
+Segue abaixo o arquivo:
+
+Ultrasonic.h
+
+\begin{verbatim}
+/*
+  Ultrasonic.h - Library for HR-SC04 Ultrasonic Ranging Module.
+  Created by ITead studio. Alex, Apr 20, 2010.
+  iteadstudio.com
+  Adapted for Hiperion - Dez, 2011.
+*/
+
+
+#ifndef Ultrasonic_h
+#define Ultrasonic_h
+
+#include "Arduino.h"
+
+#define CM 1
+#define INC 0
+
+class Ultrasonic
+{
+  public:
+    Ultrasonic(int TP, int EP);
+    long Timing();
+    long Ranging(int sys);
+    long Distancia(int trigger);
+
+    private:
+    int Trig_pin;
+    int Echo_pin;
+    long  duration,distacne_cm,distance_inc;
+    
+};
+
+#endif
+\end{verbatim}
+Segue abaixo o arquivo:
+
+Ultrasonic.cpp
+
+\begin{verbatim}
+ /*
+  Ultrasonic.h - Library for HR-SC04 Ultrasonic Ranging Module.
+  Created by ITead studio. Alex, Apr 20, 2010.
+  iteadstudio.com
+  Adapted for Hiperion - Dez, 2011.
+*/
+
+
+#include "Ultrasonic.h"
+#define TMAX 35000 // em micro segundos
+
+Ultrasonic::Ultrasonic(int TP, int EP)
+{
+   pinMode(TP,OUTPUT);
+   pinMode(EP,INPUT);
+   Trig_pin=TP;
+   Echo_pin=EP;
+}
+
+long Ultrasonic::Timing()
+{
+  digitalWrite(Trig_pin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(Trig_pin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trig_pin, LOW);
+  duration = pulseIn(Echo_pin,HIGH, TMAX);
+  return duration;
+}
+
+long Ultrasonic::Ranging(int sys)
+{
+  Timing();
+  distacne_cm = duration /29 / 2 ;
+  distance_inc = duration / 74 / 2;
+  if (sys)
+  return distacne_cm;
+  else
+  return distance_inc;
+}
+
+long Ultrasonic::Distancia(int trigger)
+{
+  //seta o pino trigger com um pulso baixo "LOW" (ou desligado ou ainda 0)
+  digitalWrite(trigger, LOW);
+  // delay de 2 microssegundos
+  delayMicroseconds(2);
+  //seta o pino trigger com pulso alto "HIGH" (ou ligado ou ainda 1)
+  digitalWrite(trigger, HIGH);
+  //delay de 10 microssegundos
+  delayMicroseconds(10);
+  //seta o pino trigger com pulso baixo novamente
+  digitalWrite(trigger, LOW);
+  // função Ranging, faz a conversão do tempo de SENSOR DISTANCIA resposta do echo em centimetros
+  return (Ranging(CM));
+}
+\end{verbatim}
+
+
 
   \section{QuadArchon - Controle bluetooth}
+
+Para a função do controle remoto, foi utilizado o QuadArchon, que é um aplicativo gratuito desenvolvido para plataforma android que através de bluetooth se comunica mandando os sinais de controle e também recebendo telemetria.
+
+Este aplicativo foi desenvolvido em uma disciplina do departamento de Sistemas Eletrônicos da Escola Politécnica. Toda informação a respeito do QuadArchon, inclusive o aplicativo para download, pode ser encontrada no site: https://sites.google.com/site/quadarchon/ 
 
  \chapter{Instruções de montagem}
  TODO
@@ -1248,16 +1882,11 @@ Todos estes softwares devem ser programados em uma placa arduíno Mega. Para obte
  \chapter{ESC - Controlador eletrônico de velocidade}
 
 
-
   \section{Software}
 
 
 
-  \section{Esquemático}
-
-
-
-  \section{Circuito impresso}
+  \section{Hardware}
 
 
 
