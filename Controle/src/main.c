@@ -122,7 +122,7 @@ void inicializa() {
 	throttle(1, 1, 0);
 	enable_timer32(1);
 
-	delay32Ms(0, 3000); //Atraso para que os periféricos e componentes externos inicializem
+	delay32Ms(0, 8000); //Atraso para que os periféricos e componentes externos inicializem
 
 	//O timer 1 será usado para gerar o intervalo de 100ms, que é o tempo de amostragem.
 	// Initialize 16-bit timer 1. TIME_INTERVAL is defined as 1mS
@@ -135,6 +135,7 @@ void inicializa() {
 
 void le_nav()
 {
+	return;
 	  while (1)
 	  {				/* Loop forever */
 		if ( UARTCount == NAV_MES_SIZE )
@@ -158,8 +159,11 @@ void throttle(uint8_t timer_num, uint8_t match, float percent) {
 
 void processa()
 {
-    A = kp*( nav_params->pitch/2*M_PI - asin(accel_data->x*accel_scale) )  + kd*gyro_data->x*gyro_scale;
-    B = kp*( nav_params->roll/2*M_PI - asin(accel_data->y*accel_scale) )  + kd*gyro_data->y*gyro_scale;
+	int32_t accel_x_med = (accel_data->x = accel_data->x_ant)/2;
+	int32_t accel_y_med = (accel_data->y = accel_data->y_ant)/2;
+
+    A = kp*( nav_params->pitch/2*M_PI - asin(accel_x_med*accel_scale) )  + kd*gyro_data->y*gyro_scale;
+    B = kp*( nav_params->roll/2*M_PI - asin(accel_y_med*accel_scale) )  - kd*gyro_data->x*gyro_scale;
     C = kd_yaw*(nav_params->yaw/2*M_PI - kd_yaw*gyro_data->z*gyro_scale);
 }
 
@@ -191,9 +195,16 @@ int main(void)
 
 	inicializa();
 
-	kp = 1;      // Constante proporcional do controlador PD
-	kd = 1;      // Constante derivativa do controlador PD
-	kd_yaw = 1;  // Constante derivativa do yaw do controlador PD
+	//throttle(0, 0, 0);
+	//throttle(0, 1, 0);
+	//throttle(1, 0, 0);
+	//throttle(1, 1, 0);
+
+	//while(1);
+
+	kp = 2;      // Constante proporcional do controlador PD
+	kd = 1.2;      // Constante derivativa do controlador PD
+	kd_yaw = 0;  // Constante derivativa do yaw do controlador PD
 	D = 0;
 
 	//Loop principal
@@ -221,7 +232,6 @@ int main(void)
         still_running = FALSE;
         // Go to sleep to save power between timer interrupts
         __WFI();
-
         }
 
     // Enter an infinite loop, just incrementing a counter
