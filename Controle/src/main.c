@@ -46,7 +46,7 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 #define ClrGPIOBit(port,bit) ClrGPIOBits((port), 1<<(bit))
 
 #define M_PI 3.14159265358979323846                  // pi
-#define NAV_MES_SIZE 7                               // Tamanho da mensagem recebida da navegação.
+#define NAV_MES_SIZE 8                               // Tamanho da mensagem recebida da navegação.
 #define Tamostragem 100                              // O tempo de amostragem em ms.
 #define pwm_periodo 59999                            // PWM de 50Hz. Ver o ajuste do prescaler no driver.
 volatile uint16_t throttle_min = 95.0*(pwm_periodo+1)/100; // O throttle mínimo ocorre quando o dutty cicle está
@@ -128,7 +128,7 @@ void inicializa() {
 	// Initialize 16-bit timer 1. TIME_INTERVAL is defined as 1mS
 	init_timer16(1, Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
 	// Enable the TIMER1 Interrupt
-	NVIC_EnableIRQ(TIMER_16_1_IRQn);
+	//NVIC_EnableIRQ(TIMER_16_1_IRQn);
 	// Enable timer 0.
 	enable_timer16(1);
 }
@@ -200,7 +200,6 @@ int main(void)
 
 	//Loop principal
 	while(1) {
-		//apague = LPC_TMR16B1->TC;
         still_running = TRUE;
 
         //Lê sinais dos sensores
@@ -209,7 +208,7 @@ int main(void)
         temp = Gyro_GetTemp(gyro_data);
 
         //Lê parâmetros de navegação
-	    le_nav();
+	    //le_nav();
         nav_params->pitch = 0;
         nav_params->roll = 0;
         nav_params->yaw = 0;
@@ -220,6 +219,8 @@ int main(void)
         //Envia as rotações dos motores aos ESCs
         envia_rotacoes();
 
+        ToggleGPIOBit( LED_PORT, LED_BIT );
+
         still_running = FALSE;
         // Go to sleep to save power between timer interrupts
         __WFI();
@@ -227,6 +228,10 @@ int main(void)
 
     // Enter an infinite loop, just incrementing a counter
     return 0;
+}
+
+void atualiza_PWMs() {
+
 }
 
 void TIMER16_1_IRQHandler(void)
