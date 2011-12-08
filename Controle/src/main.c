@@ -195,13 +195,6 @@ int main(void)
 
 	inicializa();
 
-	//throttle(0, 0, 0);
-	//throttle(0, 1, 0);
-	//throttle(1, 0, 0);
-	//throttle(1, 1, 0);
-
-	//while(1);
-
 	kp = 2;      // Constante proporcional do controlador PD
 	kd = 1.2;      // Constante derivativa do controlador PD
 	kd_yaw = 0;  // Constante derivativa do yaw do controlador PD

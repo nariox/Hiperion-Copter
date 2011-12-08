@@ -32,6 +32,7 @@
 //Controle de altura
 #define altura_throttle_max 100
 #define altura_throttle_min 1
+#define altura_passo_max 10
 #define ALTURA_POUSO 5
 #define ki 1
 
