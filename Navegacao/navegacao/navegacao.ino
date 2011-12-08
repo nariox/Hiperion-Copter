@@ -4,7 +4,7 @@
  Name        : navegacao.ino
  Author      : Bruno Pinho
  Revision    : Danilo Luvizotto e Pedro Nariyoshi
- Version     : 1.1
+ Version     : 1.0
  Description : Navigation of Hiperion - Quadcopter
 
 ===============================================================================
@@ -60,21 +60,21 @@ int altura_erro_acumulado = 0;
 int Conectado = 0;
 
 void manda_dados(int roll, int pitch, int yaw, int throttle) {
-      Serial3.print("R");
-      Serial3.print(roll+CENTRADO);
-      Serial3.print("P");
-      Serial3.print(pitch+CENTRADO);
-      Serial3.print("Y");
-      Serial3.print(yaw+CENTRADO);
-      Serial3.print("T");
-      Serial3.print(throttle);
+      Serial1.print("R");
+      Serial1.print(roll+CENTRADO);
+      Serial1.print("P");
+      Serial1.print(pitch+CENTRADO);
+      Serial1.print("Y");
+      Serial1.print(yaw+CENTRADO);
+      Serial1.print("T");
+      Serial1.print(throttle);
 }
 
 void setup() {
     Serial.begin(115200); // Para debug
-    Serial1.begin(57600); // Para GPS
+    Serial1.begin(115200); // Para a camada de Controle
     Serial2.begin(115200); // Para bluetooth
-    Serial3.begin(115200); // Para a camada de Controle
+    Serial3.begin(57600); // Para GPS
     pinMode(echoPin, INPUT); // define o pino 52 como entrada (recebe) SENSOR DISTANCIA
     pinMode(trigPin, OUTPUT); // define o pino 48 como saida (envia) SENSOR DISTANCIA
     pinMode(13, OUTPUT); // O pino 13 é um led, que será usado para indicar erro.
@@ -295,18 +295,6 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
   }
 }
 
-void enviabluetooth() {   // Envia dados de telemetria pelo bluetooth
-  if(Conectado == 1 && gps_disponivel) {
-    Serial2.print("LAT");
-    Serial2.print(lat);
-    Serial2.print("LON");
-    Serial2.print(lon);
-    Serial2.print("ALT");
-    Serial2.print(alt);
-  }
-}
-
-
 void loop() {
   if(millis() - ultima_execucao > T_AMOSTRAGEM ) {
       Serial.println("ERRO! A execuçao demorou mais que T_AMOSTRAGEM!");
@@ -316,20 +304,16 @@ void loop() {
    //Espera o tempo de amostragem
   while(millis() - ultima_execucao < T_AMOSTRAGEM);
   
-  //Tratar dados do Controle remoto
+  //TODO: Tratar dados do Controle remoto
   //bluetooth(); // Pegar dados pelo bluetooth
   //if(!Conectado) //Caso o controle bluetooth esteja desconectado ele entra no modo POUSAR
     //MODO = POUSAR;
-  //Obter dados dos sensores
   altura = ultrasonic.Distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
   gps_disponivel = le_gps();               //Lê os dados do GPS
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
-  
-  enviabluetooth(); // Envia dados do GPS pelo bluetooth
-  
   if(MODO > GPS) // Caso tenha entrado em algum modo inexistente - GPS  o ultimo modo
     MODO = POUSAR;
-    
+
   switch(MODO) {
       case DESLIGAR:                //Fazer o multirrotor pousar em segurança
           manda_dados(1, 2, 3, 4);   //Desliga os motores
@@ -440,8 +424,8 @@ void loop() {
 }
 
 bool feedgps() {
-  while (Serial1.available()) {
-    if (gps.encode(Serial1.read()))
+  while (Serial3.available()) {
+    if (gps.encode(Serial3.read()))
       return true;
   }
   return false;
