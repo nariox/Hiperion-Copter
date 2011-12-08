@@ -4,7 +4,7 @@
  Name        : navegacao.ino
  Author      : Bruno Pinho
  Revision    : Danilo Luvizotto e Pedro Nariyoshi
- Version     : 1.0
+ Version     : 1.1
  Description : Navigation of Hiperion - Quadcopter
 
 ===============================================================================
@@ -295,6 +295,18 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
   }
 }
 
+void enviabluetooth() {   // Envia dados de telemetria pelo bluetooth
+  if(Conectado == 1 && gps_disponivel) {
+    Serial2.print("LAT");
+    Serial2.print(lat);
+    Serial2.print("LON");
+    Serial2.print(lon);
+    Serial2.print("ALT");
+    Serial2.print(alt);
+  }
+}
+
+
 void loop() {
   if(millis() - ultima_execucao > T_AMOSTRAGEM ) {
       Serial.println("ERRO! A execuçao demorou mais que T_AMOSTRAGEM!");
@@ -304,16 +316,20 @@ void loop() {
    //Espera o tempo de amostragem
   while(millis() - ultima_execucao < T_AMOSTRAGEM);
   
-  //TODO: Tratar dados do Controle remoto
+  //Tratar dados do Controle remoto
   //bluetooth(); // Pegar dados pelo bluetooth
   //if(!Conectado) //Caso o controle bluetooth esteja desconectado ele entra no modo POUSAR
     //MODO = POUSAR;
+  //Obter dados dos sensores
   altura = ultrasonic.Distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
   gps_disponivel = le_gps();               //Lê os dados do GPS
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
+  
+  enviabluetooth(); // Envia dados do GPS pelo bluetooth
+  
   if(MODO > GPS) // Caso tenha entrado em algum modo inexistente - GPS  o ultimo modo
     MODO = POUSAR;
-
+    
   switch(MODO) {
       case DESLIGAR:                //Fazer o multirrotor pousar em segurança
           manda_dados(1, 2, 3, 4);   //Desliga os motores
