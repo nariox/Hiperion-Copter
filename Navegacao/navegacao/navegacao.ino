@@ -22,7 +22,7 @@
 #define YAWPADRAO 30 // Velocidade padrao de rotacao
 #define MARGEMGPS 10 // Margem de erro do GPS (0,0001 = 10m aproximadamente no equador)
 #define MAXDIST 300 // Distancia maxima do sensor de distancia (em cm)
-#define T_AMOSTRAGEM 1000
+#define T_AMOSTRAGEM 100
 //Modos de navegacao
 #define DESLIGAR 0
 #define POUSAR 1
@@ -60,13 +60,32 @@ int altura_erro_acumulado = 0;
 int Conectado = 0;
 
 void manda_dados(int roll, int pitch, int yaw, int throttle) {
+      roll =+ CENTRADO;
+      pitch =+ CENTRADO;
+      yaw =+ CENTRADO;
       Serial1.print("R");
-      Serial1.print(roll+CENTRADO);
+      if(roll < 10)
+        Serial1.print("0");
+      if(roll < 100)
+        Serial1.print("0");
+      Serial1.print(roll);
       Serial1.print("P");
-      Serial1.print(pitch+CENTRADO);
+      if(pitch < 10)
+        Serial1.print("0");
+      if(pitch < 100)
+        Serial1.print("0");
+      Serial1.print(pitch);
       Serial1.print("Y");
-      Serial1.print(yaw+CENTRADO);
+      if(yaw < 10)
+        Serial1.print("0");
+      if(yaw < 100)
+        Serial1.print("0");
+      Serial1.print(yaw);
       Serial1.print("T");
+      if(throttle < 10)
+        Serial1.print("0");
+      if(throttle < 100)
+        Serial1.print("0");
       Serial1.print(throttle);
 }
 
