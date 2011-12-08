@@ -135,17 +135,15 @@ void inicializa() {
 
 void le_nav()
 {
-	return;
-	  while (1)
-	  {				/* Loop forever */
-		if ( UARTCount == NAV_MES_SIZE )
-		{
-		  LPC_UART->IER = IER_THRE | IER_RLS;			/* Disable RBR */
-		  UARTSend( (uint8_t *)UARTBuffer, UARTCount );
-		  UARTCount = 0;
-		  LPC_UART->IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
-		}
-	  }
+    while (1) {				/* Loop forever */
+	    //if ( UARTCount == NAV_MES_SIZE ) {
+    	if ( UARTCount > 0 ) {
+		    LPC_UART->IER = IER_THRE | IER_RLS;			/* Disable RBR */
+		    UARTSend( (uint8_t *)UARTBuffer, UARTCount );
+		    UARTCount = 0;
+		    LPC_UART->IER = IER_THRE | IER_RLS | IER_RBR;	/* Re-enable RBR */
+        }
+	}
 }
 
 float temp=0;

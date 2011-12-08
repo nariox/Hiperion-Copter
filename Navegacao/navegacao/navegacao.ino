@@ -60,21 +60,21 @@ int altura_erro_acumulado = 0;
 int Conectado = 0;
 
 void manda_dados(int roll, int pitch, int yaw, int throttle) {
-      Serial2.print("R");
-      Serial2.print(roll+CENTRADO);
-      Serial2.print("P");
-      Serial2.print(pitch+CENTRADO);
-      Serial2.print("Y");
-      Serial2.print(yaw+CENTRADO);
-      Serial2.print("T");
-      Serial2.print(throttle+CENTRADO);
+      Serial3.print("R");
+      Serial3.print(roll+CENTRADO);
+      Serial3.print("P");
+      Serial3.print(pitch+CENTRADO);
+      Serial3.print("Y");
+      Serial3.print(yaw+CENTRADO);
+      Serial3.print("T");
+      Serial3.print(throttle);
 }
 
 void setup() {
     Serial.begin(115200); // Para debug
     Serial1.begin(57600); // Para GPS
-    Serial2.begin(115200); // Para a camada de Controle
     Serial2.begin(115200); // Para bluetooth
+    Serial3.begin(115200); // Para a camada de Controle
     pinMode(echoPin, INPUT); // define o pino 52 como entrada (recebe) SENSOR DISTANCIA
     pinMode(trigPin, OUTPUT); // define o pino 48 como saida (envia) SENSOR DISTANCIA
     pinMode(13, OUTPUT); // O pino 13 é um led, que será usado para indicar erro.
@@ -133,22 +133,22 @@ void estavel() {   // Mantem o multirrotor estavel
 
 void bluetooth() {   // Tratamento dos dados do bluetooth
   int inByte;
-  if(Conectado == 0 && Serial3.available()) {
-    inByte = Serial3.read();    
+  if(Conectado == 0 && Serial2.available()) {
+    inByte = Serial2.read();    
     if (inByte = 'R') {
-      inByte = Serial3.read();
+      inByte = Serial2.read();
       if (inByte = 'F') {
-        inByte = Serial3.read();
+        inByte = Serial2.read();
         if (inByte = 'C') {
-          inByte = Serial3.read();
+          inByte = Serial2.read();
           if (inByte = 'O') {
-            inByte = Serial3.read();
+            inByte = Serial2.read();
             if (inByte = 'M') {
-              inByte = Serial3.read();
+              inByte = Serial2.read();
               if (inByte = 'M') {
                 Conectado = 1;
                 delay(50);
-                Serial3.flush();
+                Serial2.flush();
               }
             }
           }
@@ -159,24 +159,24 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
 
   if(Conectado == 1) {
     for(int i = 1; i <= 8; i++) {
-      inByte = Serial3.read();
+      inByte = Serial2.read();
       switch(inByte) {
         case 'M': //Modo sendo recebido
-          inByte = Serial3.read();
+          inByte = Serial2.read();
           if(inByte == 'N') {
-            inByte = Serial3.read();    
+            inByte = Serial2.read();    
             if (inByte = 'O') {
-              inByte = Serial3.read();
+              inByte = Serial2.read();
               if (inByte = ' ') {
-                inByte = Serial3.read();
+                inByte = Serial2.read();
                 if (inByte = 'C') {
-                  inByte = Serial3.read();
+                  inByte = Serial2.read();
                   if (inByte = 'A') {
-                    inByte = Serial3.read();
+                    inByte = Serial2.read();
                     if (inByte = 'R') {
                       Conectado = 0;
                       delay(50);
-                      Serial3.flush();
+                      Serial2.flush();
                     }
                   }
                 }
@@ -188,81 +188,80 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
           break;
         
         case 'R': //Roll sendo recebido
-          inByte = Serial3.read();
-          roll = (Serial3.read() - '0') * 100;
-          roll =+ (Serial3.read() - '0') * 10;
-          roll =+ (Serial3.read() - '0') * 1;
+          inByte = Serial2.read();
+          roll = (Serial2.read() - '0') * 100;
+          roll =+ (Serial2.read() - '0') * 10;
+          roll =+ (Serial2.read() - '0');// * 1;
           roll =- 127;
           break;
 
         case 'P': //Pitch sendo recebido
-          pitch = (Serial3.read() - '0') * 100;
-          pitch =+ (Serial3.read() - '0') * 10;
-          pitch =+ (Serial3.read() - '0') * 1;
+          pitch = (Serial2.read() - '0') * 100;
+          pitch =+ (Serial2.read() - '0') * 10;
+          pitch =+ (Serial2.read() - '0');// * 1;
           pitch =- 127;
           break;
 
         case 'Y': //Yaw sendo recebido
-          yaw = (Serial3.read() - '0') * 100;
-          yaw =+ (Serial3.read() - '0') * 10;
-          yaw =+ (Serial3.read() - '0') * 1;
+          yaw = (Serial2.read() - '0') * 100;
+          yaw =+ (Serial2.read() - '0') * 10;
+          yaw =+ (Serial2.read() - '0');// * 1;
           yaw =- 127;
           break;
 
         case 'T': //Throttle sendo recebido
-          throttle = (Serial3.read() - '0') * 100;
-          throttle =+ (Serial3.read() - '0') * 10;
-          throttle =+ (Serial3.read() - '0') * 1;
-          throttle =- 127;
+          throttle = (Serial2.read() - '0') * 100;
+          throttle =+ (Serial2.read() - '0') * 10;
+          throttle =+ (Serial2.read() - '0');// * 1;
           break;
         
         case 'A': //Altura sendo recebida
-          altura_alvo = (Serial3.read() - '0') * 1000;
-          altura_alvo =+ (Serial3.read() - '0') * 100;
-          altura_alvo =+ (Serial3.read() - '0') * 10;
+          altura_alvo = (Serial2.read() - '0') * 1000;
+          altura_alvo =+ (Serial2.read() - '0') * 100;
+          altura_alvo =+ (Serial2.read() - '0') * 10;
           break;
-        //Ainda estao erradas latitude e longitude.
+
         case 'K': //latitude sendo recebida
-          inByte = Serial3.read();
-          latdestino = (Serial3.read() - '0') * 1000000;
-          latdestino =+ (Serial3.read() - '0') * 100000;
-          latdestino =+ (Serial3.read() - '0') * 10000;
-          latdestino =+ (Serial3.read() - '0') * 1000;
-          latdestino =+ (Serial3.read() - '0') * 100;
-          latdestino =+ (Serial3.read() - '0') * 10;
-          latdestino =+ (Serial3.read() - '0') * 1;
+          inByte = Serial2.read();
+          latdestino = (Serial2.read() - '0') * 1000000;
+          latdestino =+ (Serial2.read() - '0') * 100000;
+          latdestino =+ (Serial2.read() - '0') * 10000;
+          latdestino =+ (Serial2.read() - '0') * 1000;
+          latdestino =+ (Serial2.read() - '0') * 100;
+          latdestino =+ (Serial2.read() - '0') * 10;
+          latdestino =+ (Serial2.read() - '0');// * 1;
           if(inByte == '-')
             latdestino = 0 - latdestino;
           break;
 
         case 'L': //longitude sendo recebida
-          inByte = Serial3.read();
-          londestino = (Serial3.read() - '0') * 10000000;
-          londestino =+ (Serial3.read() - '0') * 1000000;
-          londestino =+ (Serial3.read() - '0') * 100000;
-          londestino =+ (Serial3.read() - '0') * 10000;
-          londestino =+ (Serial3.read() - '0') * 1000;
-          londestino =+ (Serial3.read() - '0') * 100;
-          londestino =+ (Serial3.read() - '0') * 10;
-          londestino =+ (Serial3.read() - '0') * 1;
+          inByte = Serial2.read();
+          londestino = (Serial2.read() - '0') * 10000000;
+          londestino =+ (Serial2.read() - '0') * 1000000;
+          londestino =+ (Serial2.read() - '0') * 100000;
+          londestino =+ (Serial2.read() - '0') * 10000;
+          londestino =+ (Serial2.read() - '0') * 1000;
+          londestino =+ (Serial2.read() - '0') * 100;
+          londestino =+ (Serial2.read() - '0') * 10;
+          londestino =+ (Serial2.read() - '0');// * 1;
           if(inByte == '-')
             londestino = 0 - londestino;
           break;
           
         case 'N': // Caso a conexao tenha sido perdida
-          inByte = Serial3.read();    
+          inByte = Serial2.read();    
           if (inByte = 'O') {
-            inByte = Serial3.read();
+            inByte = Serial2.read();
             if (inByte = ' ') {
-              inByte = Serial3.read();
+              inByte = Serial2.read();
               if (inByte = 'C') {
-                inByte = Serial3.read();
+                inByte = Serial2.read();
                 if (inByte = 'A') {
-                  inByte = Serial3.read();
+                  inByte = Serial2.read();
                   if (inByte = 'R') {
                     Conectado = 0;
                     delay(50);
-                    Serial3.flush();
+                    Serial2.flush();
                   }
                 }
               }
@@ -271,17 +270,17 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
           break;
           
         case 'O': // Caso a conexao tenha sido perdida
-          inByte = Serial3.read();
+          inByte = Serial2.read();
           if (inByte = ' ') {
-            inByte = Serial3.read();
+            inByte = Serial2.read();
             if (inByte = 'C') {
-              inByte = Serial3.read();
+              inByte = Serial2.read();
               if (inByte = 'A') {
-                inByte = Serial3.read();
+                inByte = Serial2.read();
                 if (inByte = 'R') {
                   Conectado = 0;
                   delay(50);
-                  Serial3.flush();
+                  Serial2.flush();
                 }
               }
             }
@@ -292,22 +291,23 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
           break;
       }
     }
-    Serial3.flush();
+    Serial2.flush();
   }
 }
 
 void loop() {
-  if(millis() - ultima_execucao > T_AMOSTRAGEM )
-      //sinaliza_erro(0);    // O último loop demorou mais que T_AMOSTRAGEM para ser executado.
-      Serial.println("ERRO!");
-      
+  if(millis() - ultima_execucao > T_AMOSTRAGEM ) {
+      Serial.println("ERRO! A execuçao demorou mais que T_AMOSTRAGEM!");
+      manda_dados(0, 0, 0, 0);   //Desliga os motores
+      sinaliza_erro(0);
+  }
    //Espera o tempo de amostragem
   while(millis() - ultima_execucao < T_AMOSTRAGEM);
   
   //TODO: Tratar dados do Controle remoto
-  bluetooth(); // Pegar dados pelo bluetooth
-  if(Conectado == 0) //Caso o controle bluetooth esteja desconectado ele entra no modo POUSAR
-    MODO = POUSAR;
+  //bluetooth(); // Pegar dados pelo bluetooth
+  //if(!Conectado) //Caso o controle bluetooth esteja desconectado ele entra no modo POUSAR
+    //MODO = POUSAR;
   altura = ultrasonic.Distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
   gps_disponivel = le_gps();               //Lê os dados do GPS
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
@@ -316,7 +316,7 @@ void loop() {
 
   switch(MODO) {
       case DESLIGAR:                //Fazer o multirrotor pousar em segurança
-          manda_dados(0, 0, 0, 0);   //Desliga os motores
+          manda_dados(1, 2, 3, 4);   //Desliga os motores
           break;
                   
       case POUSAR:                //Fazer o multirrotor pousar em segurança
