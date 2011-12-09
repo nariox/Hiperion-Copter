@@ -173,7 +173,7 @@ void throttle(uint8_t timer_num, uint8_t match, float percent) {
 
 void processa()
 {
-	//Valores Bons
+	//Valores bons também, mas mais agressivos
 	//accel_x_med = 0.9 * (accel_x_med - gyro_data->y*gyro_scale * 0.01) + (0.1) * accel_data->x*accel_scale;
 	//accel_y_med = 0.9 * (accel_y_med + gyro_data->x*gyro_scale * 0.01) + (0.1) * accel_data->y*accel_scale;
 
@@ -182,25 +182,17 @@ void processa()
 
 	if((-M_PI < accel_x_med) && (accel_x_med < M_PI))
         A = kp*( (nav_params->pitch -127)*nav_scale - accel_x_med)  + kd*gyro_data->y*gyro_scale;
-	else {
-	    throttle(0, 0, 0);
-		throttle(0, 1, 0);
-		throttle(1, 0, 0);
-		throttle(1, 1, 0);
-		while(1);
-	}
+	else
+		A = (accel_x_med > M_PI) ? M_PI : -M_PI;
+
 	if( (-M_PI < accel_y_med) && (accel_y_med < M_PI))
         B = kp*( (nav_params->roll -127)*nav_scale - accel_y_med)  - kd*gyro_data->x*gyro_scale;
-	else{
-	    throttle(0, 0, 0);
-		throttle(0, 1, 0);
-		throttle(1, 0, 0);
-		throttle(1, 1, 0);
-		while(1);
-	}
+	else
+	    B = (accel_y_med > M_PI) ? M_PI : -M_PI;
+
 	C = kd_yaw*( (nav_params->yaw -127)*nav_scale - kd_yaw*gyro_data->z*gyro_scale);
-    //D = nav_params->throttle/64.0;
-    D = 0.7;
+    D = nav_params->throttle/64.0;
+    //D = 0.7;
 }
 
 void envia_rotacoes()
