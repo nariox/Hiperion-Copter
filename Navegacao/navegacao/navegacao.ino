@@ -33,7 +33,7 @@
 #define altura_throttle_max 100
 #define altura_throttle_min 1
 #define altura_passo_max 10
-#define ALTURA_POUSO 10
+#define ALTURA_POUSO 5 
 #define ki 1
 
 Ultrasonic ultrasonic(50,52); //iniciando a função e passando os pinos SENSOR DISTANCIA
@@ -316,15 +316,21 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
 }
 
 void enviabluetooth() { // Envia dados de telemetria pelo bluetooth
-  if(Conectado == 1 && gps_disponivel) {
-    Serial2.print("LAT");
-    Serial2.print(lat);
-    Serial2.print("LON");
-    Serial2.print(lon);
-    Serial2.print("ALT");
-    Serial2.print(alt);
-    Serial2.print("THR");
-    Serial2.print(throttle);
+  if(Conectado == 1) {
+    if(gps_disponivel) {
+      Serial2.print("LAT");
+      Serial2.print(lat);
+      Serial2.print("LON");
+      Serial2.print(lon);
+      Serial2.print("ALT");
+      Serial2.print(alt);
+      Serial2.print("THR");
+      Serial2.print(throttle);
+    }
+    else {
+      Serial2.print("THR");
+      Serial2.print(throttle);      
+    }
   }
 }
 
