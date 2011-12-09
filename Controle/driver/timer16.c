@@ -341,7 +341,7 @@ void init_timer16PWM(uint8_t timer_num, uint32_t period, uint8_t match_enable, u
 		LPC_TMR16B1->MR2	= timer16_1_period/2;
 		
 		/* Set match control register */
-		LPC_TMR16B1->MCR = 1<<10;// | 1<<9;				/* Reset on MR3 */
+		LPC_TMR16B1->MCR = 0xb111<<9;// | 1<<9;				/* Reset on MR3 */
 		
 		if (cap_enabled)
 		{

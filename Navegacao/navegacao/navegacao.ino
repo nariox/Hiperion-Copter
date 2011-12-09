@@ -335,7 +335,7 @@ void loop() {
 
   switch(MODO) {
       case DESLIGAR:                //Fazer o multirrotor pousar em segurança
-          manda_dados(0, 0, 0, 255);   //Desliga os motores
+          manda_dados(0, 0, 0, 0);   //Desliga os motores
           break;
                   
       case POUSAR:                //Fazer o multirrotor pousar em segurança
