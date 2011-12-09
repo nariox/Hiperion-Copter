@@ -47,7 +47,7 @@ __CRP const unsigned int CRP_WORD = CRP_NO_CRP ;
 
 #define M_PI 3.14159265358979323846                  // pi
 #define NAV_MES_SIZE 8                               // Tamanho da mensagem recebida da navegação.
-#define Tamostragem 100                              // O tempo de amostragem em ms.
+#define Tamostragem 10                               // O tempo de amostragem em ms.
 #define pwm_periodo 59999                            // PWM de 50Hz. Ver o ajuste do prescaler no driver.
 volatile uint16_t throttle_min = 95.0*(pwm_periodo+1)/100; // O throttle mínimo ocorre quando o dutty cicle está
 volatile uint16_t throttle_max = 90.0*(pwm_periodo+1)/100; // em 95% e o máximo quando o dutty cicle está em 90%
@@ -73,6 +73,9 @@ float kd = 0;      //Constante derivativa do controlador PD
 float kd_yaw = 0;  //Constante derivativa do yaw do controlador PD
 float A, B, C, D;      //Ver "Controle - ortogonalização" na monografia associada a esse código.
 float throttles[4];    //Valor de rotação dos motores. Varia entre 0 e 255.
+
+float accel_x_med = 0;
+float accel_y_med = 0;
 
 int UARTBuffer_p = 0;
 
@@ -170,14 +173,34 @@ void throttle(uint8_t timer_num, uint8_t match, float percent) {
 
 void processa()
 {
-	int32_t accel_x_med = (accel_data->x = accel_data->x_ant)/2;
-	int32_t accel_y_med = (accel_data->y = accel_data->y_ant)/2;
+	//Valores Bons
+	//accel_x_med = 0.9 * (accel_x_med - gyro_data->y*gyro_scale * 0.01) + (0.1) * accel_data->x*accel_scale;
+	//accel_y_med = 0.9 * (accel_y_med + gyro_data->x*gyro_scale * 0.01) + (0.1) * accel_data->y*accel_scale;
 
-    A = kp*( (nav_params->pitch -127)*nav_scale - asin(accel_x_med*accel_scale) )  + kd*gyro_data->y*gyro_scale;
-    B = kp*( (nav_params->roll -127)*nav_scale - asin(accel_y_med*accel_scale) )  - kd*gyro_data->x*gyro_scale;
-    C = kd_yaw*( (nav_params->yaw -127)*nav_scale - kd_yaw*gyro_data->z*gyro_scale);
+	accel_x_med = 0.94 * (accel_x_med - gyro_data->y*gyro_scale * 0.01) + (0.06) * accel_data->x*accel_scale;
+	accel_y_med = 0.94 * (accel_y_med + gyro_data->x*gyro_scale * 0.01) + (0.06) * accel_data->y*accel_scale;
+
+	if((-M_PI < accel_x_med) && (accel_x_med < M_PI))
+        A = kp*( (nav_params->pitch -127)*nav_scale - accel_x_med)  + kd*gyro_data->y*gyro_scale;
+	else {
+	    throttle(0, 0, 0);
+		throttle(0, 1, 0);
+		throttle(1, 0, 0);
+		throttle(1, 1, 0);
+		while(1);
+	}
+	if( (-M_PI < accel_y_med) && (accel_y_med < M_PI))
+        B = kp*( (nav_params->roll -127)*nav_scale - accel_y_med)  - kd*gyro_data->x*gyro_scale;
+	else{
+	    throttle(0, 0, 0);
+		throttle(0, 1, 0);
+		throttle(1, 0, 0);
+		throttle(1, 1, 0);
+		while(1);
+	}
+	C = kd_yaw*( (nav_params->yaw -127)*nav_scale - kd_yaw*gyro_data->z*gyro_scale);
     //D = nav_params->throttle/64.0;
-    D = 1;
+    D = 0.7;
 }
 
 void envia_rotacoes()
@@ -213,13 +236,17 @@ void envia_rotacoes()
 	throttle(1, 1, throttles[3]);
 }
 
+int tempo = 0;
+
 int main(void)
 {
+	int timer_count = 0;
 
 	inicializa();
 
-	kp = 3.0/(2*M_PI);      // Constante proporcional do controlador PD
-	kd = 0.0/(2*M_PI);      // Constante derivativa do controlador PD
+	kp = 1.0/(2*M_PI);      // Constante proporcional do controlador PD
+	//kp = 0;
+	kd = 0.05/(2*M_PI);      // Constante derivativa do controlador PD
 	kd_yaw = 0/(2*M_PI);    // Constante derivativa do yaw do controlador PD
 	D = 0;
 
@@ -228,6 +255,8 @@ int main(void)
         // Go to sleep to save power between timer interrupts
         __WFI();
         init_timer16(1, Tamostragem*TIME_INTERVALmS_KHZ_CLOCK);
+        LPC_TMR16B1->TC = 0;
+        NVIC_EnableIRQ(TIMER_16_1_IRQn);
         enable_timer16(1);
 
         //Lê sinais dos sensores
@@ -247,9 +276,22 @@ int main(void)
         //Inverte o estado do led
         ToggleGPIOBit( LED_PORT, LED_BIT );
 
+        tempo = LPC_TMR16B1->TC;
+
         if (LPC_TMR16B1->TC == 0) { //O processamento demorou mais que o tempo de amostragem.
         	ClrGPIOBit( LED_PORT, LED_BIT );    // Mantém o LED aceso para indicar o erro.
+    	    throttle(0, 0, 0);
+    		throttle(0, 1, 0);
+    		throttle(1, 0, 0);
+    		throttle(1, 1, 0);
         	while(1); //Erro
+        }
+
+        if(timer_count != 9)
+        	++timer_count;
+        else {
+        	timer_count = 0;
+        	NVIC_DisableIRQ(TIMER_16_1_IRQn);
         }
     }
 
