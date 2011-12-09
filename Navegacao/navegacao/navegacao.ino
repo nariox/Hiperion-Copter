@@ -33,7 +33,7 @@
 #define altura_throttle_max 100
 #define altura_throttle_min 1
 #define altura_passo_max 10
-#define ALTURA_POUSO 5
+#define ALTURA_POUSO 10
 #define ki 1
 
 Ultrasonic ultrasonic(50,52); //iniciando a função e passando os pinos SENSOR DISTANCIA
@@ -73,7 +73,7 @@ void manda_dados(int roll, int pitch, int yaw, int throttle) {
       if(pitch < 10)
         Serial1.print("0");
       if(pitch < 100)
-        Serial1.print("0");
+        Serial1.print("");
       Serial1.print(pitch);
       Serial1.print("Y");
       if(yaw < 10)
@@ -314,6 +314,17 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
   }
 }
 
+void enviabluetooth() { // Envia dados de telemetria pelo bluetooth
+  if(Conectado == 1 && gps_disponivel) {
+    Serial2.print("LAT");
+    Serial2.print(lat);
+    Serial2.print("LON");
+    Serial2.print(lon);
+    Serial2.print("ALT");
+    Serial2.print(alt);
+  }
+}
+
 void loop() {
   if(millis() - ultima_execucao > T_AMOSTRAGEM ) {
       Serial.println("ERRO! A execuçao demorou mais que T_AMOSTRAGEM!");
@@ -323,19 +334,22 @@ void loop() {
    //Espera o tempo de amostragem
   while(millis() - ultima_execucao < T_AMOSTRAGEM);
   
-  //TODO: Tratar dados do Controle remoto
+  // Tratar dados do Controle remoto
   //bluetooth(); // Pegar dados pelo bluetooth
   //if(!Conectado) //Caso o controle bluetooth esteja desconectado ele entra no modo POUSAR
     //MODO = POUSAR;
+  // Obter dados dos sensores
   altura = ultrasonic.Distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
   gps_disponivel = le_gps();               //Lê os dados do GPS
   angmag = 500;           // Lê os dados do magnetometro (500 significa sem magnetômetro)
   if(MODO > GPS) // Caso tenha entrado em algum modo inexistente - GPS  o ultimo modo
     MODO = POUSAR;
-
+  
+  enviabluetooth(); // Envia dados do GPS pelo bluetooth
+  
   switch(MODO) {
       case DESLIGAR:                //Fazer o multirrotor pousar em segurança
-          manda_dados(1, 2, 3, 4);   //Desliga os motores
+          manda_dados(0, 0, 0, 0);   //Desliga os motores
           break;
                   
       case POUSAR:                //Fazer o multirrotor pousar em segurança
@@ -358,7 +372,7 @@ void loop() {
       case GPS:                   //O multirrotor está navegando pelo GPS
           if (gps_disponivel) { //GPS esta com sinal
             if(angmag == 500) { // Magnetometro desconectado ou inexistente
-              roll = ANGULOGPS;
+              pitch = ANGULOGPS;
               latresultante = latdestino-lat;
               lonresultante = londestino-lon;
               distgps = latresultante*latresultante + lonresultante*lonresultante;
@@ -370,7 +384,7 @@ void loop() {
                 else //Caso contrario ele vira a direita.
                   yaw = YAWPADRAO;
               }
-              manda_dados(roll, 0, yaw, cont_altura());
+              manda_dados(0, pitch, yaw, cont_altura());
               distantgps = distgps; // distantgps guarda a distancia gps para usar na proxima iteracao
             }
             //Fazer a rotacao ate sincronizar com o norte utilizando o magnetometro
@@ -389,48 +403,48 @@ void loop() {
                     estavel();    
 
                 else if(modlat <= MARGEMGPS) { // Latitude alcancada
-                    if(latresultante < 0) { // Esquerda
-                        roll = ANGULOGPS;
+                    if(lonresultante < 0) { // Esquerda
+                        roll = - ANGULOGPS;
                         manda_dados(roll, 0, 0, cont_altura());
                     }
                     else { // Direita
-                        roll = - ANGULOGPS;
+                        roll = ANGULOGPS;
                         manda_dados(roll, 0, 0, cont_altura());
                     }            
                 }
 
                 else if(modlon <= MARGEMGPS) { // Longitude alcancada
-                    if(lonresultante < 0) { // 
-                        pitch = ANGULOGPS;
+                    if(latresultante < 0) { // Atras
+                        pitch = - ANGULOGPS;
                         manda_dados(0, pitch, 0, cont_altura());
                     }
                     else { // Frente
-                        pitch = - ANGULOGPS;
+                        pitch = ANGULOGPS;
                         manda_dados(0, pitch, 0, cont_altura());                            
                     }            
                 }
 
                 else if(modlat > modlon) { // Caso ele tenha que andar mais latitude que longitude
                     if(latresultante > 0)
-                        roll = ANGULOGPS;
+                        pitch = ANGULOGPS;
                     else 
-                        roll = -ANGULOGPS;
+                        pitch = -ANGULOGPS;
                     if(lonresultante > 0)
-                        pitch = ANGULOGPS * (modlon / modlat);
+                        roll = ANGULOGPS * (modlon / modlat);
                     else
-                        pitch = - ANGULOGPS * (modlon / modlat);
+                        roll = - ANGULOGPS * (modlon / modlat);
                     manda_dados(roll, pitch, 0, cont_altura());
                 }
                     
                 else if(modlon >= modlat) { // Caso ele tenha que andar mais lontitude que latitude
                     if(lonresultante > 0)
-                        pitch = ANGULOGPS;
+                        roll = ANGULOGPS;
                     else
-                        pitch = -ANGULOGPS;
+                        roll = -ANGULOGPS;
                     if(latresultante > 0)
-                        roll = ANGULOGPS * (modlat / modlon);
+                        pitch = ANGULOGPS * (modlat / modlon);
                     else
-                        roll = - ANGULOGPS * (modlat / modlon);
+                        pitch = - ANGULOGPS * (modlat / modlon);
                     manda_dados(roll, pitch, 0, cont_altura());
                 }
             }
