@@ -611,7 +611,28 @@ Para medir a velocidade angular, o sensor funciona corretamente. Possuir a veloc
 
 \subsubsection{Fusão de dados inerciais}\label{fusao}
 
-Há diversas maneiras de fundir os dados dos sensores de maneira a conseguir leituras mais precisas \ref{balancefilter}. Como a plataforma é embarcada, não 
+Há diversas maneiras de fundir os dados dos sensores de maneira a conseguir leituras mais precisas \ref{balancefilter}. Como a plataforma é embarcada, não é possível utilizar métodos computacionalmente intensivos, como o filtro de Kalman. A solução escolhida foi o filtro de balanço desenvolvido por \citeonline{balancefilter}.
+
+O conceito é unir a leitura do acelerômetro, que é correto em baixas frequências, porém possui ruído em altas, com a leitura do giroscópio, que possui leitura correta em altas frequências, porém desvia na média.
+
+O sinal do acelerômetro passa por um filtro passa-baixas, o que o torna menos ruidoso, mas mais lento. Quanto maior for a filtragem, mais atraso o filtro causa, isto pode causa problemas de instabilidade.
+
+O sinal do giroscópio é integrado e depois passa por um filtro passa-altas, o que anula a sua média e portanto o erro induzido por ele.
+
+O filtro de balanço soma os dois sinais filtrados para obter uma estimativa do ângulo. Esta estimativa alia as forças de âmbos os ângulos e é computacionalmente leve.
+
+Para a nossa implementação, utilizamos um filtro derivador de 1 zero como filtro passa-altas e um filtro de média móvel de largura 2 como passa-baixas:
+
+\begin{subequations}
+  \begin{align}
+    PA: ~ y(n) = \frac{x(n) - x(n-1)} \\
+    PB: ~ y(n) = \frac{x(n) + x(n-1)}
+  \end{align}
+\end{subequations}
+
+Para simplificar ainda mais as contas, o filtro passa-altas foi unido ao integrador, de forma que a própria leitura do giroscópio já é o sinal filtrado.
+
+Além disso, o sinal do giroscópio também será utilizado para fazer o controle derivativo, então o ganho atribuido a ele pode unir o ganho proporcional e o derivativo.
 
 \subsection{GPS}
 
@@ -692,7 +713,7 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \citeonline{fuzzycontrol} formula um sistema de controle inteligente de quadrrotores baseado na lógica fuzzy. As entradas para o sistemas são o valores desejados para altura e os ângulos em relação aos três eixos de referência que passam pelo centro de massa, e as saídas são as potências de cada um dos quatro rotores para se atender à especificação. Por fim, são feitas simulações para validar a eficiência da estratégia de controle.
 
-\subsection{Ortognalização}
+\subsection{Ortogonalização}
 
 Para sanar o problema pelas múltiplas entradas e saídas. Foi utilizada uma técnica para poder controlá-los independentemente. Para isso foi necessária uma troca de base.
 
@@ -791,14 +812,11 @@ Este capítulo trata de assuntos não relacionados às técnicas apresentadas no cap
 
 O grupo é composto por três alunos: Bruno Pinho, Danilo Luvizotto e Pedro Nariyoshi. 
 
-Bruno foi o responsável pela camada de navegação e de seus periféricos, como o gps, magnetometro e sensor de distancia. Responsável também da geração das curvas relacionadas ao trabalho. Também auxiliou nas demais partes do projeto.
+Bruno é responsável pela camada de navegação e de seus periféricos, como o gps, magnetômetro e sensor de distância. Responsável também da geração das curvas de medida dos motores.
 
-Danilo foi o responsável por implementar a camada de controle. Responsável também pela estrutura do multirrotor, e auxiliando no desenvolvimento da arquitetura e nas demais partes do projeto.
+Danilo é responsável por implementar a camada de controle, pela estrutura do multirrotor e auxílio no desenvolvimento da arquitetura e programação.
 
-Pedro foi o responsável por coordenar o projeto. Sendo responsável também pelo desenvolvimento da parte teórica do projeto. Trabalhou também na estrutura do multirrotor e participou ativamente de todas as atividades do projeto.
-
-Na etapa de planejamento, a equipe contava com mais um integrante, Marcos Tortólio, que não está mais participando devido a um programa de intercâmbio na Espanha, como previsto.
-Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de hardware e software do veículo. 
+Pedro é responsável por coordenar o projeto, também pelo desenvolvimento do estudo teórico do projeto.
 
 \section{Problema a ser resolvido}
 
