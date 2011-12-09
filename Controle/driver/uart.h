@@ -36,7 +36,7 @@
 #define LSR_TEMT	0x40
 #define LSR_RXFE	0x80
 
-#define UART_BUFSIZE		0x40
+#define UART_BUFSIZE		0x10
 
 /* RS485 mode definition. */
 #define RS485_NMMEN		(0x1<<0)
