@@ -62,9 +62,9 @@ de São Paulo}
 
 
  \chapter*{Agradecimentos}
- Agradecemos primeiramente a Deus por estar presente em nossas vidas e nos abençoando tornando assim todo o nosso sucesso possível.
+ Agradecemos primeiramente a Deus por estar presente em nossas vidas e nos abençoando, tornando assim todo o nosso sucesso possível.
  
- Agradecemos a nossas famílias, que dedicaram grande quantidade de recursos na nossa educação, de muitas vezes sacrificial, e sempre com amor. E também  a nossas companheiras pela paciência e apoio que tiveram neste momento de muita tensão e trabalho.
+ Agradecemos as nossas famílias, que dedicaram grande quantidade de recursos na nossa educação, muitas vezes de maneira sacrificial, e sempre com amor. E também  a nossas companheiras pela paciência e apoio que tiveram neste momento de muita tensão e trabalho.
  
  Agradecemos também ao corpo docente da Escola Politécnica, por nos ensinar, ocasionalmente contra nossa vontade, mas sempre para o nosso bem. Em especial a aqueles que ensinam com paixão. 
  
@@ -77,7 +77,7 @@ de São Paulo}
 \begin{description}[style=multiline,leftmargin=3cm]
   \item[API] \textit{(Application Programming Interface)}   Interface de Programação de Aplicativo, um conjunto de normas que permite uma interface entre dois aplicativos ou um aplicativo e um plugin.
   \item[ARM] \textit{(Advanced Risc Machine)}   é uma arquitetura de processadores de 32-bits RISC.
-  \item[Brushless Motor]    um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.
+  \item[Brushless, Motor]    um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.
   \item[ESC] \textit{(Electronic Speed Controller)}   Controlador de Velocidade Eletrônico, é um dispositivo que faz a comutação das fases num motor sem escova.
   \item[GNU/Linux]   é um sistema operacional que utiliza as ferramentas do projeto GNU e o núcleo Linux.
   \item[GPS] \textit{(Global Positioning System)}    sistema utilizado para obter informações sobre tempo e posição de um objeto, utilizando 4 ou mais satélites.
@@ -437,7 +437,7 @@ Para descrever o funcionamento do programa (baseado em \cite{avr444}) pode-se ut
   {Máquina de estados do laço principal do programa do ESC}\label{fig.escdia}
 \end{figure}
 
-Na inicialização dos periféricos, inicia-se os conversores A/D, a comunicação $I^2C$, os \textit{timers}, as portas e comparadores.
+Na inicialização dos periféricos, inicia-se os conversores A/D, a comunicação I$^2$C, os \textit{timers}, as portas e comparadores.
 
 A partida do motor é constituída pelo carregamento da sequência de chaveamento, do chaveamento em malha aberta e da inicialização do \textit{timer Watchdog}. Este \textit{timer} é utilizado para detectar travamentos no motor. Se nenhuma comutação é executada dentro de um intervalo pré-determinado, o controlador entende que o motor está parado e tenta dar a partida novamente.
 
@@ -563,13 +563,92 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
 
 \section{Sensores}
 
-%\subsection{Acelerômetro}
+Existem hoje uma grande quantidade de sensores eletrônicos que são usados em diversas aplicações embarcadas. Com eles, torna-se possível diversas aplicações embarcadas. Com eles, torna-se possível observar diversos parâmetros do mundo exterior e poder atuar conforme estes parâmetros.
 
-%\subsection{Giroscópio}
+Com base na existência destes sensores se tornou possível aplicações como este projeto. Segue-se então uma pequena descrição dos sensores que foram utilizados.
 
-%\subsection{GPS}
+\subsection{Sensores inerciais}
 
-%\subsection{Magnetômetro}
+Sensores inerciais são utilizados para medir o deslocamento do multi-rotor. Para este projeto foram utilizados acelerômetros e giroscópios MEMS. Estes dispositivos possuem baixo consumo e boa precisao.
+
+O conjunto escolhido foi a unidade de medida inercial de 6 graus de liberdade da SparkFun \ref{sparkfun}. Este kit é composto por um acelerometro ADXL345 e um giroscopio ITG3200. Ambos chips são capazes de se comunicar por I$^2$C, o que torna a leitura imune ao ruído de leitura A/D do microcontrolador e ainda diminui a quantidade de fios necessária para a comunicacao. A saída digital ainda oferece a vantagem de dispensar a calibração de offset. 
+
+\subsubsection{Acelerômetro}
+
+Acelerômetro é um sensor capaz de medir aceleração própria de um objeto. A aceleração própria é a somatória das forças de campo que agem no acelerômetro, estas são geralmente equivalentes à resultante subtraida das forças normais).
+
+No multirrotor deseja-se obter o ângulo de inclinação do veículo, e não as acelerações. Para obter os dados desejados deve-se utilizar uma transformação sobre os valores para poder-se estimar os ângulos.
+
+Quando em movimento uniforme, a única aceleração sofrida pelo veículo é a aceleração da gravidade. Portanto a aceleração vista pelo sensor dependerá apenas da aceleração da gravidade e dos ângulos de Euler. Para pequenas variações de ângulo, as equações são:
+
+\begin{subequations}
+\begin{align}
+  A_x = g \sin(\theta),
+  A_y = g \sin(\phi),
+  A_z = g \sqrt{1 - \sin^2(\theta) - \sin^2(\phi)}.
+\end{align}
+\end{subequations}
+
+Linearizando, obtém-se:
+
+\begin{subequations}
+\begin{align}
+  A_x = g \theta,
+  A_y = g \phi,
+  A_z = g.
+\end{align}
+\end{subequations}
+
+No entanto, devido às outras acelerações e vibrações sofridas pelo veículo, esta medida é bastante ruidosa. O tratamento deste ruído é descrito na secao \ref{fusao}.
+
+\subsubsection{Giroscópio}
+
+Os giroscópios são sensores inerciais que medem a velocidade angular. Como os angulos sao as integrais das velocidades, estes sensores também podem ser utilizados para estimar os ângulos de Euler.
+
+Um inconveniente de utilizar este sensor para estimar os angulos é que não há referencial inercial, portanto só é possível estimar as diferenças ao longo tenpo, mas não o estado inicial. Alem disto pequenos erros de medida se aculam ao longo do tempo e não é possível corrigí-los apenas utilizando este sensor. 
+
+Para medir a velocidade angular, o sensor funciona corretamente. Possuir a velocidade angular é interessante, porque torna desnecessário inferir este valor a partir do acelerômetro. A diferenciação feita desta maneira reduz o ruído e permite o uso de valores derivativos mais altos.
+
+\subsubsection{Fusão de dados inerciais}\label{fusao}
+
+Há diversas maneiras de fundir os dados dos sensores de maneira a conseguir leituras mais precisas \ref{balancefilter}. Como a plataforma é embarcada, não é possível utilizar métodos computacionalmente intensivos, como o filtro de Kalman. A solução escolhida foi o filtro de balanço desenvolvido por \citeonline{balancefilter}.
+
+O conceito é unir a leitura do acelerômetro, que é correto em baixas frequências, porém possui ruído em altas, com a leitura do giroscópio, que possui leitura correta em altas frequências, porém desvia na média.
+
+O sinal do acelerômetro passa por um filtro passa-baixas, o que o torna menos ruidoso, mas mais lento. Quanto maior for a filtragem, mais atraso o filtro causa, isto pode causa problemas de instabilidade.
+
+O sinal do giroscópio é integrado e depois passa por um filtro passa-altas, o que anula a sua média e portanto o erro induzido por ele.
+
+O filtro de balanço soma os dois sinais filtrados para obter uma estimativa do ângulo. Esta estimativa alia as forças de âmbos os ângulos e é computacionalmente leve.
+
+Para a nossa implementação, utilizamos um filtro derivador de 1 zero como filtro passa-altas e um filtro de média móvel de largura 2 como passa-baixas:
+
+\begin{subequations}
+  \begin{align}
+    PA: ~ y(n) = \frac{x(n) - x(n-1)} \\
+    PB: ~ y(n) = \frac{x(n) + x(n-1)}
+  \end{align}
+\end{subequations}
+
+Para simplificar ainda mais as contas, o filtro passa-altas foi unido ao integrador, de forma que a própria leitura do giroscópio já é o sinal filtrado.
+
+Além disso, o sinal do giroscópio também será utilizado para fazer o controle derivativo, então o ganho atribuido a ele pode unir o ganho proporcional e o derivativo.
+
+\subsection{GPS}
+
+O sistema de posicionamento global, mais conhecido como GPS é um sistema de navegação utilizando satélites. Este sistema utiliza 4 satélites e fazendo uma triangulação do sinal ele é capaz de dizer a exata latitude e longitude de um ponto.
+
+Ele é capaz de fazer esta medição utilizando a diferença de tempo que os sinais destes quatros satélites calculando assim as três cordenadas, latitude, longitude e altitude; e também calcula o tempo.
+
+Com este sensor, é possível que o multirrotor se localize e possa se mover entre dois pontos de maneira autônoma.
+
+\subsection{Magnetômetro}
+
+O magnetômetro é um sensor capaz de medir campos magnéticos. Como a Terra produz um campo magnético, este campo pode ser medido de modo que este sensor seja utilizado conforme uma bússula.
+
+Com o auxilio do magnetômetro é possível encontrar os polos terrestres e também encontrar a direção e o sentido que o multirrotor está virado sem que ele se mova.
+
+Devido a estas qualidades este sensor é fundamental para auxiliar o multirrotor a se mover de maneira autônoma, pois sem ele só é possível saber em que direção ele está olhando caso ele esteja em movimento e o dado anterior e o atual do GPS seja comparado.
 
 \subsection{Sensor de distância}
 
@@ -626,7 +705,7 @@ Considerando a faixa nominal de uso das hélices, tratam-se de curvas monotônicas
 
 O sistema também apresenta características dinâmicas e não-lineares (semelhante a um pêndulo). Dependendo dos ângulos de Euler, as forças e torques geradas pelos motores serão diferentes. Apesar das magnitudes iguais, terão direções diferentes e, portanto, suas componentes serão diferentes. Ao mesmo tempo, a componente da gravidade se mantém na mesma direção 
 
-Os sensores também apresentam um problema para esta aplicação Os acelerômetros medem a aceleração que o veiculo sofre e não os ângulos Os giroscópios medem apenas a velocidade de variação dos ângulos Se o veiculo estiver em movimento inercial, e possível inferir os ângulos a partir da aceleração da gravidade, mas esta situação não existe na pratica. E possível integrar as leituras do giroscópio, mas haverá um erro na leitura que se acumula com o tempo. Pode-se utilizar outros sensores para se obter leituras mais confiáveis, como \ref{visionuav} que revisa modelo matemático de um quadrirotor usando a equação de Lagrange e propõe um método de controle linear baseado em imagens de duas câmeras, uma no quadrrotor e outro no solo.
+Os sensores também apresentam um problema para esta aplicação. Os acelerômetros medem a aceleração que o veiculo sofre e não os ângulos. Os giroscópios medem apenas a velocidade de variação dos ângulos. Se o veículo estiver em movimento inercial, e possível inferir os ângulos a partir da aceleração da gravidade, situação que não existe na prática. Também não é possível apenas integrar as leituras do giroscópio, pois haverá um erro na leitura que se acumula com o tempo. Pode-se utilizar outros sensores para se obter leituras mais confiáveis, como \ref{visionuav} que propõe um método de controle linear baseado em imagens de duas câmeras, uma no quadrrotor e outro no solo.
 
 Por último, o sistema apresenta diversas entradas (para cada motor) e diversas saídas (três ângulos de Euler e aceleração nesta direção). Foram conferidos alguns artigos no assunto e como que alguns produtos comerciais controlam seus motores.
 
@@ -634,7 +713,7 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \citeonline{fuzzycontrol} formula um sistema de controle inteligente de quadrrotores baseado na lógica fuzzy. As entradas para o sistemas são o valores desejados para altura e os ângulos em relação aos três eixos de referência que passam pelo centro de massa, e as saídas são as potências de cada um dos quatro rotores para se atender à especificação. Por fim, são feitas simulações para validar a eficiência da estratégia de controle.
 
-\subsection{Ortognalização}
+\subsection{Ortogonalização}
 
 Para sanar o problema pelas múltiplas entradas e saídas. Foi utilizada uma técnica para poder controlá-los independentemente. Para isso foi necessária uma troca de base.
 
@@ -733,14 +812,11 @@ Este capítulo trata de assuntos não relacionados às técnicas apresentadas no cap
 
 O grupo é composto por três alunos: Bruno Pinho, Danilo Luvizotto e Pedro Nariyoshi. 
 
-Bruno foi o responsável pela camada de navegação e de seus periféricos, como o gps, magnetometro e sensor de distancia. Responsável também da geração das curvas relacionadas ao trabalho. Também auxiliou nas demais partes do projeto.
+Bruno é responsável pela camada de navegação e de seus periféricos, como o gps, magnetômetro e sensor de distância. Responsável também da geração das curvas de medida dos motores.
 
-Danilo foi o responsável por implementar a camada de controle. Responsável também pela estrutura do multirrotor, e auxiliando no desenvolvimento da arquitetura e nas demais partes do projeto.
+Danilo é responsável por implementar a camada de controle, pela estrutura do multirrotor e auxílio no desenvolvimento da arquitetura e programação.
 
-Pedro foi o responsável por coordenar o projeto. Sendo responsável também pelo desenvolvimento da parte teórica do projeto. Trabalhou também na estrutura do multirrotor e participou ativamente de todas as atividades do projeto.
-
-Na etapa de planejamento, a equipe contava com mais um integrante, Marcos Tortólio, que não está mais participando devido a um programa de intercâmbio na Espanha, como previsto.
-Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de hardware e software do veículo. 
+Pedro é responsável por coordenar o projeto, também pelo desenvolvimento do estudo teórico do projeto.
 
 \section{Problema a ser resolvido}
 
@@ -781,7 +857,8 @@ As etapas do projeto foram: Estudo Preliminar, Definições, Construção da Platafo
   \item definir o número de hélices.
 \end{itemize}
 
-  \item Estudo de um multirrotor comercial:
+  \item Estudo de um multirrotor comercial\\
+	Nesta etapa, os objetivos foram:
   \begin{itemize}
     \item escolha de um modelo comparando com outros existentes no mercado;
     \item compra e estudo teórico do multirrotor escolhido;
@@ -832,7 +909,7 @@ Nesta etapa, os objetivos foram:
 \end{itemize}
 
   \item Montagem Final\\
-	Nesta etapa, os objetivos serão:
+	Nesta etapa, os objetivos foram:
 \begin{itemize}
   \item Interligar todos os módulos;
   \item testar todos os sistemas e aplicações.
@@ -2138,7 +2215,8 @@ uint32_t I2CEngine( void )
 
 /******************************************************************************
 **                            End Of File
-******************************************************************************/ 
+******************************************************************************/
+ 
 \end{verbatim}
 
 \subsubsection{i2c\_driver.h}
@@ -4273,7 +4351,8 @@ void IntDefaultHandler(void)
     while(1)
     {
     }
-} 
+}
+ 
 \end{verbatim}
 
 \subsubsection{I2C.c}
