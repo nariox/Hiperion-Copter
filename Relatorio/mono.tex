@@ -437,7 +437,7 @@ Para descrever o funcionamento do programa (baseado em \cite{avr444}) pode-se ut
   {Máquina de estados do laço principal do programa do ESC}\label{fig.escdia}
 \end{figure}
 
-Na inicialização dos periféricos, inicia-se os conversores A/D, a comunicação $I^2C$, os \textit{timers}, as portas e comparadores.
+Na inicialização dos periféricos, inicia-se os conversores A/D, a comunicação I$^2$C, os \textit{timers}, as portas e comparadores.
 
 A partida do motor é constituída pelo carregamento da sequência de chaveamento, do chaveamento em malha aberta e da inicialização do \textit{timer Watchdog}. Este \textit{timer} é utilizado para detectar travamentos no motor. Se nenhuma comutação é executada dentro de um intervalo pré-determinado, o controlador entende que o motor está parado e tenta dar a partida novamente.
 
@@ -569,27 +569,70 @@ Com base na existência destes sensores se tornou possível aplicações como este p
 
 \subsection{Sensores inerciais}
 
-Sensores inerciais sao utilizados para medir o deslocamento do multi-rotor. Para este projeto foram utilizados acelerometros e giroscopios MEMS. Estes dispositivos possuem baixo consumo e boa precisao.
+Sensores inerciais são utilizados para medir o deslocamento do multi-rotor. Para este projeto foram utilizados acelerômetros e giroscópios MEMS. Estes dispositivos possuem baixo consumo e boa precisao.
+
+O conjunto escolhido foi a unidade de medida inercial de 6 graus de liberdade da SparkFun \ref{sparkfun}. Este kit é composto por um acelerometro ADXL345 e um giroscopio ITG3200. Ambos chips são capazes de se comunicar por I$^2$C, o que torna a leitura imune ao ruído de leitura A/D do microcontrolador e ainda diminui a quantidade de fios necessária para a comunicacao. A saída digital ainda oferece a vantagem de dispensar a calibração de offset. 
 
 \subsubsection{Acelerômetro}
 
-Acelerômetro é um sensor capaz de medir aceleração. Ele funciona com base na segunda lei de Newton. Quando o sensor está com alguma força aplicada, ele é capaz de reconhecer que existe uma aceleração atuando sobre o corpo e também obter a proporção dela através de F=ma.
+Acelerômetro é um sensor capaz de medir aceleração própria de um objeto. A aceleração própria é a somatória das forças de campo que agem no acelerômetro, estas são geralmente equivalentes à resultante subtraida das forças normais).
 
-Como ele é capaz de medir aceleração ele é capaz de perceber quando um objeto está sendo acelerado, ou seja, quando movemos um objeto partindo do repouso, ele inicialmente terá uma aceleração e esta poderá ser medida. 
+No multirrotor deseja-se obter o ângulo de inclinação do veículo, e não as acelerações. Para obter os dados desejados deve-se utilizar uma transformação sobre os valores para poder-se estimar os ângulos.
 
-Por este motivo, a utilização deste sensor se tornou bastante comum. Ele é muito utilizado em aplicações como jogos, a exemplo tem o controle do Wii, e também em celulares.
+Quando em movimento uniforme, a única aceleração sofrida pelo veículo é a aceleração da gravidade. Portanto a aceleração vista pelo sensor dependerá apenas da aceleração da gravidade e dos ângulos de Euler. Para pequenas variações de ângulo, as equações são:
 
-No caso do multirrotor, como deseja-se obter o ângulo de inclinacao do veiculo, deve-se utilizar uma transformacao sobre os valores para poder-se estimar os angulos.
+\begin{subequations}
+\begin{align}
+  A_x = g \sin(\theta),
+  A_y = g \sin(\phi),
+  A_z = g \sqrt{1 - \sin^2(\theta) - \sin^2(\phi)}.
+\end{align}
+\end{subequations}
 
-Quando em movimento uniforme, a unica aceleracao sofrida pelo veículo é a aceleracao da gravidade. Portanto a aceleracao vista pelo sensor sera dependente apenas da aceleracao da gravidade e dos angulos de Euler.
+Linearizando, obtém-se:
+
+\begin{subequations}
+\begin{align}
+  A_x = g \theta,
+  A_y = g \phi,
+  A_z = g.
+\end{align}
+\end{subequations}
+
+No entanto, devido às outras acelerações e vibrações sofridas pelo veículo, esta medida é bastante ruidosa. O tratamento deste ruído é descrito na secao \ref{fusao}.
 
 \subsubsection{Giroscópio}
 
-Os giroscopio sao sensores inerciais que medem a velocidade angular. Com um giroscópio acoplado, é possível que um determinado objeto, possa perceber caso haja rotação em determinado eixo.
+Os giroscópios são sensores inerciais que medem a velocidade angular. Como os angulos sao as integrais das velocidades, estes sensores também podem ser utilizados para estimar os ângulos de Euler.
 
-Os giroscópios podem possuir de um a três graus de liberdade. Com três ele é capaz de verificar se existe rotação nos eixos x, y e z. Como os angulos sao as integrais das velocidades, estes sensores tambem podem ser utilizados para estimar os angulos de Euler.
+Um inconveniente de utilizar este sensor para estimar os angulos é que não há referencial inercial, portanto só é possível estimar as diferenças ao longo tenpo, mas não o estado inicial. Alem disto pequenos erros de medida se aculam ao longo do tempo e não é possível corrigí-los apenas utilizando este sensor. 
 
-Acompanhado do acelerômetro, estes dois sensores são capazes de medir quase todo tipo de movimentação de um objeto, a não ser no caso de um movimento retilínio uniforme.
+Para medir a velocidade angular, o sensor funciona corretamente. Possuir a velocidade angular é interessante, porque torna desnecessário inferir este valor a partir do acelerômetro. A diferenciação feita desta maneira reduz o ruído e permite o uso de valores derivativos mais altos.
+
+\subsubsection{Fusão de dados inerciais}\label{fusao}
+
+Há diversas maneiras de fundir os dados dos sensores de maneira a conseguir leituras mais precisas \ref{balancefilter}. Como a plataforma é embarcada, não é possível utilizar métodos computacionalmente intensivos, como o filtro de Kalman. A solução escolhida foi o filtro de balanço desenvolvido por \citeonline{balancefilter}.
+
+O conceito é unir a leitura do acelerômetro, que é correto em baixas frequências, porém possui ruído em altas, com a leitura do giroscópio, que possui leitura correta em altas frequências, porém desvia na média.
+
+O sinal do acelerômetro passa por um filtro passa-baixas, o que o torna menos ruidoso, mas mais lento. Quanto maior for a filtragem, mais atraso o filtro causa, isto pode causa problemas de instabilidade.
+
+O sinal do giroscópio é integrado e depois passa por um filtro passa-altas, o que anula a sua média e portanto o erro induzido por ele.
+
+O filtro de balanço soma os dois sinais filtrados para obter uma estimativa do ângulo. Esta estimativa alia as forças de âmbos os ângulos e é computacionalmente leve.
+
+Para a nossa implementação, utilizamos um filtro derivador de 1 zero como filtro passa-altas e um filtro de média móvel de largura 2 como passa-baixas:
+
+\begin{subequations}
+  \begin{align}
+    PA: ~ y(n) = \frac{x(n) - x(n-1)} \\
+    PB: ~ y(n) = \frac{x(n) + x(n-1)}
+  \end{align}
+\end{subequations}
+
+Para simplificar ainda mais as contas, o filtro passa-altas foi unido ao integrador, de forma que a própria leitura do giroscópio já é o sinal filtrado.
+
+Além disso, o sinal do giroscópio também será utilizado para fazer o controle derivativo, então o ganho atribuido a ele pode unir o ganho proporcional e o derivativo.
 
 \subsection{GPS}
 
@@ -662,7 +705,7 @@ Considerando a faixa nominal de uso das hélices, tratam-se de curvas monotônicas
 
 O sistema também apresenta características dinâmicas e não-lineares (semelhante a um pêndulo). Dependendo dos ângulos de Euler, as forças e torques geradas pelos motores serão diferentes. Apesar das magnitudes iguais, terão direções diferentes e, portanto, suas componentes serão diferentes. Ao mesmo tempo, a componente da gravidade se mantém na mesma direção 
 
-Os sensores também apresentam um problema para esta aplicação Os acelerômetros medem a aceleração que o veiculo sofre e não os ângulos Os giroscópios medem apenas a velocidade de variação dos ângulos Se o veiculo estiver em movimento inercial, e possível inferir os ângulos a partir da aceleração da gravidade, mas esta situação não existe na pratica. E possível integrar as leituras do giroscópio, mas haverá um erro na leitura que se acumula com o tempo. Pode-se utilizar outros sensores para se obter leituras mais confiáveis, como \ref{visionuav} que revisa modelo matemático de um quadrirotor usando a equação de Lagrange e propõe um método de controle linear baseado em imagens de duas câmeras, uma no quadrrotor e outro no solo.
+Os sensores também apresentam um problema para esta aplicação. Os acelerômetros medem a aceleração que o veiculo sofre e não os ângulos. Os giroscópios medem apenas a velocidade de variação dos ângulos. Se o veículo estiver em movimento inercial, e possível inferir os ângulos a partir da aceleração da gravidade, situação que não existe na prática. Também não é possível apenas integrar as leituras do giroscópio, pois haverá um erro na leitura que se acumula com o tempo. Pode-se utilizar outros sensores para se obter leituras mais confiáveis, como \ref{visionuav} que propõe um método de controle linear baseado em imagens de duas câmeras, uma no quadrrotor e outro no solo.
 
 Por último, o sistema apresenta diversas entradas (para cada motor) e diversas saídas (três ângulos de Euler e aceleração nesta direção). Foram conferidos alguns artigos no assunto e como que alguns produtos comerciais controlam seus motores.
 
@@ -670,7 +713,7 @@ Por último, o sistema apresenta diversas entradas (para cada motor) e diversas s
 
 \citeonline{fuzzycontrol} formula um sistema de controle inteligente de quadrrotores baseado na lógica fuzzy. As entradas para o sistemas são o valores desejados para altura e os ângulos em relação aos três eixos de referência que passam pelo centro de massa, e as saídas são as potências de cada um dos quatro rotores para se atender à especificação. Por fim, são feitas simulações para validar a eficiência da estratégia de controle.
 
-\subsection{Ortognalização}
+\subsection{Ortogonalização}
 
 Para sanar o problema pelas múltiplas entradas e saídas. Foi utilizada uma técnica para poder controlá-los independentemente. Para isso foi necessária uma troca de base.
 
@@ -769,14 +812,11 @@ Este capítulo trata de assuntos não relacionados às técnicas apresentadas no cap
 
 O grupo é composto por três alunos: Bruno Pinho, Danilo Luvizotto e Pedro Nariyoshi. 
 
-Bruno foi o responsável pela camada de navegação e de seus periféricos, como o gps, magnetometro e sensor de distancia. Responsável também da geração das curvas relacionadas ao trabalho. Também auxiliou nas demais partes do projeto.
+Bruno é responsável pela camada de navegação e de seus periféricos, como o gps, magnetômetro e sensor de distância. Responsável também da geração das curvas de medida dos motores.
 
-Danilo foi o responsável por implementar a camada de controle. Responsável também pela estrutura do multirrotor, e auxiliando no desenvolvimento da arquitetura e nas demais partes do projeto.
+Danilo é responsável por implementar a camada de controle, pela estrutura do multirrotor e auxílio no desenvolvimento da arquitetura e programação.
 
-Pedro foi o responsável por coordenar o projeto. Sendo responsável também pelo desenvolvimento da parte teórica do projeto. Trabalhou também na estrutura do multirrotor e participou ativamente de todas as atividades do projeto.
-
-Na etapa de planejamento, a equipe contava com mais um integrante, Marcos Tortólio, que não está mais participando devido a um programa de intercâmbio na Espanha, como previsto.
-Suas atividades no projeto foram relacionadas à pesquisa sobre a arquitetura de hardware e software do veículo. 
+Pedro é responsável por coordenar o projeto, também pelo desenvolvimento do estudo teórico do projeto.
 
 \section{Problema a ser resolvido}
 
