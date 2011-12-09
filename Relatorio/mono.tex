@@ -563,7 +563,7 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
 
 \section{Sensores}
 
-Existem hoje uma grande quantidade de sensores eletrônicos que são usados em diversas aplicações embarcadas. Com eles, torna-se possível diversas aplicações embarcadas. Com eles, torna-se possível observar diversos parâmetros do mundo exterior e poder atuar conforme estes parâmetros.
+Existem hoje uma grande quantidade de sensores eletrônicos que são usados em diversas aplicações embarcadas. Com eles, torna-se possível observar diversos parâmetros do mundo exterior e poder atuar conforme estes parâmetros. E também diversas aplicações embarcadas.
 
 Com base na existência destes sensores se tornou possível aplicações como este projeto. Segue-se então uma pequena descrição dos sensores que foram utilizados.
 
@@ -571,7 +571,9 @@ Com base na existência destes sensores se tornou possível aplicações como este p
 
 Sensores inerciais são utilizados para medir o deslocamento do multi-rotor. Para este projeto foram utilizados acelerômetros e giroscópios MEMS. Estes dispositivos possuem baixo consumo e boa precisao.
 
-O conjunto escolhido foi a unidade de medida inercial de 6 graus de liberdade da SparkFun \ref{sparkfun}. Este kit é composto por um acelerometro ADXL345 e um giroscopio ITG3200. Ambos chips são capazes de se comunicar por I$^2$C, o que torna a leitura imune ao ruído de leitura A/D do microcontrolador e ainda diminui a quantidade de fios necessária para a comunicacao. A saída digital ainda oferece a vantagem de dispensar a calibração de offset. 
+O conjunto escolhido foi a unidade de medida inercial de 6 graus de liberdade da SparkFun \cite{sparkfun}. Este kit é composto por um acelerometro ADXL345 e um giroscopio ITG3200. Ambos chips são capazes de se comunicar por I$^2$C, o que torna a leitura imune ao ruído de leitura A/D do microcontrolador e ainda diminui a quantidade de fios necessária para a comunicacao. A saída digital ainda oferece a vantagem de dispensar a calibração de offset.
+
+Os sensores inerciais serão utilizados para auxiliar na parte de estabilização do multirrotor.
 
 \subsubsection{Acelerômetro}
 
@@ -608,47 +610,6 @@ Os giroscópios são sensores inerciais que medem a velocidade angular. Como os an
 Um inconveniente de utilizar este sensor para estimar os angulos é que não há referencial inercial, portanto só é possível estimar as diferenças ao longo tenpo, mas não o estado inicial. Alem disto pequenos erros de medida se aculam ao longo do tempo e não é possível corrigí-los apenas utilizando este sensor. 
 
 Para medir a velocidade angular, o sensor funciona corretamente. Possuir a velocidade angular é interessante, porque torna desnecessário inferir este valor a partir do acelerômetro. A diferenciação feita desta maneira reduz o ruído e permite o uso de valores derivativos mais altos.
-
-\subsubsection{Fusão de dados inerciais}\label{fusao}
-
-Há diversas maneiras de fundir os dados dos sensores de maneira a conseguir leituras mais precisas \ref{balancefilter}. Como a plataforma é embarcada, não é possível utilizar métodos computacionalmente intensivos, como o filtro de Kalman. A solução escolhida foi o filtro de balanço desenvolvido por \citeonline{balancefilter}.
-
-O conceito é unir a leitura do acelerômetro, que é correto em baixas frequências, porém possui ruído em altas, com a leitura do giroscópio, que possui leitura correta em altas frequências, porém desvia na média.
-
-O sinal do acelerômetro passa por um filtro passa-baixas, o que o torna menos ruidoso, mas mais lento. Quanto maior for a filtragem, mais atraso o filtro causa, isto pode causa problemas de instabilidade.
-
-O sinal do giroscópio é integrado e depois passa por um filtro passa-altas, o que anula a sua média e portanto o erro induzido por ele.
-
-O filtro de balanço soma os dois sinais filtrados para obter uma estimativa do ângulo. Esta estimativa alia as forças de âmbos os ângulos e é computacionalmente leve.
-
-Para a nossa implementação, utilizamos um filtro derivador de 1 zero como filtro passa-altas e um filtro de média móvel de largura 2 como passa-baixas:
-
-\begin{subequations}
-  \begin{align}
-    PA: ~ y(n) = \frac{x(n) - x(n-1)} \\
-    PB: ~ y(n) = \frac{x(n) + x(n-1)}
-  \end{align}
-\end{subequations}
-
-Para simplificar ainda mais as contas, o filtro passa-altas foi unido ao integrador, de forma que a própria leitura do giroscópio já é o sinal filtrado.
-
-Além disso, o sinal do giroscópio também será utilizado para fazer o controle derivativo, então o ganho atribuido a ele pode unir o ganho proporcional e o derivativo.
-
-\subsection{GPS}
-
-O sistema de posicionamento global, mais conhecido como GPS é um sistema de navegação utilizando satélites. Este sistema utiliza 4 satélites e fazendo uma triangulação do sinal ele é capaz de dizer a exata latitude e longitude de um ponto.
-
-Ele é capaz de fazer esta medição utilizando a diferença de tempo que os sinais destes quatros satélites calculando assim as três cordenadas, latitude, longitude e altitude; e também calcula o tempo.
-
-Com este sensor, é possível que o multirrotor se localize e possa se mover entre dois pontos de maneira autônoma.
-
-\subsection{Magnetômetro}
-
-O magnetômetro é um sensor capaz de medir campos magnéticos. Como a Terra produz um campo magnético, este campo pode ser medido de modo que este sensor seja utilizado conforme uma bússula.
-
-Com o auxilio do magnetômetro é possível encontrar os polos terrestres e também encontrar a direção e o sentido que o multirrotor está virado sem que ele se mova.
-
-Devido a estas qualidades este sensor é fundamental para auxiliar o multirrotor a se mover de maneira autônoma, pois sem ele só é possível saber em que direção ele está olhando caso ele esteja em movimento e o dado anterior e o atual do GPS seja comparado.
 
 \subsection{Sensor de distância}
 
@@ -705,7 +666,7 @@ Considerando a faixa nominal de uso das hélices, tratam-se de curvas monotônicas
 
 O sistema também apresenta características dinâmicas e não-lineares (semelhante a um pêndulo). Dependendo dos ângulos de Euler, as forças e torques geradas pelos motores serão diferentes. Apesar das magnitudes iguais, terão direções diferentes e, portanto, suas componentes serão diferentes. Ao mesmo tempo, a componente da gravidade se mantém na mesma direção 
 
-Os sensores também apresentam um problema para esta aplicação. Os acelerômetros medem a aceleração que o veiculo sofre e não os ângulos. Os giroscópios medem apenas a velocidade de variação dos ângulos. Se o veículo estiver em movimento inercial, e possível inferir os ângulos a partir da aceleração da gravidade, situação que não existe na prática. Também não é possível apenas integrar as leituras do giroscópio, pois haverá um erro na leitura que se acumula com o tempo. Pode-se utilizar outros sensores para se obter leituras mais confiáveis, como \ref{visionuav} que propõe um método de controle linear baseado em imagens de duas câmeras, uma no quadrrotor e outro no solo.
+Os sensores também apresentam um problema para esta aplicação. Os acelerômetros medem a aceleração que o veiculo sofre e não os ângulos. Os giroscópios medem apenas a velocidade de variação dos ângulos. Se o veículo estiver em movimento inercial, e possível inferir os ângulos a partir da aceleração da gravidade, situação que não existe na prática. Também não é possível apenas integrar as leituras do giroscópio, pois haverá um erro na leitura que se acumula com o tempo. Pode-se utilizar outros sensores para se obter leituras mais confiáveis, como \cite{visionuav} que propõe um método de controle linear baseado em imagens de duas câmeras, uma no quadrrotor e outro no solo.
 
 Por último, o sistema apresenta diversas entradas (para cada motor) e diversas saídas (três ângulos de Euler e aceleração nesta direção). Foram conferidos alguns artigos no assunto e como que alguns produtos comerciais controlam seus motores.
 
@@ -797,6 +758,31 @@ Utilizando essa nova base, pode-se controlar os parâmetros de forma independente
 \end{subequations}
 
 O problema das múltiplas variáveis se extingue dessa maneira. O controle PID pode então ser aplicado às variáveis A, B, C e D e então estas são decompostas nas forças dos motores individuais. Esta abordagem permite ainda que sejam utilizados métodos diferentes para controlar cada variável.
+
+\subsection{Fusão de dados inerciais}\label{fusao}
+
+Há diversas maneiras de fundir os dados dos sensores de maneira a conseguir leituras mais precisas \cite{balancefilter}. Como a plataforma é embarcada, não é possível utilizar métodos computacionalmente intensivos, como o filtro de Kalman. A solução escolhida foi o filtro de balanço desenvolvido por \citeonline{balancefilter}.
+
+O conceito é unir a leitura do acelerômetro, que é correto em baixas frequências, porém possui ruído em altas, com a leitura do giroscópio, que possui leitura correta em altas frequências, porém desvia na média.
+
+O sinal do acelerômetro passa por um filtro passa-baixas, o que o torna menos ruidoso, mas mais lento. Quanto maior for a filtragem, mais atraso o filtro causa, isto pode causa problemas de instabilidade.
+
+O sinal do giroscópio é integrado e depois passa por um filtro passa-altas, o que anula a sua média e portanto o erro induzido por ele.
+
+O filtro de balanço soma os dois sinais filtrados para obter uma estimativa do ângulo. Esta estimativa alia as forças de âmbos os ângulos e é computacionalmente leve.
+
+Para a nossa implementação, utilizamos um filtro derivador de 1 zero como filtro passa-altas e um filtro de média móvel de largura 2 como passa-baixas:
+
+\begin{subequations}
+  \begin{align}
+    PA: ~ y(n) = \frac{x(n) - x(n-1)}{2}, \\
+    PB: ~ y(n) = \frac{x(n) + x(n-1)}{2}.
+  \end{align}
+\end{subequations}
+
+Para simplificar ainda mais as contas, o filtro passa-altas foi unido ao integrador, de forma que a própria leitura do giroscópio já é o sinal filtrado.
+
+Além disso, o sinal do giroscópio também será utilizado para fazer o controle derivativo, então o ganho atribuido a ele pode unir o ganho proporcional e o derivativo.
 
 \chapter{Desenvolvimento do Trabalho}
 
