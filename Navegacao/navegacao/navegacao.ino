@@ -59,10 +59,11 @@ int altura_erro_acumulado = 0;
 //Bluetooth
 int Conectado = 0;
 
-void manda_dados(int roll, int pitch, int yaw, int throttle) {
-      roll =+ CENTRADO;
-      pitch =+ CENTRADO;
-      yaw =+ CENTRADO;
+void manda_dados(int ro, int pi, int ya, int th) {
+      roll = ro + CENTRADO;
+      pitch = pi + CENTRADO;
+      yaw = ya + CENTRADO;
+      throttle = th;
       Serial1.print("R");
       if(roll < 10)
         Serial1.print("0");
@@ -322,6 +323,8 @@ void enviabluetooth() { // Envia dados de telemetria pelo bluetooth
     Serial2.print(lon);
     Serial2.print("ALT");
     Serial2.print(alt);
+    Serial2.print("THR");
+    Serial2.print(throttle);
   }
 }
 
