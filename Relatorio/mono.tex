@@ -62,9 +62,9 @@ de São Paulo}
 
 
  \chapter*{Agradecimentos}
- Agradecemos primeiramente a Deus por estar presente em nossas vidas e nos abençoando tornando assim todo o nosso sucesso possível.
+ Agradecemos primeiramente a Deus por estar presente em nossas vidas e nos abençoando, tornando assim todo o nosso sucesso possível.
  
- Agradecemos a nossas famílias, que dedicaram grande quantidade de recursos na nossa educação, de muitas vezes sacrificial, e sempre com amor. E também  a nossas companheiras pela paciência e apoio que tiveram neste momento de muita tensão e trabalho.
+ Agradecemos as nossas famílias, que dedicaram grande quantidade de recursos na nossa educação, muitas vezes de maneira sacrificial, e sempre com amor. E também  a nossas companheiras pela paciência e apoio que tiveram neste momento de muita tensão e trabalho.
  
  Agradecemos também ao corpo docente da Escola Politécnica, por nos ensinar, ocasionalmente contra nossa vontade, mas sempre para o nosso bem. Em especial a aqueles que ensinam com paixão. 
  
@@ -77,7 +77,7 @@ de São Paulo}
 \begin{description}[style=multiline,leftmargin=3cm]
   \item[API] \textit{(Application Programming Interface)}   Interface de Programação de Aplicativo, um conjunto de normas que permite uma interface entre dois aplicativos ou um aplicativo e um plugin.
   \item[ARM] \textit{(Advanced Risc Machine)}   é uma arquitetura de processadores de 32-bits RISC.
-  \item[Brushless Motor]    um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.
+  \item[Brushless, Motor]    um motor que não utiliza uma escova para a comutação. Esses motores necessitam de um controlador eletrônico para gerar a comutação.
   \item[ESC] \textit{(Electronic Speed Controller)}   Controlador de Velocidade Eletrônico, é um dispositivo que faz a comutação das fases num motor sem escova.
   \item[GNU/Linux]   é um sistema operacional que utiliza as ferramentas do projeto GNU e o núcleo Linux.
   \item[GPS] \textit{(Global Positioning System)}    sistema utilizado para obter informações sobre tempo e posição de um objeto, utilizando 4 ou mais satélites.
@@ -563,13 +563,49 @@ Seguem alguns valores de referência, extraídos de \citeonline{lipoeval}, onde é 
 
 \section{Sensores}
 
-%\subsection{Acelerômetro}
+Existem hoje uma grande quantidade de sensores eletrônicos que são usados em diversas aplicações embarcadas. Com eles, torna-se possível diversas aplicações embarcadas. Com eles, torna-se possível observar diversos parâmetros do mundo exterior e poder atuar conforme estes parâmetros.
 
-%\subsection{Giroscópio}
+Com base na existência destes sensores se tornou possível aplicações como este projeto. Segue-se então uma pequena descrição dos sensores que foram utilizados.
 
-%\subsection{GPS}
+\subsection{Sensores inerciais}
 
-%\subsection{Magnetômetro}
+Sensores inerciais sao utilizados para medir o deslocamento do multi-rotor. Para este projeto foram utilizados acelerometros e giroscopios MEMS. Estes dispositivos possuem baixo consumo e boa precisao.
+
+\subsubsection{Acelerômetro}
+
+Acelerômetro é um sensor capaz de medir aceleração. Ele funciona com base na segunda lei de Newton. Quando o sensor está com alguma força aplicada, ele é capaz de reconhecer que existe uma aceleração atuando sobre o corpo e também obter a proporção dela através de F=ma.
+
+Como ele é capaz de medir aceleração ele é capaz de perceber quando um objeto está sendo acelerado, ou seja, quando movemos um objeto partindo do repouso, ele inicialmente terá uma aceleração e esta poderá ser medida. 
+
+Por este motivo, a utilização deste sensor se tornou bastante comum. Ele é muito utilizado em aplicações como jogos, a exemplo tem o controle do Wii, e também em celulares.
+
+No caso do multirrotor, como deseja-se obter o ângulo de inclinacao do veiculo, deve-se utilizar uma transformacao sobre os valores para poder-se estimar os angulos.
+
+Quando em movimento uniforme, a unica aceleracao sofrida pelo veículo é a aceleracao da gravidade. Portanto a aceleracao vista pelo sensor sera dependente apenas da aceleracao da gravidade e dos angulos de Euler.
+
+\subsubsection{Giroscópio}
+
+Os giroscopio sao sensores inerciais que medem a velocidade angular. Com um giroscópio acoplado, é possível que um determinado objeto, possa perceber caso haja rotação em determinado eixo.
+
+Os giroscópios podem possuir de um a três graus de liberdade. Com três ele é capaz de verificar se existe rotação nos eixos x, y e z. Como os angulos sao as integrais das velocidades, estes sensores tambem podem ser utilizados para estimar os angulos de Euler.
+
+Acompanhado do acelerômetro, estes dois sensores são capazes de medir quase todo tipo de movimentação de um objeto, a não ser no caso de um movimento retilínio uniforme.
+
+\subsection{GPS}
+
+O sistema de posicionamento global, mais conhecido como GPS é um sistema de navegação utilizando satélites. Este sistema utiliza 4 satélites e fazendo uma triangulação do sinal ele é capaz de dizer a exata latitude e longitude de um ponto.
+
+Ele é capaz de fazer esta medição utilizando a diferença de tempo que os sinais destes quatros satélites calculando assim as três cordenadas, latitude, longitude e altitude; e também calcula o tempo.
+
+Com este sensor, é possível que o multirrotor se localize e possa se mover entre dois pontos de maneira autônoma.
+
+\subsection{Magnetômetro}
+
+O magnetômetro é um sensor capaz de medir campos magnéticos. Como a Terra produz um campo magnético, este campo pode ser medido de modo que este sensor seja utilizado conforme uma bússula.
+
+Com o auxilio do magnetômetro é possível encontrar os polos terrestres e também encontrar a direção e o sentido que o multirrotor está virado sem que ele se mova.
+
+Devido a estas qualidades este sensor é fundamental para auxiliar o multirrotor a se mover de maneira autônoma, pois sem ele só é possível saber em que direção ele está olhando caso ele esteja em movimento e o dado anterior e o atual do GPS seja comparado.
 
 \subsection{Sensor de distância}
 
@@ -2138,7 +2174,8 @@ uint32_t I2CEngine( void )
 
 /******************************************************************************
 **                            End Of File
-******************************************************************************/ 
+******************************************************************************/
+ 
 \end{verbatim}
 
 \subsubsection{i2c\_driver.h}
@@ -4273,7 +4310,8 @@ void IntDefaultHandler(void)
     while(1)
     {
     }
-} 
+}
+ 
 \end{verbatim}
 
 \subsubsection{I2C.c}
