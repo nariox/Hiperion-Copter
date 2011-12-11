@@ -338,6 +338,7 @@ void enviabluetooth() { // Envia dados de telemetria pelo bluetooth
       Serial2.print("ALT");
       Serial2.print(alt);
       Serial2.print("THR");
+<<<<<<< HEAD
       Serial2.print(throttle/100);
       Serial2.print((throttle%100)/10);
       Serial2.print((throttle%10));
@@ -347,6 +348,21 @@ void enviabluetooth() { // Envia dados de telemetria pelo bluetooth
       Serial2.print(throttle/100);
       Serial2.print((throttle%100)/10);
       Serial2.print((throttle%10));
+=======
+      if(throttle < 10)
+        Serial2.print("0");
+      if(throttle < 100)
+        Serial2.print("0");
+      Serial2.print(throttle);
+    }
+    else {
+      Serial2.print("THR");
+      if(throttle < 10)
+        Serial2.print("0");
+      if(throttle < 100)
+        Serial2.print("0");
+      Serial2.print(throttle);      
+>>>>>>> d1b2d5846519438e3060d027945dcffd38552bb1
     }
   }
 }
@@ -362,6 +378,7 @@ void loop() {
   
   // Tratar dados do Controle remoto
   bluetooth(); // Pegar dados pelo bluetooth
+<<<<<<< HEAD
   if(!Conectado) { //Caso o controle bluetooth esteja desconectado ele entra no modo POUSAR
     MODO = POUSAR;
     //TODO: APAGAR
@@ -371,6 +388,10 @@ void loop() {
     return;
   }
     
+=======
+  if(!Conectado) //Caso o controle bluetooth esteja desconectado ele entra no modo POUSAR
+    MODO = POUSAR;
+>>>>>>> d1b2d5846519438e3060d027945dcffd38552bb1
   // Obter dados dos sensores
   altura = ultrasonic.Distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
   gps_disponivel = le_gps();               //Lê os dados do GPS
