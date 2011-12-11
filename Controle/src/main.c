@@ -191,8 +191,8 @@ void processa()
 	    B = (accel_y_med > M_PI) ? M_PI : -M_PI;
 
 	C = kd_yaw*( (nav_params->yaw -127)*nav_scale - kd_yaw*gyro_data->z*gyro_scale);
-    D = nav_params->throttle/64.0;
-    //D = 0.7;
+    //D = nav_params->throttle/64.0;
+    D = 0.7;
 }
 
 void envia_rotacoes()

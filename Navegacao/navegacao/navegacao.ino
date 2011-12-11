@@ -177,11 +177,24 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
     }   
   }
 
-  if(Conectado == 1) {
+
+  while(Serial2.available() < 41);
+  while(Serial2.available() > 0) {
+    Serial.write(Serial2.read());
+  }
+
+  if(Conectado == 1 && Serial2.available()) {
     for(int i = 1; i <= 8; i++) {
       inByte = Serial2.read();
+      while(inByte != 'M') {
+          while (!Serial2.available());
+          inByte = Serial2.read();          
+      }
       switch(inByte) {
         case 'M': //Modo sendo recebido
+          while (!Serial2.available()) {
+            
+          }
           inByte = Serial2.read();
           if(inByte == 'N') {
             inByte = Serial2.read();    
@@ -204,7 +217,7 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
             }
           }
           else
-            MODO = inByte;          
+            MODO = inByte - '0';   
           break;
         
         case 'R': //Roll sendo recebido
@@ -231,7 +244,7 @@ void bluetooth() {   // Tratamento dos dados do bluetooth
 
         case 'T': //Throttle sendo recebido
           throttle = (Serial2.read() - '0') * 100;
-          throttle =+ (Serial2.read() - '0') * 10;
+          throttle =+ (Serial2.read()) * 10;
           throttle =+ (Serial2.read() - '0');// * 1;
           break;
         
@@ -325,11 +338,15 @@ void enviabluetooth() { // Envia dados de telemetria pelo bluetooth
       Serial2.print("ALT");
       Serial2.print(alt);
       Serial2.print("THR");
-      Serial2.print(throttle);
+      Serial2.print(throttle/100);
+      Serial2.print((throttle%100)/10);
+      Serial2.print((throttle%10));
     }
     else {
       Serial2.print("THR");
-      Serial2.print(throttle);      
+      Serial2.print(throttle/100);
+      Serial2.print((throttle%100)/10);
+      Serial2.print((throttle%10));
     }
   }
 }
@@ -344,9 +361,16 @@ void loop() {
   while(millis() - ultima_execucao < T_AMOSTRAGEM);
   
   // Tratar dados do Controle remoto
-  //bluetooth(); // Pegar dados pelo bluetooth
-  //if(!Conectado) //Caso o controle bluetooth esteja desconectado ele entra no modo POUSAR
-    //MODO = POUSAR;
+  bluetooth(); // Pegar dados pelo bluetooth
+  if(!Conectado) { //Caso o controle bluetooth esteja desconectado ele entra no modo POUSAR
+    MODO = POUSAR;
+    //TODO: APAGAR
+    Serial.print("Conectado: "); 
+    Serial.println(Conectado);
+    ultima_execucao = millis();
+    return;
+  }
+    
   // Obter dados dos sensores
   altura = ultrasonic.Distancia(trigPin);   //Calcula a altura em centimetros atraves do sensor de distância
   gps_disponivel = le_gps();               //Lê os dados do GPS
@@ -355,6 +379,13 @@ void loop() {
     MODO = POUSAR;
   
   enviabluetooth(); // Envia dados do GPS pelo bluetooth
+
+  Serial.print("Modo: ");  
+  Serial.println(MODO);
+  Serial.print("throttle: ");
+  Serial.println(throttle);
+//  Serial.print("Altura: ");  
+//  Serial.println(altura);
   
   switch(MODO) {
       case DESLIGAR:                //Fazer o multirrotor pousar em segurança
